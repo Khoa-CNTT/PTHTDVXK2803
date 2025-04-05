@@ -6,6 +6,8 @@ import { generalAccessToken, generalRefreshToken } from "../utils/jwt.util";
 import { sendOtpEmail } from "./email.service";
 import { findOtp, insertOtp, isValidOtp } from "./otp.service";
 import { CloudinaryAsset } from "../@types/cloudinary";
+import { ArrangeType } from "../@types/type";
+import { log } from "../utils/logger";
 
 interface Customer {
   email: string;
@@ -28,6 +30,16 @@ interface TokenData {
   id: string;
   role: string;
 }
+
+const totalCustomer = async (): Promise<number> => {
+  try {
+    const query = "select count(*) as totalCustomerList from customer";
+    const [rows] = await (await globalBookTicketsDB).execute(query);
+    return (rows as RowDataPacket[])[0].totalCustomerList;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const countCustomer = async (): Promise<number> => {
   try {
@@ -225,13 +237,23 @@ export const deleteCustomerSer = (id: number): Promise<any> => {
   });
 };
 
-export const getAllCustomerSer = (): Promise<{ status: string; message: string; data: object }> => {
+export const getAllCustomerSer = (
+  limit: number,
+  offset: number,
+  arrangeType: ArrangeType
+): Promise<{ status: string; total: number; data: object }> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [row] = await globalBookTicketsDB.execute("call get_all_customer()");
+      log(`offset: ${offset}`);
+      const totalCustomerCount = await totalCustomer();
+      const [row] = await globalBookTicketsDB.execute("call get_all_customer(?, ?, ?)", [
+        limit,
+        offset,
+        arrangeType,
+      ]);
       resolve({
         status: "OK",
-        message: "Get all customer success",
+        total: totalCustomerCount,
         data: row[0],
       });
     } catch (error) {

@@ -17,6 +17,8 @@ import {
   uploadImagesToCloudinary,
 } from "../middlewares/uploadHandler";
 import { CloudinaryAsset } from "../@types/cloudinary";
+import { ArrangeType } from "../@types/type";
+import { log } from "../utils/logger";
 
 interface UploadedFile extends Express.Multer.File {
   cloudinaryURL?: string;
@@ -201,7 +203,14 @@ export const deleteCustomer = async (req: Request, res: Response): Promise<any> 
 
 export const getAllCustomer = async (req: Request, res: Response): Promise<any> => {
   try {
-    const data = await getAllCustomerSer();
+    const limit = Number(req.query.limit) || 10;
+    const offset = Number(req.query.offset);
+    const arrangeType =
+      (req.query.arrangeType as string)?.toUpperCase() === "ASC" ? "ASC" : ("DESC" as ArrangeType);
+    log(`arrangeType: ${arrangeType}`);
+    if (limit < 0 || offset < 0)
+      return errorResponse(res, "limit and offset must be greater than 0", 404);
+    const data = await getAllCustomerSer(limit, offset, arrangeType);
     return successResponse(res, data, "success");
   } catch (error) {
     console.log("Controller", error);
