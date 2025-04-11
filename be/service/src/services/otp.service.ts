@@ -5,24 +5,29 @@ interface OtpData {
   otp: string;
   email: string;
   passwordHash: string;
-  name: string;
+  fullName: string;
 }
 
 interface OtpRecord {
   email: string;
-  name: string;
+  fullName: string;
   password: string;
   otp: string;
 }
 
-const insertOtp = ({ otp, email, passwordHash, name }: OtpData): Promise<{ data: any }> => {
+const insertOtp = ({ otp, email, passwordHash, fullName }: OtpData): Promise<{ data: any }> => {
   return new Promise(async (resolve, reject) => {
     try {
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(otp, salt);
 
       const query = "call upsert_otp(?, ?, )";
-      const [result] = await globalBookTicketsDB.execute(query, [email, hash, passwordHash, name]);
+      const [result] = await globalBookTicketsDB.execute(query, [
+        email,
+        hash,
+        passwordHash,
+        fullName,
+      ]);
 
       resolve({
         data: result,

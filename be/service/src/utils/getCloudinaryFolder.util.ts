@@ -1,5 +1,5 @@
 export const getCloudinaryFolder = (role: string | undefined): string | null => {
-  let folder = "book-bus-ticket/image/";
+  let folder = "book-bus-ticket/image";
 
   switch (role) {
     case "customer":

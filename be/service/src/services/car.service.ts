@@ -36,7 +36,12 @@ export const getImgCarIsMain = async (carID: number) => {
 };
 
 export const totalCar = async () => {
-  const [rows] = await bookBusTicketsDB.execute("select count(id) as totalCarList from car");
+  const [rows] = await bookBusTicketsDB.execute(
+    `select count(c.id) as totalCarList from car c
+    inner join img_car ic
+    on c.id = ic.car_id
+    where ic.is_main = 1`
+  );
   return (rows as any)[0].totalCarList ?? 0;
 };
 
@@ -174,6 +179,7 @@ export const getAllCarSer = (limit: number, offset: number): Promise<any> => {
       const [rows] = await bookBusTicketsDB.execute(sql, [limit, offset]);
       resolve({
         total: total,
+        totalPage: Math.ceil(total / limit),
         data: rows[0],
       });
     } catch (error) {
@@ -187,13 +193,16 @@ export const getCarByIdSer = (id: number): Promise<any> => {
     try {
       const sql = "call getDetailCar(?)";
       const [rows] = await bookBusTicketsDB.execute(sql, [id]);
-      let detailCar: Car = rows[0];
+      let detailCar: Car = rows[0][0];
+      if (!detailCar) {
+        reject(new Error("Xe không tồn tại"));
+      }
 
       //convert time to VietNam time
-      detailCar[0].createAt = convertToVietnamTime(detailCar[0].createAt);
-      detailCar[0].updateAt = convertToVietnamTime(detailCar[0].updateAt);
+      detailCar.createAt = convertToVietnamTime(detailCar.createAt);
+      detailCar.updateAt = convertToVietnamTime(detailCar.updateAt);
 
-      resolve(detailCar[0]);
+      resolve(detailCar);
     } catch (error) {
       reject(error);
     }

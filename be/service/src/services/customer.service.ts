@@ -1,39 +1,34 @@
 import bcrypt from "bcrypt";
-import { RowDataPacket } from "mysql2/promise";
+import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import otpGenerator from "otp-generator";
-import { bookBusTicketsDB, globalBookTicketsDB } from "../config/db";
-import { generalAccessToken, generalRefreshToken } from "../utils/jwt.util";
+import { globalBookTicketsDB } from "../config/db";
 import { sendOtpEmail } from "./email.service";
 import { findOtp, insertOtp, isValidOtp } from "./otp.service";
 import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
-import { log } from "../utils/logger";
+import { CustomerLogin, CustomerRegister, CustomerType } from "../@types/customer";
+import { convertToVietnamTime } from "../utils/convertTime";
+import deleteOldFile from "../utils/deleteOldFile.util";
+import { UserService } from "./user.service";
+import { generalAccessToken, generalRefreshToken } from "../utils/jwt.util";
 
-interface Customer {
+type Customer = {
   email: string;
-  firstName?: string;
-  lastName?: string;
+  fullName?: string;
+  sex?: "male" | "female" | "other";
   password: string;
-  // urlImg?: string;
-  // urlPublicImg: string;
+  urlImg?: string;
+  urlPublicImg?: string;
   phone?: string;
-  dayBirth?: string;
+  dateBirth?: string;
   address?: string;
-}
+};
 
-interface CustomerLogin {
-  email: string;
-  password: string;
-}
-
-interface TokenData {
-  id: string;
-  role: string;
-}
+const userService = new UserService(globalBookTicketsDB);
 
 const totalCustomer = async (): Promise<number> => {
   try {
-    const query = "select count(*) as totalCustomerList from customer";
+    const query = "select count(*) as totalCustomerList from user where role = 'customer'";
     const [rows] = await (await globalBookTicketsDB).execute(query);
     return (rows as RowDataPacket[])[0].totalCustomerList;
   } catch (error) {
@@ -41,180 +36,202 @@ const totalCustomer = async (): Promise<number> => {
   }
 };
 
-export const countCustomer = async (): Promise<number> => {
-  try {
-    const query = "select count(*) from customer";
-    const [rows] = await (await globalBookTicketsDB).execute(query);
-    const result = rows[0]["count(*)"];
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// export const registerSer = (newCustomer: NewCustomer): Promise<any> => {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       const { email, password, lastName } = newCustomer;
-
-//       const checkPerson = await checkUser(email);
-//       if (checkPerson) {
-//         return resolve({
-//           status: "ERR",
-//           message: "This user already exists",
-//         });
-//       }
-
-//       const otp = otpGenerator.generate(6, {
-//         digits: true,
-//         lowerCaseAlphabets: false,
-//         upperCaseAlphabets: false,
-//         specialChars: false,
-//       });
-
-//       const passwordHash = await bcrypt.hash(password, 10);
-//       await insertOtp({ otp, email, passwordHash });
-//       await sendOtpEmail({ email, otp });
-
-//       resolve({
-//         status: "OK",
-//         message: "Create OTP success",
-//       });
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-// };
-
-// export const verifyEmailSer = (email: string, otp: string): Promise<any> => {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       const checkOtp = await findOtp(email);
-
-//       if (!checkOtp) {
-//         return resolve({
-//           status: "ERR",
-//           message: "The OTP code for this email does not exist",
-//         });
-//       }
-
-//       const isValid = await isValidOtp(otp, checkOtp.otp);
-
-//       if (!isValid) {
-//         return resolve({
-//           status: "ERR",
-//           message: "Error verifying email",
-//         });
-//       }
-
-//       if (isValid && email === checkOtp.email) {
-//         const count = await countCustomer();
-//         const userId = count < 9 ? `CTM0${count + 1}` : `CTM${count + 1}`;
-
-//         const sqlPerson = `INSERT INTO person (id, email, name, password, role_id, status_id) VALUES (?, ?, ?, ?, ?, ?)`;
-//         const values = [userId, checkOtp.email, checkOtp.name, checkOtp.password, "CTM", "PS01"];
-
-//         await (await globalBookTicketsDB).query(sqlPerson, values);
-
-//         const sqlCustomer = `INSERT INTO customer (id) VALUES (?)`;
-//         await (await globalBookTicketsDB).query(sqlCustomer, [userId]);
-
-//         const newUser = await checkUser(email);
-//         if (newUser) {
-//           const access_token = generalAccessToken({ id: newUser.id, role: newUser.role });
-//           const refresh_token = generalRefreshToken({ id: newUser.id, role: newUser.role });
-
-//           return resolve({
-//             status: "OK",
-//             message: "Register success",
-//             access_token,
-//             refresh_token,
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-// };
-
-// export const loginSer = (customerLogin: CustomerLogin): Promise<any> => {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       const checkPerson = await checkUser(customerLogin.email);
-//       if (checkPerson === null) {
-//         resolve({
-//           status: "ERR",
-//           message: "The user is not defined",
-//         });
-//       } else {
-//         const comparePass = await bcrypt.compareSync(customerLogin.password, checkPerson.password);
-//         if (!comparePass) {
-//           resolve({
-//             status: "ERR",
-//             message: "Password error",
-//           });
-//         } else {
-//           const access_token = generalAccessToken({
-//             id: checkPerson?.id,
-//             role: checkPerson?.role,
-//           });
-
-//           const refresh_token = generalRefreshToken({
-//             id: checkPerson?.id,
-//             role: checkPerson?.role,
-//           });
-
-//           resolve({
-//             status: "OK",
-//             message: "Login success",
-//             access_token,
-//             refresh_token,
-//           });
-//         }
-//       }
-//     } catch (error) {
-//       reject(error);
-//     }
-//   });
-// };
-
-export const fetchCustomerSer = (id: number): Promise<any> => {
+export const registerSer = (newCustomer: CustomerRegister): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const [row] = await globalBookTicketsDB.execute("call fetch_customer(?)", [id]);
+      const { email, password, fullName } = newCustomer;
+
+      const checkPerson = await userService.checkUser(email);
+      if (checkPerson) {
+        return resolve({
+          status: "ERR",
+          message: "This user already exists",
+        });
+      }
+
+      const otp = otpGenerator.generate(6, {
+        digits: true,
+        lowerCaseAlphabets: false,
+        upperCaseAlphabets: false,
+        specialChars: false,
+      });
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      await insertOtp({ otp, email, passwordHash, fullName });
+      await sendOtpEmail({ email, otp });
+
       resolve({
         status: "OK",
-        data: row[0],
+        message: "Create OTP success",
       });
     } catch (error) {
-      console.log("Err Service.getDetail", error);
+      reject(error);
     }
   });
 };
 
-export const updateCustomerSer = (
+export const verifyEmailSer = (email: string, otp: string): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkOtp = await findOtp(email);
+
+      if (!checkOtp) {
+        return resolve({
+          status: "ERR",
+          message: "The OTP code for this email does not exist",
+        });
+      }
+
+      const isValid = await isValidOtp(otp, checkOtp.otp);
+
+      if (!isValid) {
+        return resolve({
+          status: "ERR",
+          message: "Error verifying email",
+        });
+      }
+
+      if (isValid && email === checkOtp.email) {
+        const sql = `insert into user (email, password, fullName, role) values (?, ?, ?, ?)`;
+        const values = [checkOtp.email, checkOtp.fullName, checkOtp.password, "customer"];
+
+        const [rows] = await globalBookTicketsDB.execute<ResultSetHeader>(sql, values);
+
+        if (rows.affectedRows > 0) {
+          const access_token = generalAccessToken({ id: email, role: "customer" });
+          const refresh_token = generalRefreshToken({ id: email, role: "customer" });
+
+          return resolve({
+            status: "OK",
+            message: "Register success",
+            access_token,
+            refresh_token,
+          });
+        }
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const loginSer = (customerLogin: CustomerLogin): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const checkPerson = await userService.getUserByEmail(customerLogin.email);
+      if (checkPerson === null) {
+        resolve({
+          status: "ERR",
+          message: "The user is not defined",
+        });
+      } else {
+        const comparePass = await bcrypt.compareSync(customerLogin.password, checkPerson.password);
+        if (!comparePass) {
+          resolve({
+            status: "ERR",
+            message: "Password error",
+          });
+        } else {
+          const access_token = generalAccessToken({
+            id: checkPerson?.id,
+            role: checkPerson?.role,
+          });
+
+          const refresh_token = generalRefreshToken({
+            id: checkPerson?.id,
+            role: checkPerson?.role,
+          });
+
+          resolve({
+            status: "OK",
+            message: "Login success",
+            access_token,
+            refresh_token,
+          });
+        }
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const fetchCustomerSer = (id: number): Promise<object> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const [rows] = await globalBookTicketsDB.execute("call fetch_customer(?)", [id]);
+      if (rows[0].length === 0) {
+        resolve({
+          status: "ERR",
+          message: "Customer not found",
+        });
+      }
+
+      let detailCus: CustomerType = rows[0][0];
+
+      detailCus.createAt = convertToVietnamTime(detailCus.createAt);
+      detailCus.updateAt = convertToVietnamTime(detailCus.updateAt);
+      detailCus.dateBirth = convertToVietnamTime(detailCus.dateBirth);
+
+      resolve(detailCus);
+    } catch (error) {
+      console.log("Err Service.getDetail", error);
+      reject(error);
+    }
+  });
+};
+
+export const updateCustomerSer = (id: number, updateCustomer: Customer): Promise<any> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const hashPass = await bcrypt.hash(updateCustomer.password, 10);
+      const sql = "call update_customer( ?, ?, ?, ?, ?, ?, ?)";
+      const values = [
+        id,
+        updateCustomer.fullName,
+        updateCustomer.sex,
+        hashPass,
+        updateCustomer.phone,
+        updateCustomer.dateBirth,
+        updateCustomer.address,
+      ];
+
+      const [rows] = await globalBookTicketsDB.execute<ResultSetHeader>(sql, values);
+      if (rows.affectedRows === 0) {
+        return resolve({ status: "ERR", message: "Customer not found" });
+      }
+      resolve({
+        status: "OK",
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+export const updateImageCustomerSer = (
   id: number,
-  updateCustomer: Customer,
+  publicId: string | null,
   fileCloudinary: CloudinaryAsset
 ): Promise<any> => {
   return new Promise(async (resolve, reject) => {
     try {
-      const hashPass = await bcrypt.hash(updateCustomer.password, 10);
-      const sql = "call update_customer( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-      const values = [
-        id,
-        updateCustomer.firstName,
-        updateCustomer.lastName,
-        hashPass,
-        fileCloudinary.secure_url,
-        fileCloudinary.public_id,
-        updateCustomer.phone,
-        updateCustomer.dayBirth,
-        updateCustomer.address,
-      ];
+      const { secure_url, public_id } = fileCloudinary;
 
-      await globalBookTicketsDB.execute(sql, values);
+      const sql = "call update_image_user( ?, ?, ?)";
+      const values = [id, secure_url, public_id];
+
+      const [rows] = await globalBookTicketsDB.execute<ResultSetHeader>(sql, values);
+      if (publicId) {
+        if (rows.affectedRows === 0) {
+          return resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        } else {
+          deleteOldFile(publicId, "image");
+        }
+      }
       resolve({
         status: "OK",
       });
@@ -241,20 +258,26 @@ export const getAllCustomerSer = (
   limit: number,
   offset: number,
   arrangeType: ArrangeType
-): Promise<{ status: string; total: number; data: object }> => {
+): Promise<{ status: string; total: number; totalPage: number; data: object }> => {
   return new Promise(async (resolve, reject) => {
     try {
-      log(`offset: ${offset}`);
       const totalCustomerCount = await totalCustomer();
       const [row] = await globalBookTicketsDB.execute("call get_all_customer(?, ?, ?)", [
         limit,
         offset,
         arrangeType,
       ]);
+      let dataCustomer: CustomerType[] = row[0].map((item: CustomerType) => {
+        item.createAt = convertToVietnamTime(item.createAt);
+        item.updateAt = convertToVietnamTime(item.updateAt);
+        item.dateBirth = convertToVietnamTime(item.dateBirth);
+        return item;
+      });
       resolve({
         status: "OK",
         total: totalCustomerCount,
-        data: row[0],
+        totalPage: Math.ceil(totalCustomerCount / limit),
+        data: totalCustomerCount > 0 ? dataCustomer : [],
       });
     } catch (error) {
       console.error("Err Service.getall", error);
@@ -268,30 +291,39 @@ export const addCustomerSer = (
   fileCloudinary: CloudinaryAsset
 ): Promise<any> => {
   return new Promise(async (resolve, reject) => {
-    console.log(fileCloudinary);
     try {
       const regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.(com|vn|org|edu|net)$/;
+      console.log("newCustomer-ser", newCustomer);
       if (!regex.test(newCustomer.email)) {
-        return resolve({
+        console.log('"Invalid email format", newCustomer.email);');
+        deleteOldFile(fileCloudinary.public_id, "image");
+        return reject({
           status: "ERR",
           message: "Invalid email",
         });
       }
       const hashPass = await bcrypt.hash(newCustomer.password, 10);
-      const sql = "call insert_customer(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      const sql = "call addCustomer(?, ?, ?, ?, ?, ?, ?, ?, ?)";
       const values = [
         newCustomer.email,
-        newCustomer.firstName,
-        newCustomer.lastName,
+        newCustomer.fullName,
+        newCustomer.sex,
         hashPass,
         fileCloudinary ? fileCloudinary.secure_url : null,
         fileCloudinary ? fileCloudinary.public_id : null,
         newCustomer.phone,
-        newCustomer.dayBirth,
+        newCustomer.dateBirth,
         newCustomer.address,
       ];
-
-      await globalBookTicketsDB.execute(sql, values);
+      console.log("values", values);
+      const [rows] = await globalBookTicketsDB.execute<ResultSetHeader>(sql, values);
+      if (rows.affectedRows === 0) {
+        deleteOldFile(fileCloudinary.public_id, "image");
+        return reject({
+          status: "ERR",
+          message: "Create customer failed",
+        });
+      }
       resolve({
         status: "OK",
         message: "Create customer success",
