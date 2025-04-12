@@ -1,8 +1,14 @@
-import { globalBookTicketsDB } from "../config/db";
+import { bcrypt } from "bcrypt";
+import { generalAccessToken, generalRefreshToken } from "../utils/jwt.util";
 
 interface TokenData {
   id: string;
   role: string;
+}
+
+interface LoginType {
+  email: string;
+  password: string;
 }
 
 export class UserService {
@@ -20,7 +26,6 @@ export class UserService {
     }
   }
 
-  // Method to check if the user is an admin
   isAdmin(token: string): boolean {
     const decoded = this.decodeToken(token);
     return decoded ? decoded.role === "admin" : false;
@@ -38,5 +43,59 @@ export class UserService {
   async getUserByEmail(email: string): Promise<any> {
     const [rows] = await this.db.execute("select * from user where email = ?", [email]);
     return rows[0][0];
+  }
+
+  login(userLogin: LoginType): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const checkPerson = await this.getUserByEmail(userLogin.email);
+        if (checkPerson === null) {
+          resolve({
+            status: "ERR",
+            message: "The user is not defined",
+          });
+        } else {
+          const comparePass = await bcrypt.compareSync(userLogin.password, checkPerson.password);
+          if (!comparePass) {
+            resolve({
+              status: "ERR",
+              message: "Password error",
+            });
+          } else {
+            const access_token = generalAccessToken({
+              id: checkPerson?.id,
+              role: checkPerson?.role,
+            });
+
+            const refresh_token = generalRefreshToken({
+              id: checkPerson?.id,
+              role: checkPerson?.role,
+            });
+
+            resolve({
+              status: "OK",
+              message: "Login success",
+              access_token,
+              refresh_token,
+            });
+          }
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  delete(id: number): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.db.execute("call delete_user(?)", [id]);
+        resolve({
+          status: "OK",
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }
