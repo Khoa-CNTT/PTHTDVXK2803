@@ -1,14 +1,17 @@
-interface Driver {
+export type DriverType = {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
+  fullName?: string;
   password?: string;
-  url_img: string;
-  public_img_id: string;
-  phone: string;
-  address: string;
-  role: "customer" | "admin" | "driver";
-  create_at: string; // timestamp
-  update_at: string;
-}
+  sex?: "male" | "female" | "other";
+  licenseNumber?: string; // số bằng lái xe
+  experienceYears?: string; // số năm kinh nghiệm lái xe
+  dateBirth?: string;
+  phone?: string;
+  address?: string;
+  urlImg?: string;
+  urlPublicImg?: string;
+  createAt?: string; // timestamp
+  updateAt?: string; // timestamp
+  role: "driver";
+};

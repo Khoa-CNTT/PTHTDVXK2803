@@ -4,6 +4,7 @@ import carRouter from "./car.routes";
 import customerRouter from "./customer.routes";
 import locationRouter from "./location.routes";
 import userRouter from "./user.routes";
+import driverRoute from "./driver.routes";
 
 const routes = (app: express.Application): void => {
   // Cấu hình routes
@@ -11,6 +12,7 @@ const routes = (app: express.Application): void => {
   app.use("/api/location", locationRouter);
   app.use("/api/customer", customerRouter);
   app.use("/api/car", carRouter);
+  app.use("/api/driver", driverRoute);
 
   // Route cho các yêu cầu không tìm thấy
   app.use((req: Request, res: Response): void => {
