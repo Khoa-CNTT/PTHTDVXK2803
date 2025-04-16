@@ -1,16 +1,20 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import PrivateRoute from "./components/PrivateRoute";
 import Layout from "./layouts/Layout";
+import ManageLayout from "./layouts/ManageLayout";
+import AddCustomer from "./pages/CustomerManage/AddCustomer";
+import DetailCustomer from "./pages/CustomerManage/DetailCustomer";
+import ManageCustomer from "./pages/CustomerManage/ManageCustomer";
+import UpdateCustomer from "./pages/CustomerManage/UpdateCustomer";
+import AddCar from "./pages/ManageCar/AddCar";
+import DetailCar from "./pages/ManageCar/DetailCar";
+import ManageCar from "./pages/ManageCar/ManageCar";
+import UpdateCar from "./pages/ManageCar/UpdateCar";
 import "./styles/app.scss";
 import "./styles/reset.scss";
 import "./styles/root.scss";
-import PrivateRoute from "./components/PrivateRoute";
-import ManageLayout from "./layouts/ManageLayout";
-import ManageCar from "./pages/ManageCar/ManageCar";
-import DetailCar from "./pages/ManageCar/DetailCar";
-import AddCar from "./pages/ManageCar/AddCar";
-import UpdateCar from "./pages/ManageCar/UpdateCar";
 import useClientWidth from "./utils/useClientWidth.util";
 
 function App() {
@@ -31,6 +35,15 @@ function App() {
                 <Route path="detail/:id" element={<DetailCar />} />
                 <Route path="add" element={<AddCar />} />
                 <Route path="update/:id" element={<UpdateCar />} />
+              </Route>
+
+              {/* Customer Manage */}
+              <Route path="/customer-manage" element={<ManageLayout />}>
+                <Route index element={<ManageCustomer />} />
+                <Route path="page/:page" element={<ManageCustomer />} />
+                <Route path="detail/:id" element={<DetailCustomer />} />
+                <Route path="add" element={<AddCustomer />} />
+                <Route path="update/:id" element={<UpdateCustomer />} />
               </Route>
             </Route>
           </Routes>
