@@ -1,0 +1,62 @@
+.container {
+  display: flex;
+
+  height: 4.75rem;
+  border: 1px solid var(--bright-blue);
+  border-right: none;
+
+  &:hover {
+    border-right: 1px solid var(--bright-blue);
+  }
+
+  .img {
+    width: 5.5rem;
+    border-right: 1px solid var(--bright-blue);
+
+    object-fit: cover;
+    aspect-ratio: 16/9;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    width: 0;
+    height: auto;
+    gap: 0.2rem;
+
+    transition: width 0.2s linear;
+
+    .btn {
+      padding: 0.1rem;
+      border: none;
+      .ic {
+        height: 1.1rem;
+        width: 1.1rem;
+
+        transition: color 0.2s linear;
+      }
+
+      .main {
+        color: var(--warning);
+      }
+    }
+
+    .start-btn:hover {
+      color: var(--warning);
+    }
+
+    .update-btn:hover {
+      color: var(--info);
+    }
+
+    .delete-btn:hover {
+      color: var(--danger);
+    }
+  }
+
+  &:hover > .actions {
+    width: 1.8rem;
+  }
+}

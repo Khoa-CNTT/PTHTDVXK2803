@@ -1,0 +1,18 @@
+@use "./mixin" as mix;
+
+.container {
+  width: 100%;
+
+  .add-btn {
+    margin-bottom: 1rem;
+
+    background-color: var(--primary);
+    color: var(--white);
+  }
+
+  .img-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+}

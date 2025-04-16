@@ -1,0 +1,11 @@
+@mixin responsive($size) {
+  @if $size == mobile {
+    @media (max-width: 767px) {
+      @content;
+    }
+  } @else if $size == tablet {
+    @media (max-width: 1024px) {
+      @content;
+    }
+  }
+}

@@ -1,0 +1,31 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+}
+
+.header {
+  background-color: rgb(46, 180, 252);
+  color: #000;
+  padding: 1rem;
+}
+
+.main {
+  overflow: hidden;
+
+  flex: 1;
+  padding: 2rem;
+
+  background-color: #f0f0f0;
+}
+
+.footer {
+  background-color: rgb(46, 180, 252);
+  color: #000;
+  padding: 1rem;
+}

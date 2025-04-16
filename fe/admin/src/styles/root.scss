@@ -1,0 +1,57 @@
+:root {
+  /* Color */
+  --light-gray: #f0f0f0;
+  --white: #ffffff;
+  --bright-blue: #2eb4fc;
+  --belize-hole: #3498db; //shade of blue
+  --gray: #c3c3c3;
+
+  // Button Color
+  --primary: #2eb4fc;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --info: #17a2b8;
+  --light: #f8f9fa;
+  --dark: #343a40;
+
+  /* Font Family - Custom Variables */
+  --ff-TimeNR: "Times New Roman", serif;
+  --ff-gill: "Gill Sans Extrabold", sans-serif;
+  --ff-goudy: "Goudy Bookletter 1911", sans-serif;
+  --ff-serif: serif;
+  --ff-sans: sans-serif;
+  --ff-mono: monospace;
+  --ff-cursive: cursive;
+  --ff-fantasy: fantasy;
+  --ff-ui-serif: ui-serif;
+  --ff-ui-sans: ui-sans-serif;
+  --ff-ui-mono: ui-monospace;
+  --ff-ui-rounded: ui-rounded;
+  --ff-emoji: emoji;
+  --ff-math: math;
+  --ff-fangsong: fangsong;
+
+  /* Global values */
+  --ff-inherit: inherit; /* Kế thừa font từ phần tử cha */
+  --ff-initial: initial; /* Đặt về giá trị mặc định của trình duyệt */
+  --ff-revert: revert; /* Khôi phục về giá trị mặc định của trình duyệt hoặc stylesheet gốc */
+  --ff-unset: unset; /* Nếu thẻ cha có font-family → kế thừa, nếu không → trở về giá trị mặc định */
+}
+
+/* Sử dụng biến trong CSS */
+body {
+  font-family: var(--ff-sans);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--ff-TimeNR);
+}
+
+p {
+  font-family: var(--ff-inherit);
+}

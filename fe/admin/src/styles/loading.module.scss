@@ -1,0 +1,26 @@
+.animation {
+  display: grid;
+  place-items: center;
+}
+
+.spinner {
+  width: 4rem;
+  height: 5rem;
+  background-color: #fff;
+  border: 0.425rem solid #48a8fc;
+  border-top: #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
