@@ -1,0 +1,131 @@
+@use "./mixin" as mix;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+
+  min-width: 33.7rem;
+  max-width: 80%;
+
+  @include mix.responsive(mobile) {
+    min-width: 21.7rem;
+  }
+
+  .feats {
+    display: flex;
+    justify-content: space-between;
+
+    .btn {
+      display: grid;
+      place-items: center;
+
+      width: 5rem;
+      padding: 0.6rem;
+      border-radius: 0.5rem;
+
+      font-size: 1.12rem;
+      color: var(--white);
+      text-align: center;
+    }
+
+    .btn-back {
+      background-color: var(--bright-blue);
+    }
+
+    .btn-delete {
+      background-color: var(--danger);
+    }
+  }
+
+  .update-car {
+    background-color: var(--light-gray);
+
+    & > .title {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+
+      padding: 1.6rem;
+      border-bottom: 1px solid var(--bright-blue);
+      margin-bottom: 1rem;
+      border-radius: 0.32rem;
+
+      background-color: var(--white);
+
+      color: var(--belize-hole);
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .input-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      padding: 1rem 0.5rem;
+      border-radius: 0.32rem;
+
+      background-color: var(--white);
+
+      .item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        .title {
+          text-transform: capitalize;
+          font-size: 1.15rem;
+          font-weight: 500;
+        }
+
+        .input {
+          padding: 0.2rem 0.4rem;
+          border: 1px solid var(--gray);
+          border-radius: 0.25rem;
+
+          font-size: 1.1rem;
+          text-transform: capitalize;
+          outline: none;
+
+          &:focus {
+            border-color: var(--bright-blue);
+          }
+        }
+
+        & .img-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.2rem;
+
+          .img-item {
+            .img {
+              width: 6rem;
+              height: 5rem;
+              border: 1px solid var(--bright-blue);
+              object-fit: cover;
+              aspect-ratio: 16/9;
+
+              @include mix.responsive(mobile) {
+                width: 3.8rem;
+                height: 3.4rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .action {
+      display: flex;
+      justify-content: center;
+
+      .btn-add {
+        background-color: var(--bright-blue);
+        color: var(--white);
+      }
+    }
+  }
+}
