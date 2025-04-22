@@ -1,0 +1,215 @@
+@use "./mixin" as mix;
+
+.container {
+  width: 80vw;
+  height: 100vh;
+  padding: 1rem;
+
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    @include mix.responsive(mobile) {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .search {
+      position: relative;
+      padding-top: 0.5rem;
+
+      .search-input {
+        min-width: 12rem;
+        max-width: 15rem;
+
+        padding: 0.4rem;
+        border-radius: 4px;
+        border: 1px solid #0dcaf0;
+
+        outline: none;
+
+        @include mix.responsive(mobile) {
+          font-size: 1.2rem;
+        }
+      }
+      .title {
+        position: absolute;
+        top: -0.5rem;
+        left: 1.5rem;
+
+        background-color: #fff;
+        font-size: 0.8rem;
+
+        padding: 0 0.25rem;
+      }
+    }
+
+    .type-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+
+      .type-item {
+        display: flex;
+        gap: 0.2rem;
+
+        .label {
+          text-transform: capitalize;
+          text-wrap: wrap;
+        }
+      }
+    }
+
+    .btn-add {
+      padding: 0.5rem 0.725rem;
+      background-color: #28a745;
+      border: none;
+      border-radius: 0.5rem;
+
+      color: white;
+      text-align: center;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #218838;
+      }
+      @include mix.responsive(mobile) {
+        width: 15rem;
+        padding: 0.5rem;
+      }
+    }
+  }
+
+  .table-wrapper {
+    width: 100%;
+    // flex-grow: 1;
+    overflow-x: auto;
+    overflow-y: auto;
+    min-height: 5rem;
+    // height: 32rem;
+    border: 1px solid #ddd;
+
+    @include mix.responsive(mobile) {
+      overflow-x: auto;
+      width: 100%; // Đảm bảo rằng .table-wrapper chiếm toàn bộ chiều rộng
+    }
+
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #1caaf1;
+      border-radius: 4px;
+    }
+  }
+
+  .table {
+    table-layout: auto;
+
+    // min-width: 700px; // Đảm bảo bảng đủ lớn để tạo thanh cuộn
+    width: 100%;
+    padding: 1rem;
+
+    border-collapse: collapse;
+
+    @include mix.responsive(mobile) {
+      min-width: 700px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+      vertical-align: middle;
+      white-space: nowrap; // Giữ nội dung không bị xuống dòng
+    }
+
+    th {
+      background-color: #f4f4f4;
+      .numerical-order {
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+
+        .asc,
+        .desc {
+          font-size: 1.2rem;
+          color: #1caaf1;
+
+          transition: transform 0.5s linear;
+
+          cursor: pointer;
+        }
+        .asc {
+          transform: rotate(180deg);
+        }
+        .desc {
+          transform: rotate(0deg);
+        }
+      }
+    }
+    .pagination {
+      display: grid;
+      place-items: center;
+
+      .paginate {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+    }
+  }
+
+  .btn-list {
+    display: flex;
+    justify-content: center;
+    align-items: stretch; // Đảm bảo thẻ con cao bằng nhau
+    .btn {
+      display: grid;
+      place-items: center;
+
+      width: 4rem !important;
+      padding: 6px 10px;
+      margin-right: 5px;
+      border: none;
+      border-radius: 4px;
+
+      color: white;
+      cursor: pointer;
+
+      &-detail {
+        background-color: #0dcaf0;
+
+        &:hover {
+          background-color: #12a3c1;
+        }
+      }
+      &-edit {
+        background-color: #007bff;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+
+      &-delete {
+        background-color: #dc3545;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+}
