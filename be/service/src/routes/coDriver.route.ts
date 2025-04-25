@@ -1,6 +1,6 @@
 import express from "express";
 import { CoDriverController } from "../controllers/coDriver.controller";
-import { verifyAccessToken } from "../utils/jwt.util";
+import { verifyAccessToken } from "../services/auth.service";
 import { authorizeRoles } from "../middlewares/auth.middleware";
 
 const route = express.Router();

@@ -1,10 +1,8 @@
 import bcrypt from "bcrypt";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
 import { ModelAdmin } from "../models/user";
 import { convertToVietnamTime } from "../utils/convertTime";
-import deleteOldFile from "../utils/deleteOldFile.util";
 import testEmail from "../utils/testEmail";
 
 type Admin = {
@@ -44,7 +42,6 @@ export class AdminService {
 
         detailAdmin.createAt = convertToVietnamTime(detailAdmin.createAt);
         detailAdmin.updateAt = convertToVietnamTime(detailAdmin.updateAt);
-        detailAdmin.dateBirth = convertToVietnamTime(detailAdmin.dateBirth);
 
         resolve(detailAdmin);
       } catch (error) {
@@ -59,11 +56,7 @@ export class AdminService {
       try {
         const hashPass = await bcrypt.hash(dataUpdate.password, 10);
         const sql = "call updateCoDriver( ?, ?, ?)";
-        const values = [
-          id,
-          dataUpdate.email,
-          hashPass
-        ];
+        const values = [id, dataUpdate.email, hashPass];
 
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {
@@ -78,34 +71,6 @@ export class AdminService {
     });
   }
 
-  // updateImage(id: number, publicId: string | null, fileCloudinary: CloudinaryAsset): Promise<any> {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       const { secure_url, public_id } = fileCloudinary;
-
-  //       const sql = "call updateImageUser( ?, ?, ?)";
-  //       const values = [id, secure_url, public_id];
-
-  //       const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
-  //       if (publicId) {
-  //         if (rows.affectedRows === 0) {
-  //           return resolve({
-  //             status: "ERR",
-  //             message: "Co-driver not found",
-  //           });
-  //         } else {
-  //           deleteOldFile(publicId, "image");
-  //         }
-  //       }
-  //       resolve({
-  //         status: "OK",
-  //       });
-  //     } catch (error) {
-  //       reject(error);
-  //     }
-  //   });
-  // }
-
   getAll(
     limit: number,
     offset: number,
@@ -114,15 +79,10 @@ export class AdminService {
     return new Promise(async (resolve, reject) => {
       try {
         const totalCustomerCount = await this.total();
-        const [row] = await this.db.execute("call getAdmin(?, ?, ?)", [
-          limit,
-          offset,
-          arrangeType,
-        ]);
+        const [row] = await this.db.execute("call getAdmin(?, ?, ?)", [limit, offset, arrangeType]);
         let dataCoDriver: ModelAdmin[] = row[0].map((item: ModelAdmin) => {
           item.createAt = convertToVietnamTime(item.createAt);
           item.updateAt = convertToVietnamTime(item.updateAt);
-          item.dateBirth = convertToVietnamTime(item.dateBirth);
           return item;
         });
         resolve({
@@ -149,10 +109,7 @@ export class AdminService {
         }
         const hashPass = await bcrypt.hash(newAdmin.password, 10);
         const sql = "call addCoDriver(?, ?)";
-        const values = [
-          newAdmin.email,
-          hashPass,
-        ];
+        const values = [newAdmin.email, hashPass];
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {
           return reject({
