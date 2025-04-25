@@ -3,32 +3,32 @@ import { errorResponse, successResponse } from "../utils/response.util";
 import { RequestFile } from "../middlewares/uploadHandler";
 import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
-import { globalBookTicketsDB } from "../config/db";
+import { bookBusTicketsDB } from "../config/db";
 import { DriverService } from "../services/driver.service";
 
 export class DriverController {
-  private driverService = new DriverService(globalBookTicketsDB);
+  private driverService = new DriverService(bookBusTicketsDB);
 
-  register = async (req: Request, res: Response): Promise<any> => {
+  register = async (req: Request, res: Response) => {
     try {
       const { email, password, confirmPassword } = req.body;
       const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
       const isCheckEmail = reg.test(email);
 
       if (!email || !password || !confirmPassword) {
-        return errorResponse(res, "The input is required", 200);
+        errorResponse(res, "The input is required", 200);
       }
 
       if (!isCheckEmail) {
-        return errorResponse(res, "Email is not in correct format", 200);
+        errorResponse(res, "Email is not in correct format", 200);
       }
 
       if (password !== confirmPassword) {
-        return errorResponse(res, "Password and confirm password are not the same", 200);
+        errorResponse(res, "Password and confirm password are not the same", 200);
       }
 
       const data = await this.driverService.register(req.body);
-      const { refresh_token, ...newData } = data;
+      const { refresh_token, ...response } = data;
 
       res.cookie("refresh_token", refresh_token, {
         httpOnly: true,
@@ -37,63 +37,61 @@ export class DriverController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return successResponse(res, newData, "Register success");
+      successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      return errorResponse(res, "Controller.register", 404);
+      errorResponse(res, "Controller.register", 404);
     }
   };
 
-  verifyEmail = async (req: Request, res: Response): Promise<any> => {
+  verifyEmail = async (req: Request, res: Response) => {
     try {
       const { email, otp } = req.body;
       const response = await this.driverService.verifyEmail(email, otp);
-      return successResponse(res, response, "Verify email success");
+      successResponse(res, 200, response);
     } catch (error) {
-      return errorResponse(res, "ERR Controller.verifyEmail", 404);
+      errorResponse(res, "ERR Controller.verifyEmail", 404);
     }
   };
 
-  fetch = async (req: Request, res: Response): Promise<any> => {
+  fetch = async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     try {
-      const data = await this.driverService.fetch(id);
-      return successResponse(res, data, "Fetch driver success");
+      const response = await this.driverService.fetch(id);
+      successResponse(res, 200, response);
     } catch (error) {
-      return errorResponse(res, "ERR Controller.fetch", 404);
+      errorResponse(res, "ERR Controller.fetch", 404);
     }
   };
 
-  update = async (req: Request, res: Response): Promise<any> => {
+  update = async (req: Request, res: Response) => {
     try {
       const id = Number(req.params.id);
-      if (!id) return errorResponse(res, "id is required", 404);
-
+      if (!id) errorResponse(res, "id is required", 404);
       const updateData = req.body;
-      const data = await this.driverService.update(id, updateData);
-      return successResponse(res, data, "Update driver success");
+      const response = await this.driverService.update(id, updateData);
+      successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      return errorResponse(res, "ERR Controller.update", 404);
+      errorResponse(res, "ERR Controller.update", 404);
     }
   };
 
-  updateImage = async (req: RequestFile, res: Response): Promise<any> => {
+  updateImage = async (req: RequestFile, res: Response) => {
     try {
       const id = Number(req.body.id);
       const file = req.uploadedImage as CloudinaryAsset;
       const publicId = req.body.publicId;
-      if (!id) return errorResponse(res, "id is required", 404);
-
-      const data = await this.driverService.updateImage(id, publicId, file);
-      return successResponse(res, data, "Update image success");
+      if (!id) errorResponse(res, "id is required", 404);
+      const response = await this.driverService.updateImage(id, publicId, file);
+      successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      return errorResponse(res, "ERR Controller.updateImage", 404);
+      errorResponse(res, "ERR Controller.updateImage", 404);
     }
   };
 
-  getAll = async (req: Request, res: Response): Promise<any> => {
+  getAll = async (req: Request, res: Response) => {
     try {
       const limit = Number(req.query.limit) || 10;
       const offset = Number(req.query.offset);
@@ -103,25 +101,25 @@ export class DriverController {
           : ("DESC" as ArrangeType);
 
       if (limit < 0 || offset < 0)
-        return errorResponse(res, "limit and offset must be greater than 0", 404);
+        errorResponse(res, "limit and offset must be greater than 0", 404);
 
-      const data = await this.driverService.getAll(limit, offset, arrangeType);
-      return successResponse(res, data, "Get all driver success");
+      const response = await this.driverService.getAll(limit, offset, arrangeType);
+      successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      return errorResponse(res, "ERR Controller.getAll", 404);
+      errorResponse(res, "ERR Controller.getAll", 404);
     }
   };
 
-  create = async (req: RequestFile, res: Response): Promise<any> => {
+  create = async (req: RequestFile, res: Response) => {
     try {
       const file = req.uploadedImage as CloudinaryAsset;
       const newDriver = JSON.parse(req.body.data);
-      const data = await this.driverService.add(newDriver, file);
-      return successResponse(res, data, "Create driver success");
+      const response = await this.driverService.add(newDriver, file);
+      successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      return errorResponse(res, "ERR Controller.create", 404);
+      errorResponse(res, "ERR Controller.create", 404);
     }
   };
 }

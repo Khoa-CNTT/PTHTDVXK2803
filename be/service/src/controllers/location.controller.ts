@@ -8,55 +8,43 @@ import {
 } from "./../services/location.service";
 
 export const addLocationControl = async (req: Request, res: Response) => {
-  if (!req.body.nameLocation) return errorResponse(res, "Name location null!.", 404);
+  if (!req.body.nameLocation) errorResponse(res, "Name location null!.", 404);
   try {
-    const result = await addLocationSer(req.body.nameLocation);
-    return successResponse(res, result, "Success");
+    const response = await addLocationSer(req.body.nameLocation);
+    successResponse(res, 200, response);
   } catch (error) {
-    console.error("Err Controller.addLocation: ", error);
-    return res.status(404).json({
-      message: "Err Controller.addLocation",
-    });
+    errorResponse(error.message, "Err Controller.addLocation", 500);
   }
 };
 
 export const updateLocationControl = async (req: Request, res: Response) => {
   const { id, nameLocation } = req.body;
 
-  if (!id || !nameLocation) return errorResponse(res, "Id or name location null!.", 404);
+  if (!id || !nameLocation) errorResponse(res, "Id or name location null!.", 404);
   try {
-    const result = await updateLocationSer(Number(id), nameLocation);
-    return successResponse(res, result, "Success");
+    const response = await updateLocationSer(Number(id), nameLocation);
+    successResponse(res, 200, response);
   } catch (error) {
-    console.error("Err Controller.updateLocation: ", error);
-    return res.status(404).json({
-      message: "Err Controller.updateLocation",
-    });
+    errorResponse(error.message, "Err Controller.upload", 500);
   }
 };
 
 export const deleteLocationControl = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  if (!id) return errorResponse(res, "id location null!.", 404);
+  if (!id) errorResponse(res, "id location null!.", 404);
   try {
-    const result = await deleteLocationSer(id);
-    return successResponse(res, result, "Success");
+    const response = await deleteLocationSer(id);
+    successResponse(res, 200, response);
   } catch (error) {
-    console.error("Err Controller.deleteLocation: ", error);
-    return res.status(404).json({
-      message: "Err Controller.deleteLocation",
-    });
+    errorResponse(error.message, "Err Controller.delete", 500);
   }
 };
 
 export const getAllLocationControl = async (req: Request, res: Response) => {
   try {
-    const result = await getAllLocationSer();
-    return successResponse(res, result, "Success");
+    const response = await getAllLocationSer();
+    successResponse(res, 200, response);
   } catch (error) {
-    console.error("Err Controller.getAllLocation: ", error);
-    return res.status(404).json({
-      message: "Err Controller.getAllLocation",
-    });
+    errorResponse(error.message, "Err Controller.getLocations", 500);
   }
 };
