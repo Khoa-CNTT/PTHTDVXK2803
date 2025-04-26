@@ -80,24 +80,6 @@ const uploadImagesToCloudinary = async (
     }
     let files = req.files as Express.Multer.File[];
     let bodyData;
-    // try {
-    //   bodyData = JSON.parse(req.body?.data || "{}");
-    //   if (!bodyData.email) return next("Email is required");
-    // } catch (error) {
-    //   return next("Invalid JSON data format");
-    // }
-
-    // const { role } = bodyData;
-
-    // if (!role) {
-    //   return next("Missing role");
-    // }
-
-    // const folder = getCloudinaryFolder(role);
-
-    // if (!folder) {
-    //   return next("The user does not exist");
-    // }
 
     const folder = "book-bus-ticket/image/car";
 
@@ -142,16 +124,6 @@ const uploadImagesToCloudinary = async (
       req.processedFile = result;
       return next();
     }
-
-    // Delete old images (if any)
-    // if (public_img_ids && Array.isArray(public_img_ids)) {
-    //   await Promise.all(public_img_ids.map((public_id) => deleteOldFile(public_id, "image")));
-    // }
-
-    // req.processedFiles.forEach((file, index) => {
-    //   console.log(`req.files[${index}]: ${uploadImages[index]};`);
-    //   file.cloudinaryImages = [uploadImages[index]];
-    // });
 
     req.processedFiles = uploadImages.map((image, index) => ({
       ...req.files[index],
