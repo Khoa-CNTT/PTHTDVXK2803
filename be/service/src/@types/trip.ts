@@ -1,11 +1,12 @@
-interface Trip {
+export interface TripFormData {
   id: number;
-  car_id: number;
-  driver_id: number;
-  trip_name: string;
-  departure_time: string; // datetime
-  departure_location_id: number;
-  arrival_time: string; // datetime
-  arrival_location_id: number;
+  carId: number;
+  driverId: number;
+  coDrivers?: { id: number }[];
+  tripName: string;
+  departureId: number;
+  startTime: string; // datetime
+  arrivalId: number;
+  endTime: string; // datetime
   price: number; // decimal(10, 2)
 }
