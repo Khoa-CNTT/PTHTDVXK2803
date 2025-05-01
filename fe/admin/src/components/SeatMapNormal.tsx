@@ -1,30 +1,25 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styles from "../styles/seatMapNormal.module.scss";
 import Seat, { SeatType } from "./Seat";
 
-// interface SeatMapNormalProps{
-//   on
-// }
+const SeatMapNormal = ({
+  onSelected,
+  initialSeats,
+}: {
+  onSelected: (seats: SeatType[]) => void;
+  initialSeats?: SeatType[];
+}) => {
+  const [seats, setSeats] = useState<SeatType[]>(initialSeats);
 
-const generateSleeperSeats = (): SeatType[] => {
-  const seats: SeatType[] = [];
-  for (let i = 1; i <= 14; i++) {
-    const padded = i.toString().padStart(2, "0");
-    seats.push({ position: `A${padded}`, status: "available" });
-    seats.push({ position: `B${padded}`, status: "available" });
-  }
-  return seats;
-};
-
-const SeatMapNormal = () => {
-  const [seats, setSeats] = useState<SeatType[]>(generateSleeperSeats());
-
-  const handleSelectedSeat = (updatedSeat: SeatType) => {
+  const handleSelectedSeat = useCallback((updatedSeat: SeatType) => {
     setSeats((prevSeats) =>
       prevSeats.map((seat) => (seat.position === updatedSeat.position ? updatedSeat : seat))
     );
-  };
-  console.log("seats", seats);
+  }, []);
+
+  useEffect(() => {
+    onSelected(seats);
+  }, [seats, onSelected]);
 
   const renderSeats = (position: "A" | "B") => {
     const seatOfLetter = seats.filter((seat) => seat.position.startsWith(position));
@@ -38,7 +33,6 @@ const SeatMapNormal = () => {
       if (i < seatOfLetter.length) row.push(seatOfLetter[i++]); // phải
       rows.push(row);
     }
-    console.log("rows", rows);
 
     return (
       <div className={styles.floor}>
@@ -49,7 +43,7 @@ const SeatMapNormal = () => {
                 <Seat
                   key={seat.position}
                   seatValue={seat}
-                  useStatus="booked"
+                  useStatus="unavailable"
                   onSelected={handleSelectedSeat}
                 />
               ))}

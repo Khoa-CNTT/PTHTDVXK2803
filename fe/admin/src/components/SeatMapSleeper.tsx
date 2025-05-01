@@ -1,30 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/seatMapSleeper.module.scss";
 import Seat, { SeatType } from "./Seat";
 
-const generateSleeperSeats = (): SeatType[] => {
-  const seats: SeatType[] = [];
-  for (let i = 1; i <= 20; i++) {
-    const padded = i.toString().padStart(2, "0");
-    seats.push({ position: `A${padded}`, status: "available", floor: "bottom" });
-    seats.push({ position: `B${padded}`, status: "available", floor: "top" });
-  }
-  return seats;
-};
-
-const SeatMapSleeper = () => {
-  const [seats, setSeats] = useState<SeatType[]>(generateSleeperSeats());
+const SeatMapSleeper = ({
+  initialSeats,
+  onSelected,
+}: {
+  initialSeats: SeatType[];
+  onSelected: (seats: SeatType[]) => void;
+}) => {
+  const [seats, setSeats] = useState<SeatType[]>(initialSeats);
 
   const handleSelectedSeat = (updatedSeat: SeatType) => {
     setSeats((prevSeats) =>
       prevSeats.map((seat) => (seat.position === updatedSeat.position ? updatedSeat : seat))
     );
   };
-  console.log("seats", seats);
+
+  useEffect(() => {
+    onSelected(seats);
+  }, [seats, onSelected]);
 
   const renderFloor = (floor: "top" | "bottom") => {
     const floorSeats = seats.filter((seat) => seat.floor === floor);
-    console.log("floor", floorSeats);
     // Chia thành từng hàng (hàng 0 có 2 ghế, các hàng khác có 3)
     const rows: SeatType[][] = [];
 
@@ -38,7 +36,6 @@ const SeatMapSleeper = () => {
       if (i < floorSeats.length) row.push(floorSeats[i++]); // phải
       rows.push(row);
     }
-    console.log("rows", rows);
 
     return (
       <div className={styles.floor}>
@@ -50,7 +47,7 @@ const SeatMapSleeper = () => {
                 <Seat
                   key={seat.position}
                   seatValue={seat}
-                  useStatus="booked"
+                  useStatus="unavailable"
                   onSelected={handleSelectedSeat}
                 />
               ))}

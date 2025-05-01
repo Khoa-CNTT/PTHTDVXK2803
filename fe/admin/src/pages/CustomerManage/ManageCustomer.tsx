@@ -2,13 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { GoTriangleDown } from "react-icons/go";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import DefaultImage from "../../components/DefaultImage";
 import Loading from "../../components/Loading";
 import Pagination from "../../components/Pagination";
 import { getCustomerList } from "../../services/customer.service";
 import styles from "../../styles/manageCustomer.module.scss";
 import { ArrangeType } from "../../types/type";
+import DefaultImage from "../../components/DefaultImage";
 import { dateTimeTransform } from "../../utils/transform";
+import { debounce } from "../../utils/debounce.util";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -20,6 +21,8 @@ const ManageCustomer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(
     page ? Math.max(1, parseInt(page, 10)) - 1 : 0
   );
+  const [searchEmailValue, setSearchEmailValue] = useState<string>("");
+
   const urlMain = "/customer-manage";
 
   // Khi URL thay đổi, cập nhật currentPage
@@ -29,12 +32,13 @@ const ManageCustomer: React.FC = () => {
   }, [location.pathname]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["customerList", currentPage, arrangeType],
+    queryKey: ["customerList", currentPage, arrangeType, searchEmailValue],
     queryFn: () =>
       getCustomerList({
         offset: currentPage * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
         arrangeType: arrangeType,
+        emailSearch: searchEmailValue,
       }),
     staleTime: 5 * 60 * 10,
     placeholderData: (previousData) => previousData,
@@ -46,6 +50,16 @@ const ManageCustomer: React.FC = () => {
   const toggleArrangeType = () => {
     setArrangeType((prevArrangeType) => (prevArrangeType === "asc" ? "desc" : "asc"));
   };
+
+  const debouncedSetSearchEmailValue = debounce((value: string) => {
+    console.log("value", value);
+    setSearchEmailValue(value);
+  }, 200);
+
+  const handleChangeValueSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    debouncedSetSearchEmailValue(e.target.value);
+  };
+
   const handlePageClick = (selectedItem: { selected: number }) => {
     const newPage = selectedItem.selected + 1;
     console.log("newPage", newPage);
@@ -74,7 +88,7 @@ const ManageCustomer: React.FC = () => {
             type="text"
             placeholder="Tìm kiếm..."
             className={styles["search-input"]}
-            // onChange={handleSearch}
+            onChange={handleChangeValueSearch}
           />
         </div>
 
@@ -109,7 +123,7 @@ const ManageCustomer: React.FC = () => {
             {customerData.map((customer, index) => (
               <tr key={index}>
                 <td
-                  className={styles["customer-id"]}
+                  className={styles["user-id"]}
                   onClick={() => customer.id && handleRedirectDetail(customer.id)}
                 >
                   {index + 1 + currentPage * ITEMS_PER_PAGE}

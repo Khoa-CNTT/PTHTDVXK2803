@@ -6,7 +6,6 @@ interface ImageData {
 }
 
 const ImageList = ({ data }: { data: ImageData[] }) => {
-  console.log(data);
   return (
     <div className={styles["img-list"]}>
       {data.map((img, index) => (

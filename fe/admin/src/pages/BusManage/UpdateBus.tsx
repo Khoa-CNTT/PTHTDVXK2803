@@ -1,52 +1,50 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import styles from "../../styles/updateBus.module.scss";
+import { getDetailBus, updateBus } from "../../services/bus.service";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import Image from "../../components/Image";
-import ImageListCUD, { ImageCUDType } from "../../components/ImageListCUD";
 import Loading from "../../components/Loading";
-import { useCustomNavMutation } from "../../hooks/useCustomQuery";
-import { getDetailCar, updateCar } from "../../services/car.service";
-import styles from "../../styles/updateCar.module.scss";
 import { dateTimeTransform } from "../../utils/transform";
+import ImageListCUD, { ImageCUDType } from "../../components/ImageListCUD";
+import { useEffect, useState } from "react";
+import Image from "../../components/Image";
+import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 
-const UpdateCar = () => {
-  const { id } = useParams();
-  const idFetch = id ?? "0";
+const UpdateBus = () => {
+  const { licensePlate } = useParams();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["customer", idFetch],
-    queryFn: () => getDetailCar(idFetch),
+    queryKey: ["bus", licensePlate],
+    queryFn: () => getDetailBus(licensePlate),
     staleTime: 5 * 60 * 10,
   });
 
-  const car = data;
+  const bus = data ?? null;
   const [images, setImages] = useState<ImageCUDType[]>([]);
 
   const [form, setForm] = useState({
-    id: id,
-    licensePlate: "",
+    licensePlate: licensePlate,
     capacity: 0,
     type: "",
     indexIsMain: "",
   });
 
   const mutateUpdate = useCustomNavMutation(
-    updateCar,
-    "/car-manage",
+    updateBus,
+    "/bus-manage",
     "Cập nhật xe thành công",
     "Cập nhật xe thất bại"
   );
 
-  const imgsLength = car?.images?.length ?? 0;
-  // const imageList = car?.images ?? null;
+  const imgsLength = bus?.images?.length ?? 0;
+  // const imageList = bus?.images ?? null;
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const handleUpdateCar = async () => {
+  const handleUpdateBus = async () => {
     const formData = new FormData();
     formData.append("data", JSON.stringify(form));
 
@@ -63,16 +61,15 @@ const UpdateCar = () => {
   };
 
   useEffect(() => {
-    if (car) {
+    if (bus) {
       setForm({
-        licensePlate: car.licensePlate,
-        capacity: car.capacity,
-        type: car.type,
+        licensePlate: bus.licensePlate,
+        capacity: bus.capacity,
+        type: bus.type,
         indexIsMain: "",
-        id: id,
       });
     }
-  }, [car]);
+  }, [bus]);
 
   useEffect(() => {}, [images]);
 
@@ -82,7 +79,7 @@ const UpdateCar = () => {
   return (
     <div className={styles.container}>
       <div className={styles["feats"]}>
-        <Link to={`/car-manage`} className={`${styles["btn-back"]} ${styles.btn}`}>
+        <Link to={`/bus-manage`} className={`${styles["btn-back"]} ${styles.btn}`}>
           Quay lại
         </Link>
         <button className={`${styles["btn-delete"]} ${styles.btn}`}>Xóa</button>
@@ -90,9 +87,9 @@ const UpdateCar = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault(); // Ngăn không cho form submit mặc định
-          handleUpdateCar();
+          handleUpdateBus();
         }}
-        className={styles["update-car"]}
+        className={styles["update-bus"]}
       >
         <div className={styles.title}>
           <h2 className={styles["content-title"]}>Thông tin cập nhật</h2>
@@ -104,12 +101,12 @@ const UpdateCar = () => {
             { label: "Loại xe", value: form?.type, type: "select", name: "type" },
             {
               label: "Ngày tạo",
-              value: dateTimeTransform(car?.createAt, "DD-MM-YYYY"),
+              value: dateTimeTransform(bus?.createAt, "DD-MM-YYYY"),
               readonly: true,
             },
             {
               label: "Ngày cập nhật",
-              value: dateTimeTransform(car?.updateAt, "DD-MM-YYYY"),
+              value: dateTimeTransform(bus?.updateAt, "DD-MM-YYYY"),
               readonly: true,
             },
           ].map((item, index) => (
@@ -153,8 +150,8 @@ const UpdateCar = () => {
           <li className={` ${styles.item}`}>
             <p className={`${styles.title}`}>Hình ảnh</p>
             <div className={`${styles["img-list"]}`}>
-              {car?.images && imgsLength > 0
-                ? car?.images?.map((img) => (
+              {bus?.images && imgsLength > 0
+                ? bus?.images?.map((img) => (
                     <div key={img.id} className={`${styles["img-item"]}`}>
                       {/* //   <img src={img.urlImg} alt={`Hình ảnh ${index}`} className={`${styles.img}`} /> */}
                       <Image
@@ -189,4 +186,4 @@ const UpdateCar = () => {
   );
 };
 
-export default UpdateCar;
+export default UpdateBus;

@@ -1,0 +1,59 @@
+@use "./mixin" as mix;
+.input-drop-list {
+  width: 100%;
+  position: relative;
+
+  cursor: pointer;
+
+  @include mix.responsive(mobile) {
+    border-bottom: 1px solid #c3c3c3;
+  }
+
+  .drop-down-list {
+    z-index: 10;
+    position: absolute;
+    top: calc((100% - 0.75rem));
+    left: 0;
+
+    width: 100%;
+    padding-top: 0.725rem;
+    border-radius: 0.825rem;
+  }
+}
+.input {
+  width: 100%;
+  padding: 0.275rem;
+  border: 1px solid var(--gray);
+  border-radius: 0.25rem;
+
+  font-size: 1rem;
+  outline: none;
+
+  &:hover {
+    cursor: text;
+  }
+  &:focus {
+    border-color: var(--bright-blue);
+  }
+}
+
+.btn {
+  padding: 0.375rem 0.65rem;
+  border: 1px solid var(--primary);
+}
+
+.btn-cancel {
+  transition: 0.3s color;
+
+  &:hover {
+    color: var(--danger);
+  }
+}
+
+.btn-confirm {
+  transition: 0.3s color;
+
+  &:hover {
+    color: var(--primary);
+  }
+}

@@ -1,11 +1,11 @@
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useRef, useState } from "react";
+import styles from "../../styles/addCD.module.scss";
 import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
 import DefaultImage from "../../components/DefaultImage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 import { addCustomer } from "../../services/customer.service";
-import styles from "../../styles/addCD.module.scss";
 
 const AddCustomer = () => {
   const dateBirthRef = useRef<HTMLInputElement>(null);

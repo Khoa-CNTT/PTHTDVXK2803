@@ -1,21 +1,21 @@
-export interface Car {
+export type TypeBus = "xe thường" | "xe giường nằm";
+export interface BusType {
   id: number;
   // name?: string;
   licensePlate: string;
   capacity: number;
-  type: "Xe thường" | "Xe giường nằm";
+  type: TypeBus;
   // status?: "Sắp khởi hành" | "Đang chạy" | "Bảo trì";
-  image?: ImgCar;
-  images?: ImgCar[];
+  image?: ImgBus;
+  images?: ImgBus[];
   createAt?: string; // timestamp
   updateAt?: string;
 }
 
-export type IsMain = 0 | 1;
-export interface ImgCar {
+export interface ImgBus {
   id?: number;
   carId: number;
   urlImg: string;
   urlPublicImg: string;
-  isMain: IsMain;
+  isMain: 0 | 1;
 }

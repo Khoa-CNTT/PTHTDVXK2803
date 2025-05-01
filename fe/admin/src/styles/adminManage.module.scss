@@ -135,6 +135,8 @@
 
     th {
       background-color: #f4f4f4;
+      padding: 1rem 2rem;
+
       .numerical-order {
         display: flex;
         justify-content: center;
@@ -170,45 +172,45 @@
       }
     }
   }
+}
 
-  .btn-list {
-    display: flex;
-    justify-content: center;
-    align-items: stretch; // Đảm bảo thẻ con cao bằng nhau
-    .btn {
-      display: grid;
-      place-items: center;
+.btn-list {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; // Đảm bảo thẻ con cao bằng nhau
+  gap: 0.5rem;
 
-      width: 4rem !important;
-      padding: 6px 10px;
-      margin-right: 5px;
-      border: none;
-      border-radius: 4px;
+  .btn {
+    display: grid;
+    place-items: center;
 
-      color: white;
-      cursor: pointer;
+    min-width: 4rem;
+    padding: 0.475rem 0.625rem;
+    border-radius: 4px;
 
-      &-detail {
-        background-color: #0dcaf0;
+    color: white;
+    cursor: pointer;
 
-        &:hover {
-          background-color: #12a3c1;
-        }
+    &-detail {
+      background-color: #0dcaf0;
+
+      &:hover {
+        background-color: #12a3c1;
       }
-      &-edit {
-        background-color: #007bff;
+    }
+    &-edit {
+      background-color: #007bff;
 
-        &:hover {
-          background-color: #0056b3;
-        }
+      &:hover {
+        background-color: #0056b3;
       }
+    }
 
-      &-delete {
-        background-color: #dc3545;
+    &-delete {
+      background-color: #dc3545;
 
-        &:hover {
-          background-color: #c82333;
-        }
+      &:hover {
+        background-color: #c82333;
       }
     }
   }

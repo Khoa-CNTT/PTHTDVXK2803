@@ -1,4 +1,3 @@
-type RoleType = "customer";
 export type CustomerType = {
   id?: number;
   providerId?: string;
@@ -11,7 +10,7 @@ export type CustomerType = {
   dateBirth?: string;
   address?: string;
   provider?: string;
-  role: RoleType;
+  role: "customer";
   createAt: string;
   updateAt: string;
 };

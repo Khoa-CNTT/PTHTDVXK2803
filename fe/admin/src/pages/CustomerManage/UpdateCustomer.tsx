@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import styles from "../../styles/updateCD.module.scss";
+import { Link } from "react-router-dom";
+import { dateTimeTransform } from "../../utils/transform";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import { Link } from "react-router-dom";
-import DefaultImage from "../../components/DefaultImage";
-import Loading from "../../components/Loading";
-import { useCustomNavMutation } from "../../hooks/useCustomQuery";
+import { useQuery } from "@tanstack/react-query";
 import { fetchCustomer, updateInfoCustomer } from "../../services/customer.service";
-import styles from "../../styles/updateCD.module.scss";
-import { dateTimeTransform } from "../../utils/transform";
+import Loading from "../../components/Loading";
+import DefaultImage from "../../components/DefaultImage";
+import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 
 const UpdateCustomer = () => {
   const { id } = useParams<{ id: string }>();

@@ -11,32 +11,44 @@ export const dateTimeTransform = (
   dateString: string | undefined,
   format: string = "DD/MM/YYYY",
   isTime: boolean = true
-) => {
+): string => {
   if (!dateString) return "Invalid date";
   if (!formatType.includes(format)) return "Invalid format";
 
-  const [datePart, timePart] = dateString.trim().split(" ");
-  const dateParts = datePart.split("-");
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return "Invalid date format";
 
-  if (dateParts.length !== 3) return "Invalid date format";
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const hour = String(date.getUTCHours()).padStart(2, "0");
+  const minute = String(date.getUTCMinutes()).padStart(2, "0");
+  const time = `${hour}:${minute}`;
 
-  const [year, month, day] = dateParts;
-  const time = timePart || "";
+  let formattedDate = "";
 
   switch (format) {
     case "DD/MM/YYYY":
-      return `${isTime === false ? "" : `${time} | `}${day}/${month}/${year} `;
+      formattedDate = `${day}/${month}/${year}`;
+      break;
     case "MM/DD/YYYY":
-      return `${isTime === false ? "" : `${time} | `}${month}/${day}/${year} `;
+      formattedDate = `${month}/${day}/${year}`;
+      break;
     case "YYYY/MM/DD":
-      return `${isTime === false ? "" : `${time} | `}${year}/${month}/${day} `;
+      formattedDate = `${year}/${month}/${day}`;
+      break;
     case "DD-MM-YYYY":
-      return `${isTime === false ? "" : `${time} | `}${day}-${month}-${year} `;
+      formattedDate = `${day}-${month}-${year}`;
+      break;
     case "MM-DD-YYYY":
-      return `${isTime === false ? "" : `${time} | `}${month}-${day}-${year} `;
+      formattedDate = `${month}-${day}-${year}`;
+      break;
     case "YYYY-MM-DD":
-      return `${isTime === false ? "" : `${time} | `}${year}-${month}-${day} `;
+      formattedDate = `${year}-${month}-${day}`;
+      break;
     default:
       return "Invalid format";
   }
+
+  return isTime ? `${time} | ${formattedDate}` : formattedDate;
 };

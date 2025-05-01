@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import styles from "../../styles/addBus.module.scss";
+import { addBus } from "../../services/bus.service";
 import { Link } from "react-router-dom";
 import ImageListCUD, { ImageCUDType } from "../../components/ImageListCUD";
+import { useEffect, useState } from "react";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
-import { addCar } from "../../services/car.service";
-import styles from "../../styles/addCar.module.scss";
 
-const AddCar = () => {
+const AddBus = () => {
   const [images, setImages] = useState<ImageCUDType[]>([]);
 
   const [form, setForm] = useState({
@@ -16,8 +16,8 @@ const AddCar = () => {
   });
 
   const mutateUpdate = useCustomNavMutation(
-    addCar,
-    "/car-manage",
+    addBus,
+    "/bus-manage",
     "Thêm xe thành công",
     "Thêm xe thất bại"
   );
@@ -29,7 +29,7 @@ const AddCar = () => {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const handleAddCar = async () => {
+  const handleAddBus = async () => {
     const formData = new FormData();
     formData.append("data", JSON.stringify(form));
 
@@ -50,7 +50,7 @@ const AddCar = () => {
   return (
     <div className={styles.container}>
       <div className={styles["feats"]}>
-        <Link to={`/car-manage`} className={`${styles["btn-back"]} ${styles.btn}`}>
+        <Link to={`/bus-manage`} className={`${styles["btn-back"]} ${styles.btn}`}>
           Quay lại
         </Link>
         <button className={`${styles["btn-delete"]} ${styles.btn}`}>Xóa</button>
@@ -58,7 +58,7 @@ const AddCar = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault(); // Ngăn không cho form submit mặc định
-          handleAddCar();
+          handleAddBus();
         }}
         className={styles["update-car"]}
       >
@@ -119,4 +119,4 @@ const AddCar = () => {
   );
 };
 
-export default AddCar;
+export default AddBus;

@@ -1,9 +1,15 @@
-.layout {
+.wrapper-layout {
   display: flex;
   flex-direction: column;
+  min-width: 100vw;
   min-height: 100vh;
 }
 
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 .center {
   display: flex;
   justify-content: center;
@@ -16,7 +22,7 @@
 }
 
 .main {
-  overflow: hidden;
+  z-index: 100 !important ;
 
   flex: 1;
   padding: 2rem;

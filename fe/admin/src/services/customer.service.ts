@@ -6,14 +6,16 @@ export const getCustomerList = async ({
   offset,
   limit,
   arrangeType,
+  emailSearch,
 }: {
   offset: number;
   limit: number;
   arrangeType: ArrangeType;
+  emailSearch: string;
 }) => {
   return await bookTicketAPI
     .get<{ data: CustomerType[]; total: number }>(
-      `/customer/get-all?offset=${offset}&limit=${limit}&arrangeType=${arrangeType}`
+      `/customer/get-all?email=${emailSearch}&offset=${offset}&limit=${limit}&arrangeType=${arrangeType}`
     )
     .then((res) => res.data);
 };

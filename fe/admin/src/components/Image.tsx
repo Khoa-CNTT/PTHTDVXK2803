@@ -2,15 +2,14 @@ import styles from "../styles/image.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faStar, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { ChangeEvent, useRef, useState } from "react";
-import { IsMain } from "../types/car";
-import { deleteImgCar, updateImgCar } from "../services/car.service";
+import { deleteImgBus, updateImgBus } from "../services/bus.service";
 import { useCustomMutation } from "../hooks/useCustomQuery";
 
 interface ImageProps {
   id: number;
   urlImg: string;
   urlPublicImg: string;
-  isMain: IsMain;
+  isMain: 1 | 0;
   imgCUD: boolean;
 }
 
@@ -18,8 +17,8 @@ const Image: React.FC<ImageProps> = ({ id, urlImg, urlPublicImg, isMain, imgCUD 
   const fileRef = useRef<HTMLInputElement>(null);
   const [previewImg, setPreviewImg] = useState<string>(urlImg);
 
-  const mutateUpdate = useCustomMutation(updateImgCar, "car");
-  const mutateDelete = useCustomMutation(deleteImgCar, "car");
+  const mutateUpdate = useCustomMutation(updateImgBus, "bus");
+  const mutateDelete = useCustomMutation(deleteImgBus, "bus");
 
   const handleClickUpdate = () => {
     fileRef.current?.click();
@@ -35,7 +34,7 @@ const Image: React.FC<ImageProps> = ({ id, urlImg, urlPublicImg, isMain, imgCUD 
         urlImg: urlImg,
         urlPublicImg: urlPublicImg,
         isMain: isMain,
-        role: "car",
+        role: "bus",
       };
 
       formData.append("file", newFile);

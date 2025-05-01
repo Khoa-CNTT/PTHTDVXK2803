@@ -5,12 +5,13 @@ import { updateImgCustomer } from "../services/customer.service";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router";
 import { updateImgDriver } from "../services/driver.service";
+import { updateImgCoDriver } from "../services/coDriver.service";
 
 type DefaultImageProps = {
   id?: number;
   src?: string;
   publicId?: string;
-  updateType?: "customer" | "driver";
+  updateType?: "customer" | "driver" | "co-driver";
   onSelectedImg?: (img: File) => void;
 };
 
@@ -25,8 +26,18 @@ const DefaultImage: React.FunctionComponent<DefaultImageProps> = ({
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(src || null);
   const [file, setFile] = useState<File | null>(null);
-  const updateFunc = updateType === "customer" ? updateImgCustomer : updateImgDriver;
-  const message = updateType === "customer" ? "Cập nhật ảnh đại diện" : "Cập nhật ảnh tài xế";
+  const updateFunc =
+    updateType === "customer"
+      ? updateImgCustomer
+      : updateType === "co-driver"
+      ? updateImgCoDriver
+      : updateImgDriver;
+  const message =
+    updateType === "customer"
+      ? "Cập nhật ảnh đại diện"
+      : updateType === "driver"
+      ? "Cập nhật ảnh tài xế"
+      : "Cập nhật ảnh phụ xe";
 
   const mutateUpdate = useCustomNavMutation(
     updateFunc,
@@ -49,8 +60,6 @@ const DefaultImage: React.FunctionComponent<DefaultImageProps> = ({
   const handleClickUpdateImg = useCallback(() => {
     if (fileRef.current) {
       fileRef.current.click();
-    } else {
-      console.log("fileRef.current null");
     }
   }, []);
 

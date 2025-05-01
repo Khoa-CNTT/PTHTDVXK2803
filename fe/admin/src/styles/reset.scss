@@ -123,6 +123,11 @@ table {
   border-spacing: 0;
 }
 
+button {
+  padding: 0;
+  border: none;
+}
+
 button:focus {
   outline: none;
 }

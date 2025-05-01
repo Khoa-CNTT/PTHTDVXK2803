@@ -2,6 +2,7 @@ import seatActive from "../assets/seat_active.svg";
 import seatDisabled from "../assets/seat_disabled.svg";
 import seatBooked from "../assets/seat_booked.svg";
 import styles from "../styles/seat.module.scss";
+import React from "react";
 
 export type SeatType = {
   id?: number;
@@ -16,7 +17,7 @@ interface SeatProps {
   onSelected: (item: SeatType) => void;
 }
 
-const Seat: React.FC<SeatProps> = ({ seatValue, useStatus, onSelected }) => {
+const Seat: React.FC<SeatProps> = React.memo(({ seatValue, useStatus, onSelected }) => {
   const { position, status } = seatValue;
 
   const handleToggleStatus = () => {
@@ -43,6 +44,6 @@ const Seat: React.FC<SeatProps> = ({ seatValue, useStatus, onSelected }) => {
       />
     </div>
   );
-};
+});
 
 export default Seat;

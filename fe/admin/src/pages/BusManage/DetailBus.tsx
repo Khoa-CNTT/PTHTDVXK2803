@@ -1,24 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import styles from "../../styles/detailBus.module.scss";
+import { useQuery } from "@tanstack/react-query";
+import { getDetailBus } from "../../services/bus.service";
+import Loading from "../../components/Loading";
+import { dateTimeTransform } from "../../utils/transform";
 import { Link } from "react-router-dom";
 import ImageList from "../../components/ImageList";
-import Loading from "../../components/Loading";
-import { getDetailCar } from "../../services/car.service";
-import styles from "../../styles/detailCar.module.scss";
-import { dateTimeTransform } from "../../utils/transform";
 
-const DetailCar = () => {
-  const { id } = useParams();
-  const idFetch = id ?? "0";
+const DetailBus = () => {
+  const { licensePlate } = useParams();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["car", idFetch],
-    queryFn: () => getDetailCar(idFetch),
+    queryKey: ["bus", licensePlate],
+    queryFn: () => getDetailBus(licensePlate),
     staleTime: 5 * 60 * 10,
   });
 
-  const car = data ?? null;
-  const imageList = car?.images ?? null;
+  const bus = data ?? null;
+  const imageList = bus?.images ?? null;
 
   if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
@@ -26,16 +25,16 @@ const DetailCar = () => {
   return (
     <div className={styles.container}>
       <div className={styles["feat-back"]}>
-        <Link to={`/car-manage`} className={styles["btn-back"]}>
+        <Link to={`/bus-manage`} className={styles["btn-back"]}>
           Quay lại
         </Link>
       </div>
-      <div className={styles["detail-car"]}>
+      <div className={styles["detail-bus"]}>
         <div className={styles.title}>
           <h2 className={styles["content-title"]}>Thông tin chi tiết</h2>
           <div className={styles["feat-list"]}>
             <Link
-              to={`/car-manage/update/${id}`}
+              to={`/bus-manage/update/${licensePlate}`}
               className={`${styles["btn-update"]} ${styles["feat-item"]}`}
             >
               Cập nhật
@@ -45,11 +44,11 @@ const DetailCar = () => {
         </div>
         <ul className={styles.detail}>
           {[
-            { label: "Biển số xe", value: car?.licensePlate },
-            { label: "Sức chứa", value: car?.capacity },
-            { label: "Loại xe", value: car?.type },
-            { label: "Ngày tạo", value: dateTimeTransform(car?.createAt, "DD-MM-YYYY") },
-            { label: "Ngày cập nhật", value: dateTimeTransform(car?.updateAt, "DD-MM-YYYY") },
+            { label: "Biển số xe", value: bus?.licensePlate },
+            { label: "Sức chứa", value: bus?.capacity },
+            { label: "Loại xe", value: bus?.type },
+            { label: "Ngày tạo", value: dateTimeTransform(bus?.createAt, "DD-MM-YYYY") },
+            { label: "Ngày cập nhật", value: dateTimeTransform(bus?.updateAt, "DD-MM-YYYY") },
           ].map((item, index) => (
             <li key={index} className={styles.group}>
               <p className={styles.title}>{item.label}</p>
@@ -66,4 +65,4 @@ const DetailCar = () => {
   );
 };
 
-export default DetailCar;
+export default DetailBus;

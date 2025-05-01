@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useParams } from "react-router";
-import { Link } from "react-router-dom";
-import DefaultImage from "../../components/DefaultImage";
-import Loading from "../../components/Loading";
-import { fetchCustomer } from "../../services/customer.service";
 import styles from "../../styles/detailCD.module.scss";
+import { Link } from "react-router-dom";
 import { dateTimeTransform } from "../../utils/transform";
+import { fetchCustomer } from "../../services/customer.service";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import Loading from "../../components/Loading";
+import { useEffect } from "react";
+import DefaultImage from "../../components/DefaultImage";
 
 const DetailCustomer = () => {
   const { id } = useParams();
