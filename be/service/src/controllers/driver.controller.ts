@@ -93,6 +93,7 @@ export class DriverController {
 
   getAll = async (req: Request, res: Response) => {
     try {
+      const phoneSearch = (req.query.phone as string) || "";
       const limit = Number(req.query.limit) || 10;
       const offset = Number(req.query.offset);
       const arrangeType =
@@ -103,7 +104,7 @@ export class DriverController {
       if (limit < 0 || offset < 0)
         errorResponse(res, "limit and offset must be greater than 0", 404);
 
-      const response = await this.driverService.getAll(limit, offset, arrangeType);
+      const response = await this.driverService.getAll(limit, offset, arrangeType, phoneSearch);
       successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);

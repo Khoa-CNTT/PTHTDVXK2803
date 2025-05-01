@@ -95,6 +95,7 @@ export class CustomerController {
 
   getAll = async (req: Request, res: Response) => {
     try {
+      const emailSearch = (req.query.email as string) || "";
       const limit = Number(req.query.limit) || 10;
       const offset = Number(req.query.offset);
       const arrangeType =
@@ -105,7 +106,7 @@ export class CustomerController {
       if (limit < 0 || offset < 0)
         errorResponse(res, "limit and offset must be greater than 0", 404);
 
-      const result = await this.customerService.getAll(limit, offset, arrangeType);
+      const result = await this.customerService.getAll(limit, offset, arrangeType, emailSearch);
       successResponse(res, 200, result);
     } catch (error) {
       console.log("Err Controller", error);

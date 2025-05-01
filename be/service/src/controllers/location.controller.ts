@@ -1,50 +1,37 @@
 import { Request, Response } from "express";
 import { errorResponse, successResponse } from "../utils/response.util";
-import {
-  addLocationSer,
-  deleteLocationSer,
-  getAllLocationSer,
-  updateLocationSer,
-} from "./../services/location.service";
+import { LocationService } from "../services/location.service";
+import { bookBusTicketsDB } from "../config/db";
 
-export const addLocationControl = async (req: Request, res: Response) => {
-  if (!req.body.nameLocation) errorResponse(res, "Name location null!.", 404);
-  try {
-    const response = await addLocationSer(req.body.nameLocation);
-    successResponse(res, 200, response);
-  } catch (error) {
-    errorResponse(error.message, "Err Controller.addLocation", 500);
-  }
-};
+export class LocationController {
+  private locationService = new LocationService(bookBusTicketsDB);
+  add = async (req: Request, res: Response) => {
+    try {
+      const response = await this.locationService.add(req.body.newValue);
+      successResponse(res, 200, response);
+    } catch (error: any) {
+      errorResponse(res, error.message, 500);
+    }
+  };
 
-export const updateLocationControl = async (req: Request, res: Response) => {
-  const { id, nameLocation } = req.body;
+  delete = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    if (!id) errorResponse(res, "Id location null!.", 404);
 
-  if (!id || !nameLocation) errorResponse(res, "Id or name location null!.", 404);
-  try {
-    const response = await updateLocationSer(Number(id), nameLocation);
-    successResponse(res, 200, response);
-  } catch (error) {
-    errorResponse(error.message, "Err Controller.upload", 500);
-  }
-};
+    try {
+      const response = await this.locationService.delete(id);
+      successResponse(res, 200, response);
+    } catch (error: any) {
+      errorResponse(res, error.message, 500);
+    }
+  };
 
-export const deleteLocationControl = async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  if (!id) errorResponse(res, "id location null!.", 404);
-  try {
-    const response = await deleteLocationSer(id);
-    successResponse(res, 200, response);
-  } catch (error) {
-    errorResponse(error.message, "Err Controller.delete", 500);
-  }
-};
-
-export const getAllLocationControl = async (req: Request, res: Response) => {
-  try {
-    const response = await getAllLocationSer();
-    successResponse(res, 200, response);
-  } catch (error) {
-    errorResponse(error.message, "Err Controller.getLocations", 500);
-  }
-};
+  getAll = async (req: Request, res: Response) => {
+    try {
+      const response = await this.locationService.getAll();
+      successResponse(res, 200, response);
+    } catch (error: any) {
+      errorResponse(res, error.message, 500);
+    }
+  };
+}

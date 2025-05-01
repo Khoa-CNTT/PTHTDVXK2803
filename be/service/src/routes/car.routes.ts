@@ -52,12 +52,6 @@ carRouter.delete(
   carController.deleteCar
 );
 carRouter.get("/get-all", verifyAccessToken, authorizeRoles("admin"), carController.getAllCar);
-// carRouter.get(
-//   "/detail/:id",
-//   verifyAccessToken,
-//   authorizeRoles("admin", "customer"),
-//   carController.getCarById
-// );
 carRouter.get(
   "/detail/:licensePlate",
   verifyAccessToken,
@@ -82,4 +76,3 @@ carRouter.get(
 // });
 
 export default carRouter;
-// Compare this snippet from be-booktickets/src/controllers/car.controller.ts:

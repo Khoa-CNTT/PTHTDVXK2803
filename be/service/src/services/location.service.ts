@@ -1,71 +1,57 @@
-import { bookBusTicketsDB } from "../config/db";
+import { ResultSetHeader } from "mysql2";
+import GeocodingService from "./geocoding.service";
 
-export const addLocationSer = (
-  nameLocation: string
-): Promise<{ status: string; message: string }> => {
-  return new Promise(async (resolve, reject) => {
-    if (!nameLocation) reject({ message: "Name location null!" });
+const geocodingService = new GeocodingService();
+export class LocationService {
+  private db;
+  constructor(db: any) {
+    this.db = db;
+  }
+  add = async (newLocation: string): Promise<{ status: string; message: string }> => {
     try {
-      await bookBusTicketsDB.execute("call insert_location(?)", [nameLocation]);
-      // const newLocation = row;
-      resolve({
+      if (!newLocation) throw { message: "Name location null!" };
+      const { latitude, longitude } = await geocodingService.getCoordinates(newLocation);
+      await this.db.execute("call AddLocation(?, ?, ?)", [newLocation, latitude, longitude]);
+      return {
         status: "OK",
         message: "Add new location success.",
-      });
+      };
     } catch (error) {
-      reject(error);
+      throw error;
     }
-  });
-};
+  };
 
-export const updateLocationSer = (
-  id: number,
-  nameLocation: string
-): Promise<{ status: string; message: string }> => {
-  return new Promise(async (resolve, reject) => {
-    if (!nameLocation || !id) reject({ message: "Name location null!" });
+  delete = async (deleteId: number): Promise<{ status: string; message: string }> => {
     try {
-      await bookBusTicketsDB.execute("call update_location(?, ?)", [id, nameLocation]);
-      resolve({
-        status: "OK",
-        message: "Update location success.",
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+      const [rows] = (await this.db.execute("call deleteLocation(?)", [deleteId])) as [
+        ResultSetHeader
+      ];
 
-export const deleteLocationSer = (id: number): Promise<{ status: string; message: string }> => {
-  return new Promise(async (resolve, reject) => {
-    if (!id) reject({ message: "Id location null!" });
-    try {
-      await bookBusTicketsDB.execute("call delete_location(?)", [id]);
-      resolve({
-        status: "OK",
-        message: "Delete location success.",
-      });
+      if (rows.affectedRows > 0) {
+        return {
+          status: "OK",
+          message: "Delete location success.",
+        };
+      }
+      return {
+        status: "ERR",
+        message: "Delete location is not success.",
+      };
     } catch (error) {
-      reject(error);
+      throw error;
     }
-  });
-};
+  };
 
-export const getAllLocationSer = (): Promise<{
-  status: string;
-  message: string;
-  data: object;
-}> => {
-  return new Promise(async (resolve, reject) => {
+  getAll = async () => {
     try {
-      const [row] = await bookBusTicketsDB.execute("call get_all_location()");
-      resolve({
-        status: "OK",
-        message: "Get all location success.",
-        data: row[0],
-      });
+      const [rows] = await this.db.execute("select id, name from location");
+      if (rows.length > 0) {
+        return rows;
+      } else {
+        return null;
+      }
     } catch (error) {
-      reject(error);
+      console.log("err", error);
     }
-  });
-};
+  };
+}

@@ -1,13 +1,17 @@
 import bcrypt from "bcrypt";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
 import { ModelAdmin } from "../models/user";
 import { convertToVietnamTime } from "../utils/convertTime";
+import deleteOldFile from "../utils/deleteOldFile.util";
 import testEmail from "../utils/testEmail";
 
 type Admin = {
   email: string;
   password: string;
+  createAt: string;
+  updateAt: string;
 };
 
 export class AdminService {
@@ -19,7 +23,7 @@ export class AdminService {
 
   async total(): Promise<number> {
     try {
-      const query = "select count(*) as totalAdminList from user where role = 'co-driver'";
+      const query = "select count(*) as totalAdminList from user where role = 'admin'";
       const [rows] = await this.db.execute(query);
       return (rows as RowDataPacket[])[0].totalAdminList;
     } catch (error) {
@@ -55,8 +59,8 @@ export class AdminService {
     return new Promise(async (resolve, reject) => {
       try {
         const hashPass = await bcrypt.hash(dataUpdate.password, 10);
-        const sql = "call updateCoDriver( ?, ?, ?)";
-        const values = [id, dataUpdate.email, hashPass];
+        const sql = "call updateAdmin( ?, ?)";
+        const values = [id, hashPass];
 
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {
@@ -79,8 +83,12 @@ export class AdminService {
     return new Promise(async (resolve, reject) => {
       try {
         const totalCustomerCount = await this.total();
-        const [row] = await this.db.execute("call getAdmin(?, ?, ?)", [limit, offset, arrangeType]);
-        let dataCoDriver: ModelAdmin[] = row[0].map((item: ModelAdmin) => {
+        const [row] = await this.db.execute("call getAdmins(?, ?, ?)", [
+          limit,
+          offset,
+          arrangeType,
+        ]);
+        let dataAdmin: ModelAdmin[] = row[0].map((item: ModelAdmin) => {
           item.createAt = convertToVietnamTime(item.createAt);
           item.updateAt = convertToVietnamTime(item.updateAt);
           return item;
@@ -89,7 +97,7 @@ export class AdminService {
           status: "OK",
           total: totalCustomerCount,
           totalPage: Math.ceil(totalCustomerCount / limit),
-          data: totalCustomerCount > 0 ? dataCoDriver : [],
+          data: totalCustomerCount > 0 ? dataAdmin : [],
         });
       } catch (error) {
         console.error("Err Service.getall", error);
@@ -108,18 +116,18 @@ export class AdminService {
           });
         }
         const hashPass = await bcrypt.hash(newAdmin.password, 10);
-        const sql = "call addCoDriver(?, ?)";
+        const sql = "call addAdmin(?, ?)";
         const values = [newAdmin.email, hashPass];
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {
           return reject({
             status: "ERR",
-            message: "Create admin failed",
+            message: "Create Admin failed",
           });
         }
         resolve({
           status: "OK",
-          message: "Create admin success",
+          message: "Create Admin success",
         });
       } catch (error) {
         reject(error);

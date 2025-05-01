@@ -120,15 +120,17 @@ export class CoDriverService {
   getAll(
     limit: number,
     offset: number,
-    arrangeType: ArrangeType
+    arrangeType: ArrangeType,
+    phoneSearch: string
   ): Promise<{ status: string; total: number; totalPage: number; data: object }> {
     return new Promise(async (resolve, reject) => {
       try {
         const totalCustomerCount = await this.total();
-        const [row] = await this.db.execute("call getCoDrivers(?, ?, ?)", [
+        const [row] = await this.db.execute("call getCoDrivers(?, ?, ?, ?)", [
           limit,
           offset,
           arrangeType,
+          phoneSearch,
         ]);
         let dataCoDriver: ModelCoDriver[] = row[0].map((item: ModelCoDriver) => {
           item.createAt = convertToVietnamTime(item.createAt);

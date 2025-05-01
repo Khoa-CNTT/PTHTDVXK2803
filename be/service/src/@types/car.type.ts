@@ -1,4 +1,4 @@
-export type CarType = "xe thường" | "xe giường nằm";
+export type CarType = "xe thường" | "xe giường nằm" | "";
 export type CarStatus = "sẵn sàng" | "sắp khởi hành" | "đang chạy" | "bảo trì";
 
 export interface Car {
@@ -32,7 +32,8 @@ export const statusMap: Record<string, CarStatus> = {
   "san-sang": "sẵn sàng",
 };
 
-export const typeMap: Record<string, CarType> = {
+export const typeMap: Record<string, CarType | ""> = {
+  all: "",
   "xe-thuong": "xe thường",
   "xe-giuong-nam": "xe giường nằm",
 };

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { errorResponse, successResponse } from "../utils/response.util";
 import { RequestFile } from "../middlewares/uploadHandler";
-import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
 import { bookBusTicketsDB } from "../config/db";
 import { AdminService } from "../services/admin.service";
@@ -10,8 +9,8 @@ export class AdminController {
   private adminService = new AdminService(bookBusTicketsDB);
 
   fetch = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
     try {
+      const id = Number(req.params.id);
       const data = await this.adminService.fetch(id);
       successResponse(res, 200, data);
     } catch (error) {
@@ -32,21 +31,6 @@ export class AdminController {
       errorResponse(res, "ERR Controller.update", 404);
     }
   };
-
-  // updateImage = async (req: RequestFile, res: Response) => {
-  //   try {
-  //     const id = Number(req.body.id);
-  //     const file = req.uploadedImage as CloudinaryAsset;
-  //     const publicId = req.body.publicId;
-  //     if (!id) errorResponse(res, "id is required", 404);
-
-  //     const data = await this.coDriverService.updateImage(id, publicId, file);
-  //     successResponse(res, 200, data);
-  //   } catch (error) {
-  //     console.log("Err Controller", error);
-  //     errorResponse(res, "ERR Controller.updateImage", 404);
-  //   }
-  // };
 
   getAll = async (req: Request, res: Response) => {
     try {
@@ -70,9 +54,8 @@ export class AdminController {
 
   create = async (req: RequestFile, res: Response) => {
     try {
-      const file = req.uploadedImage as CloudinaryAsset;
-      const dataNewCoDriver = JSON.parse(req.body.data);
-      const data = await this.adminService.add(dataNewCoDriver);
+      const dataNewAdmin = JSON.parse(req.body.data);
+      const data = await this.adminService.add(dataNewAdmin);
       successResponse(res, 200, data);
     } catch (error) {
       console.log("Err Controller", error);

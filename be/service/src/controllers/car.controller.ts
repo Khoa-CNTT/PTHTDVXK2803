@@ -3,6 +3,8 @@ import { errorResponse, successResponse } from "../utils/response.util";
 import { RequestWithProcessedFiles, RequestFile } from "../middlewares/uploadHandler";
 import { bookBusTicketsDB } from "../config/db";
 import { CarService } from "../services/car.service";
+import { ArrangeType } from "../@types/type";
+import { typeMap } from "../@types/car.type";
 
 export class CarController {
   private carService = new CarService(bookBusTicketsDB);
@@ -45,22 +47,31 @@ export class CarController {
 
   getAllCar = async (req: Request, res: Response) => {
     try {
-      const { limit, offset } = CarController.parsePagination(req.query);
-      const result = await this.carService.getAllCar(limit, offset);
+      const licensePlateSearch = (req.query.license_plate as string) || "";
+      const limit = Number(req.query.limit) || 10;
+      const offset = Number(req.query.offset);
+      const typeKey = (req.query.type as string) || undefined;
+
+      const type = typeKey ? typeMap[typeKey] : "";
+
+      const arrangeType =
+        (req.query.arrangeType as string)?.toUpperCase() === "ASC"
+          ? "ASC"
+          : ("DESC" as ArrangeType);
+
+      if (limit < 0 || offset < 0)
+        errorResponse(res, "limit and offset must be greater than 0", 404);
+
+      const result = await this.carService.getAll(
+        limit,
+        offset,
+        arrangeType,
+        licensePlateSearch,
+        type
+      );
       successResponse(res, 200, result);
     } catch (error: any) {
       console.log("err", error);
-      errorResponse(res, error.message, 500);
-    }
-  };
-
-  getCarById = async (req: Request, res: Response) => {
-    try {
-      const id = Number(req.params.id);
-      if (id === 0) return successResponse(res, 200, "Car ID does not exist!");
-      const result = await this.carService.getCarById(id);
-      successResponse(res, 200, result);
-    } catch (error: any) {
       errorResponse(res, error.message, 500);
     }
   };

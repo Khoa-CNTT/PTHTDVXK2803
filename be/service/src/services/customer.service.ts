@@ -1,32 +1,20 @@
 import bcrypt from "bcrypt";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import otpGenerator from "otp-generator";
-import { globalBookTicketsDB } from "../config/db";
+import { bookBusTicketsDB } from "../config/db";
 import { sendOtpEmail } from "./email.service";
 import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType, UserRegister } from "../@types/type";
-import { CustomerType } from "../@types/customer";
+import { ModelCustomer } from "../models/user";
 import { convertToVietnamTime } from "../utils/convertTime";
 import deleteOldFile from "../utils/deleteOldFile.util";
 import { UserService } from "./user.service";
-import { generalAccessToken, generalRefreshToken } from "../utils/jwt.util";
+import { generalAccessToken, generalRefreshToken } from "../services/auth.service";
 import { OtpService } from "./otp.service";
+import testEmail from "../utils/testEmail";
 
+const userService = new UserService(bookBusTicketsDB);
 const otpService = new OtpService();
-
-type Customer = {
-  email: string;
-  fullName?: string;
-  sex?: "male" | "female" | "other";
-  password: string;
-  urlImg?: string;
-  urlPublicImg?: string;
-  phone?: string;
-  dateBirth?: string;
-  address?: string;
-};
-
-const userService = new UserService(globalBookTicketsDB);
 
 export class CustomerService {
   private db;
@@ -134,7 +122,7 @@ export class CustomerService {
   fetch(id: number): Promise<object> {
     return new Promise(async (resolve, reject) => {
       try {
-        const [rows] = await this.db.execute("call fetch_customer(?)", [id]);
+        const [rows] = await this.db.execute("call fetchCustomer(?)", [id]);
         if (rows[0].length === 0) {
           resolve({
             status: "ERR",
@@ -142,7 +130,7 @@ export class CustomerService {
           });
         }
 
-        let detailCus: CustomerType = rows[0][0];
+        let detailCus: ModelCustomer = rows[0][0];
 
         detailCus.createAt = convertToVietnamTime(detailCus.createAt);
         detailCus.updateAt = convertToVietnamTime(detailCus.updateAt);
@@ -156,11 +144,11 @@ export class CustomerService {
     });
   }
 
-  update(id: number, updateCustomer: Customer): Promise<any> {
+  update(id: number, updateCustomer: ModelCustomer): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const hashPass = await bcrypt.hash(updateCustomer.password, 10);
-        const sql = "call update_customer( ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "call updateCustomer( ?, ?, ?, ?, ?, ?, ?)";
         const values = [
           id,
           updateCustomer.fullName,
@@ -189,7 +177,7 @@ export class CustomerService {
       try {
         const { secure_url, public_id } = fileCloudinary;
 
-        const sql = "call update_image_user( ?, ?, ?)";
+        const sql = "call updateImageUser( ?, ?, ?)";
         const values = [id, secure_url, public_id];
 
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
@@ -215,17 +203,19 @@ export class CustomerService {
   getAll(
     limit: number,
     offset: number,
-    arrangeType: ArrangeType
+    arrangeType: ArrangeType,
+    emailSearch: string
   ): Promise<{ status: string; total: number; totalPage: number; data: object }> {
     return new Promise(async (resolve, reject) => {
       try {
         const totalCustomerCount = await this.total();
-        const [row] = await this.db.execute("call get_all_customer(?, ?, ?)", [
+        const [row] = await this.db.execute("call getCustomers(?, ?, ?, ?)", [
           limit,
           offset,
           arrangeType,
+          emailSearch,
         ]);
-        let dataCustomer: CustomerType[] = row[0].map((item: CustomerType) => {
+        let dataCustomer: ModelCustomer[] = row[0].map((item: ModelCustomer) => {
           item.createAt = convertToVietnamTime(item.createAt);
           item.updateAt = convertToVietnamTime(item.updateAt);
           item.dateBirth = convertToVietnamTime(item.dateBirth);
@@ -244,12 +234,10 @@ export class CustomerService {
     });
   }
 
-  add(newCustomer: Customer, fileCloudinary: CloudinaryAsset): Promise<any> {
+  add(newCustomer: ModelCustomer, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        const regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.(com|vn|org|edu|net)$/;
-        console.log("newCustomer-ser", newCustomer);
-        if (!regex.test(newCustomer.email)) {
+        if (!testEmail(newCustomer.email)) {
           console.log('"Invalid email format", newCustomer.email);');
           deleteOldFile(fileCloudinary.public_id, "image");
           return reject({
@@ -292,7 +280,7 @@ export class CustomerService {
     return new Promise(async (resolve, reject) => {
       try {
         const { id, email, displayName, photos } = profile;
-        const sql = "call save_customer(?, ?, ?, ?, ?)";
+        const sql = "call saveCustomer(?, ?, ?, ?, ?)";
         const values = [email, id, provider, displayName, photos];
         await this.db.execute(sql, values);
         resolve({

@@ -3,6 +3,7 @@ import { CloudinaryAsset } from "../@types/cloudinary";
 import { ResultSetHeader } from "mysql2";
 import { convertToVietnamTime } from "../utils/convertTime";
 import deleteOldFile from "../utils/deleteOldFile.util";
+import { ArrangeType } from "../@types/type";
 
 export class CarService {
   private db;
@@ -131,11 +132,24 @@ export class CarService {
     }
   }
 
-  async getAllCar(limit: number, offset: number) {
+  async getAll(
+    limit: number,
+    offset: number,
+    arrangeType: ArrangeType,
+    licensePlateSearch: string,
+    type: CarType
+  ) {
     try {
+      console.log("gat cars", limit, offset, arrangeType, licensePlateSearch, type);
       const total = await this.totalCar();
-      const sql = "call getCars(?, ?)";
-      const [rows] = await this.db.execute(sql, [limit, offset]);
+      const sql = "call getCars(?, ?, ?, ?, ?)";
+      const [rows] = await this.db.execute(sql, [
+        limit,
+        offset,
+        arrangeType,
+        licensePlateSearch,
+        type,
+      ]);
       return {
         total,
         totalPage: Math.ceil(total / limit),
@@ -147,56 +161,10 @@ export class CarService {
     }
   }
 
-  async getCarById(id: number) {
-    try {
-      const sql = "call getDetailCar(?)";
-      const [rows] = await this.db.execute(sql, [id]);
-      const detailCar: Car = rows[0][0];
-      if (!detailCar) throw new Error("Xe không tồn tại");
-
-      detailCar.createAt = convertToVietnamTime(detailCar.createAt);
-      detailCar.updateAt = convertToVietnamTime(detailCar.updateAt);
-
-      return detailCar;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async getCarByLicensePlate(licensePlate: string) {
     try {
       const sql = "call getCarByLicensePlate(?)";
       const [rows] = await this.db.execute(sql, [licensePlate]);
-      return rows[0];
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getCarByType(type: CarType) {
-    try {
-      const sql = "call get_car_by_type(?)";
-      const [rows] = await this.db.execute(sql, [type]);
-      return rows[0];
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getCarByStatus(status: CarStatus) {
-    try {
-      const sql = "call get_car_by_status(?)";
-      const [rows] = await this.db.execute(sql, [status]);
-      return rows[0];
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getCarByTypeAndStatus(type: string, status: string) {
-    try {
-      const sql = "call get_car_by_type_and_status(?, ?)";
-      const [rows] = await this.db.execute(sql, [type, status]);
       return rows[0];
     } catch (error) {
       throw error;

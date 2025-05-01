@@ -10,8 +10,8 @@ export class CoDriverController {
   private coDriverService = new CoDriverService(bookBusTicketsDB);
 
   fetch = async (req: Request, res: Response) => {
-    const id = Number(req.params.id);
     try {
+      const id = Number(req.params.id);
       const data = await this.coDriverService.fetch(id);
       successResponse(res, 200, data);
     } catch (error) {
@@ -50,6 +50,7 @@ export class CoDriverController {
 
   getAll = async (req: Request, res: Response) => {
     try {
+      const phoneSearch = (req.query.phone as string) || "";
       const limit = Number(req.query.limit) || 10;
       const offset = Number(req.query.offset);
       const arrangeType =
@@ -60,7 +61,7 @@ export class CoDriverController {
       if (limit < 0 || offset < 0)
         errorResponse(res, "limit and offset must be greater than 0", 404);
 
-      const data = await this.coDriverService.getAll(limit, offset, arrangeType);
+      const data = await this.coDriverService.getAll(limit, offset, arrangeType, phoneSearch);
       successResponse(res, 200, data);
     } catch (error) {
       console.log("Err Controller", error);
