@@ -6,8 +6,9 @@ import locationRouter from "./location.routes";
 import userRouter from "./user.routes";
 import driverRoute from "./driver.routes";
 import coDriverRoute from "./coDriver.route";
-import adminRoute from "./admin.route";
+import adminRoute from "./admin.routes";
 import tripRoute from "./trip.routes";
+import promotionRoute from "./promotion.route";
 
 const routes = (app: express.Application): void => {
   // Cấu hình routes
@@ -19,6 +20,7 @@ const routes = (app: express.Application): void => {
   app.use("/api/co-driver", coDriverRoute);
   app.use("/api/admin", adminRoute);
   app.use("/api/trip", tripRoute);
+  app.use("/api/promotion", promotionRoute);
 
   // Route cho các yêu cầu không tìm thấy
   app.use((req: Request, res: Response): void => {
