@@ -19,4 +19,5 @@ export interface CloudinaryAsset {
   asset_folder?: string;
   display_name?: string;
   original_filename?: string;
+  isMain?: 1 | 0;
 }

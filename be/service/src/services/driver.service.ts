@@ -12,6 +12,7 @@ import { generalAccessToken, generalRefreshToken } from "../services/auth.servic
 import { ModelDriver } from "../models/user";
 import { OtpService } from "./otp.service";
 import testEmail from "../utils/testEmail";
+import { formatDate } from "../utils/formatDate";
 
 const userService = new UserService(bookBusTicketsDB);
 const otpService = new OtpService();
@@ -119,10 +120,11 @@ export class DriverService {
     });
   }
 
-  fetch(id: number): Promise<object> {
+  fetch(id: number): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const [rows] = await this.db.execute("call fetchDriver(?)", [id]);
+        console.log("rows", rows);
         if (rows[0].length === 0) {
           resolve({
             status: "ERR",
@@ -132,10 +134,8 @@ export class DriverService {
 
         let detailDriver: ModelDriver = rows[0][0];
 
-        detailDriver.createAt = convertToVietnamTime(detailDriver.createAt);
-        detailDriver.updateAt = convertToVietnamTime(detailDriver.updateAt);
-        detailDriver.dateBirth = convertToVietnamTime(detailDriver.dateBirth);
-        detailDriver.experienceYears = convertToVietnamTime(detailDriver.experienceYears);
+        detailDriver.createAt = formatDate(detailDriver.createAt, "MM/DD/YYYY", true);
+        detailDriver.updateAt = formatDate(detailDriver.createAt, "MM/DD/YYYY", true);
 
         resolve(detailDriver);
       } catch (error) {
@@ -149,9 +149,10 @@ export class DriverService {
     return new Promise(async (resolve, reject) => {
       try {
         const hashPass = await bcrypt.hash(updateDriver.password, 10);
-        const sql = "call updateDriver( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "call updateDriver( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         const values = [
           id,
+          updateDriver.currentLocationId,
           updateDriver.fullName,
           updateDriver.sex,
           hashPass,
@@ -240,19 +241,18 @@ export class DriverService {
   add(newDriver: ModelDriver, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log("newDriver-ser", newDriver);
         if (!testEmail(newDriver.email)) {
-          console.log('"Invalid email format", newDriver.email);');
           deleteOldFile(fileCloudinary.public_id, "image");
-          return reject({
+          reject({
             status: "ERR",
             message: "Invalid email",
           });
         }
         const hashPass = await bcrypt.hash(newDriver.password, 10);
-        const sql = "call addDriver(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "call addDriver(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         const values = [
           newDriver.email,
+          newDriver.currentLocationId,
           newDriver.fullName,
           newDriver.sex,
           hashPass,
@@ -265,10 +265,10 @@ export class DriverService {
           newDriver.address,
         ];
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
-        console.log("affectedRows", rows.affectedRows);
-        if (rows.affectedRows < 1 || !rows.affectedRows) {
+
+        if (rows.affectedRows === 0) {
           deleteOldFile(fileCloudinary.public_id, "image");
-          return reject({
+          reject({
             status: "ERR",
             message: "Create driver failed",
           });

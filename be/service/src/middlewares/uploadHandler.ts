@@ -10,6 +10,7 @@ import { CloudinaryAsset } from "../@types/cloudinary";
 export interface RequestFile extends Request {
   uploadedImage: CloudinaryAsset;
 }
+
 interface RequestWithFile extends Request {
   file?: Express.Multer.File & { cloudinaryFile?: CloudinaryAsset };
 }
@@ -73,64 +74,43 @@ const uploadImagesToCloudinary = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log("data", req.body.data);
   try {
     if (!req.files || req.files.length === 0) {
       return next();
     }
-    let files = req.files as Express.Multer.File[];
-    let bodyData;
 
-    const folder = "book-bus-ticket/image/car";
-
-    const uploadImages: CloudinaryAsset[] = [];
+    const files = req.files as Express.Multer.File[];
+    const data = typeof req.body.data === "string" ? JSON.parse(req.body.data) : req.body.data;
+    const indexIsMain = Number(data?.indexIsMain ?? -1);
+    const folder = "book-bus-ticket/images/car";
     const allowedFormats = ["png", "jpg", "jpeg"];
 
-    // Upload all images
-    if (files.length > 0) {
-      await Promise.all(
-        files.map(async (file) => {
-          if (!validateFile(file.originalname, "image")) {
-            throw new Error(
-              `Invalid file format: ${file.originalname}, Only jpg, png, jpeg are allowed.`
-            );
-          }
-
-          const result: UploadApiResponse = await uploadToCloudinary(
-            file.buffer,
-            folder,
-            allowedFormats,
-            "image"
+    // Upload all images in parallel
+    const uploadImages = await Promise.all(
+      files.map(async (file, index) => {
+        if (!validateFile(file.originalname, "image")) {
+          throw new Error(
+            `Invalid file format: ${file.originalname}. Only jpg, png, jpeg are allowed.`
           );
-          uploadImages.push(result);
-        })
-      );
-    } else {
-      if (!validateFile(files[0].originalname, "image")) {
-        throw new Error(
-          `Invalid file format: ${files[0].originalname}, Only jpg, png, jpeg are allowed.`
-        );
-      }
-      const result: UploadApiResponse = await uploadToCloudinary(
-        files[0].buffer,
-        folder,
-        allowedFormats,
-        "image"
-      );
+        }
 
-      if (bodyData.urlPublicImg) {
-        await deleteOldFile(bodyData.urlPublicImg, "image");
-      }
-      req.processedFile = result;
-      return next();
-    }
+        const result = await uploadToCloudinary(file.buffer, folder, allowedFormats, "image");
 
-    req.processedFiles = uploadImages.map((image, index) => ({
-      ...req.files[index],
-      cloudinaryImages: [image],
+        return {
+          secure_url: result.secure_url,
+          public_id: result.public_id,
+          asset_id: result.asset_id,
+          originIndex: index,
+        };
+      })
+    );
+
+    req.processedFiles = uploadImages.map((image) => ({
+      ...image,
+      isMain: image.originIndex === indexIsMain ? 1 : 0,
     })) as CloudinaryAsset[];
 
-    next();
+    return next();
   } catch (error) {
     console.error("Upload Images error:", error);
     res.status(500).json({ message: "Error uploading images to Cloudinary" });
@@ -143,25 +123,8 @@ const uploadImageToCloudinary = async (req: RequestFile, res: Response, next: Ne
       return next();
     }
     let file = req.file as Express.Multer.File;
-    let bodyData;
-    try {
-      bodyData = JSON.parse(req.body?.data || "{}");
-      // if (!bodyData.email) return next("Email is required");
-    } catch (error) {
-      return next("Invalid JSON data format");
-    }
 
-    const { role } = bodyData;
-
-    // if (!role) {
-    //   return next("Missing role");
-    // }
-
-    const folder = getCloudinaryFolder(role);
-    console.log(folder);
-    // if (!folder) {
-    //   return next("The user does not exist");
-    // }
+    const folder = "book-bus-ticket/images/avatar";
 
     const allowedFormats = ["png", "jpg", "jpeg"];
 
@@ -177,9 +140,7 @@ const uploadImageToCloudinary = async (req: RequestFile, res: Response, next: Ne
       allowedFormats,
       "image"
     );
-    // if (bodyData.urlPublicImg) {
-    //   await deleteOldFile(bodyData.urlPublicImg, "image");
-    // }
+
     req.uploadedImage = result;
 
     next();

@@ -5,6 +5,7 @@ import { bookBusTicketsDB } from "../config/db";
 import { CarService } from "../services/car.service";
 import { ArrangeType } from "../@types/type";
 import { typeMap } from "../@types/car.type";
+import { CloudinaryAsset } from "../@types/cloudinary";
 
 export class CarController {
   private carService = new CarService(bookBusTicketsDB);
@@ -17,9 +18,13 @@ export class CarController {
 
   addCar = async (req: RequestWithProcessedFiles, res: Response) => {
     try {
+      const files = req.processedFiles;
       const data = JSON.parse(req.body.data);
-      const result = await this.carService.addCar(data, req.processedFiles);
-      successResponse(res, 200, result);
+      const response = await this.carService.addCar(data, files);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
+      successResponse(res, 200, response);
     } catch (error: any) {
       errorResponse(res, error.message, 500);
     }

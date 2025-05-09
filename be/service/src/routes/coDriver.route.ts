@@ -16,7 +16,12 @@ route.post(
   uploadImageToCloudinary,
   coDriverController.create
 );
-route.put("/update", verifyAccessToken, authorizeRoles("admin"), coDriverController.update);
+route.put(
+  "/update-info/:id",
+  verifyAccessToken,
+  authorizeRoles("admin"),
+  coDriverController.update
+);
 route.put(
   "/update-img",
   verifyAccessToken,

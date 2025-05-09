@@ -8,7 +8,7 @@ import testEmail from "../utils/testEmail";
 export class UserController {
   private userService = new UserService(bookBusTicketsDB);
 
-  login = async (req: Request, res: Response) => {
+  loginByAdmin = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
       const isCheckEmail = testEmail(email);
@@ -27,7 +27,66 @@ export class UserController {
         });
       }
 
-      const response = await this.userService.login(req.body);
+      const response = await this.userService.loginByAdmin(req.body);
+
+      if (
+        "access_token" in response &&
+        "refresh_token" in response &&
+        "expirationTime" in response
+      ) {
+        const { status, data, access_token, refresh_token, expirationTime } = response;
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.cookie("refresh_token", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        successResponse(res, 200, { status, data, expirationTime: expirationTime });
+      } else {
+        if ("message" in response) {
+          errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(404).json({
+        message: "Controller.login err",
+        error: err,
+      });
+    }
+  };
+
+  loginByCustomer = async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !password) {
+        res.status(200).json({
+          status: "ERR",
+          message: "The input is required",
+        });
+      }
+
+      if (!isCheckEmail) {
+        res.status(200).json({
+          status: "ERR",
+          message: "Email is not in correct format",
+        });
+      }
+
+      const response = await this.userService.loginByCustomer(req.body);
 
       if (
         "access_token" in response &&
@@ -52,7 +111,129 @@ export class UserController {
         });
         successResponse(res, 200, { status, expirationTime: expirationTime });
       } else {
-        errorResponse(res, response.message, 400);
+        if ("message" in response) {
+          errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(404).json({
+        message: "Controller.login err",
+        error: err,
+      });
+    }
+  };
+
+  loginByDriver = async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !password) {
+        res.status(200).json({
+          status: "ERR",
+          message: "The input is required",
+        });
+      }
+
+      if (!isCheckEmail) {
+        res.status(200).json({
+          status: "ERR",
+          message: "Email is not in correct format",
+        });
+      }
+
+      const response = await this.userService.loginByDriver(req.body);
+
+      if (
+        "access_token" in response &&
+        "refresh_token" in response &&
+        "expirationTime" in response
+      ) {
+        const { access_token, refresh_token, status, expirationTime } = response;
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.cookie("refresh_token", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        successResponse(res, 200, { status, expirationTime: expirationTime });
+      } else {
+        if ("message" in response) {
+          errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(404).json({
+        message: "Controller.login err",
+        error: err,
+      });
+    }
+  };
+
+  loginByCoDriver = async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !password) {
+        res.status(200).json({
+          status: "ERR",
+          message: "The input is required",
+        });
+      }
+
+      if (!isCheckEmail) {
+        res.status(200).json({
+          status: "ERR",
+          message: "Email is not in correct format",
+        });
+      }
+
+      const response = await this.userService.loginByCoDriver(req.body);
+
+      if (
+        "access_token" in response &&
+        "refresh_token" in response &&
+        "expirationTime" in response
+      ) {
+        const { access_token, refresh_token, status, expirationTime } = response;
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.cookie("refresh_token", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        successResponse(res, 200, { status, expirationTime: expirationTime });
+      } else {
+        if ("message" in response) {
+          errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
       }
     } catch (err) {
       console.log(err);
@@ -125,7 +306,7 @@ export class UserController {
         sameSite: "none",
         path: "/",
       });
-      successResponse(res, 200, {});
+      successResponse(res, 200, { status: "OK", message: "Logout success" });
     } catch (error) {
       console.log("Controller", error);
       errorResponse(res, "ERR Controller.logout", 404);

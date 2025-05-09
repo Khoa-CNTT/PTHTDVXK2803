@@ -1,7 +1,8 @@
-import { ResultSetHeader } from "mysql2";
+import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { TripFormData } from "../@types/trip";
 import { Seat } from "../models/seat";
 import { ArrangeType } from "../@types/type";
+import { TripInfo } from "../models/trip";
 
 export class TripService {
   private db;
@@ -9,6 +10,15 @@ export class TripService {
   constructor(db: any) {
     this.db = db;
   }
+
+  getTotal = async (): Promise<number> => {
+    try {
+      const [rows] = await this.db.execute("select count(*) as total from trip");
+      return (rows as RowDataPacket[])[0].total;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   getAllCar = async () => {
     try {
@@ -175,6 +185,7 @@ export class TripService {
     licensePlateSearch: string
   ) => {
     try {
+      const total = await this.getTotal();
       const [rows] = await this.db.execute(`call getAllTrip(?, ?, ?, ?)`, [
         limit,
         offset,
@@ -185,6 +196,8 @@ export class TripService {
         return {
           status: "OK",
           message: "Get all trip success",
+          total: total,
+          totalPage: Math.ceil(total / limit),
           data: rows[0],
         };
       } else {
@@ -192,6 +205,25 @@ export class TripService {
       }
     } catch (error) {
       console.log("err", error);
+    }
+  };
+
+  fetch = async (id: number) => {
+    try {
+      const [rows] = await this.db.execute("call getTripById(?)", [id]);
+      const detailTrip: TripInfo = rows[0][0];
+      if (detailTrip) {
+        return {
+          detailTrip,
+        };
+      } else {
+        return {
+          status: "ERR",
+          message: "Get detail trip not success",
+        };
+      }
+    } catch (error) {
+      throw error;
     }
   };
 }

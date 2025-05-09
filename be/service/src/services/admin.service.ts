@@ -1,14 +1,13 @@
 import bcrypt from "bcrypt";
 import { ResultSetHeader, RowDataPacket } from "mysql2/promise";
-import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
 import { ModelAdmin } from "../models/user";
 import { convertToVietnamTime } from "../utils/convertTime";
-import deleteOldFile from "../utils/deleteOldFile.util";
 import testEmail from "../utils/testEmail";
 
 type Admin = {
   email: string;
+  fullName: string;
   password: string;
   createAt: string;
   updateAt: string;
@@ -22,116 +21,109 @@ export class AdminService {
   }
 
   async total(): Promise<number> {
-    try {
-      const query = "select count(*) as totalAdminList from user where role = 'admin'";
-      const [rows] = await this.db.execute(query);
-      return (rows as RowDataPacket[])[0].totalAdminList;
-    } catch (error) {
-      throw error;
+    const query = "SELECT COUNT(*) AS totalAdminList FROM user WHERE role = 'admin'";
+    const [rows] = await this.db.execute(query);
+    return (rows as RowDataPacket[])[0].totalAdminList;
+  }
+
+  async fetch(id: number): Promise<object> {
+    const [rows] = await this.db.execute("CALL fetchAdmin(?)", [id]);
+    if (rows[0].length === 0) {
+      return {
+        status: "ERR",
+        message: "Admin not found",
+      };
     }
+
+    let detailAdmin: ModelAdmin = rows[0][0];
+    detailAdmin.createAt = convertToVietnamTime(detailAdmin.createAt);
+    detailAdmin.updateAt = convertToVietnamTime(detailAdmin.updateAt);
+    return detailAdmin;
   }
 
-  fetch(id: number): Promise<object> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const [rows] = await this.db.execute("call fetchAdmin(?)", [id]);
-        if (rows[0].length === 0) {
-          resolve({
-            status: "ERR",
-            message: "Admin not found",
-          });
-        }
-
-        let detailAdmin: ModelAdmin = rows[0][0];
-
-        detailAdmin.createAt = convertToVietnamTime(detailAdmin.createAt);
-        detailAdmin.updateAt = convertToVietnamTime(detailAdmin.updateAt);
-
-        resolve(detailAdmin);
-      } catch (error) {
-        console.log("Err Service.getDetail", error);
-        reject(error);
-      }
-    });
-  }
-
-  update(id: number, dataUpdate: Admin): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const hashPass = await bcrypt.hash(dataUpdate.password, 10);
-        const sql = "call updateAdmin( ?, ?)";
-        const values = [id, hashPass];
-
-        const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
-        if (rows.affectedRows === 0) {
-          return resolve({ status: "ERR", message: "Admin not found" });
-        }
-        resolve({
-          status: "OK",
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-
-  getAll(
+  async getAll(
     limit: number,
     offset: number,
     arrangeType: ArrangeType
-  ): Promise<{ status: string; total: number; totalPage: number; data: object }> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const totalCustomerCount = await this.total();
-        const [row] = await this.db.execute("call getAdmins(?, ?, ?)", [
-          limit,
-          offset,
-          arrangeType,
-        ]);
-        let dataAdmin: ModelAdmin[] = row[0].map((item: ModelAdmin) => {
-          item.createAt = convertToVietnamTime(item.createAt);
-          item.updateAt = convertToVietnamTime(item.updateAt);
-          return item;
-        });
-        resolve({
-          status: "OK",
-          total: totalCustomerCount,
-          totalPage: Math.ceil(totalCustomerCount / limit),
-          data: totalCustomerCount > 0 ? dataAdmin : [],
-        });
-      } catch (error) {
-        console.error("Err Service.getall", error);
-        reject(error);
-      }
+  ): Promise<{ status: string; total: number; totalPage: number; data: object[] }> {
+    const totalCount = await this.total();
+    const [row] = await this.db.execute("CALL getAdmins(?, ?, ?)", [limit, offset, arrangeType]);
+    const dataAdmin: ModelAdmin[] = row[0].map((item: ModelAdmin) => {
+      item.createAt = convertToVietnamTime(item.createAt);
+      item.updateAt = convertToVietnamTime(item.updateAt);
+      return item;
     });
+
+    return {
+      status: "OK",
+      total: totalCount,
+      totalPage: Math.ceil(totalCount / limit),
+      data: totalCount > 0 ? dataAdmin : [],
+    };
   }
 
-  add(newAdmin: Admin): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        if (!testEmail(newAdmin.email)) {
-          return reject({
-            status: "ERR",
-            message: "Invalid email",
-          });
-        }
-        const hashPass = await bcrypt.hash(newAdmin.password, 10);
-        const sql = "call addAdmin(?, ?)";
-        const values = [newAdmin.email, hashPass];
-        const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
-        if (rows.affectedRows === 0) {
-          return reject({
-            status: "ERR",
-            message: "Create Admin failed",
-          });
-        }
-        resolve({
-          status: "OK",
-          message: "Create Admin success",
-        });
-      } catch (error) {
-        reject(error);
+  async add(newAdmin: Admin) {
+    const conn = await this.db.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      const { email, fullName, password } = newAdmin;
+      if (!testEmail(email)) {
+        await conn.rollback();
+        return {
+          status: "ERR",
+          message: "Invalid email",
+        };
       }
-    });
+
+      const hashPass = await bcrypt.hash(password, 10);
+      const sql = "CALL addAdmin(?, ?, ?)";
+      const values = [email, fullName, hashPass];
+      const [rows] = (await conn.execute(sql, values)) as [ResultSetHeader];
+
+      if (rows.affectedRows === 0) {
+        await conn.rollback();
+        return {
+          status: "ERR",
+          message: "Create Admin failed",
+        };
+      }
+
+      await conn.commit();
+      return {
+        status: "OK",
+        message: "Create Admin success",
+      };
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
+  }
+
+  async update(id: number, dataUpdate: Admin) {
+    const conn = await this.db.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      const hashPass = await bcrypt.hash(dataUpdate.password, 10);
+      const sql = "CALL updateAdmin(?, ?)";
+      const values = [id, hashPass];
+      const [rows] = (await conn.execute(sql, values)) as [ResultSetHeader];
+
+      if (rows.affectedRows === 0) {
+        await conn.rollback();
+        return { status: "ERR", message: "Admin not found" };
+      }
+
+      await conn.commit();
+      return { status: "OK" };
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
   }
 }

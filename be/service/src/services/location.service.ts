@@ -46,9 +46,15 @@ export class LocationService {
     try {
       const [rows] = await this.db.execute("select id, name from location");
       if (rows.length > 0) {
-        return rows;
+        return {
+          status: "OK",
+          data: rows,
+        };
       } else {
-        return null;
+        return {
+          status: "ERR",
+          message: "Location not found.",
+        };
       }
     } catch (error) {
       console.log("err", error);

@@ -1,7 +1,6 @@
-import { Car, CarRequest, CarStatus, CarType, Image } from "../@types/car.type";
+import { Car, CarType, Image } from "../@types/car.type";
 import { CloudinaryAsset } from "../@types/cloudinary";
 import { ResultSetHeader } from "mysql2";
-import { convertToVietnamTime } from "../utils/convertTime";
 import deleteOldFile from "../utils/deleteOldFile.util";
 import { ArrangeType } from "../@types/type";
 
@@ -45,80 +44,117 @@ export class CarService {
     return (rows as any)[0].totalCarList ?? 0;
   }
 
-  async addCar(newCar: CarRequest, filesCloudinary: CloudinaryAsset[]) {
+  async addCar(newCar: Car, filesCloudinary: CloudinaryAsset[]) {
+    const connection = await this.db.getConnection(); // lấy kết nối từ pool
     try {
-      const { licensePlate, capacity, type, indexIsMain } = newCar;
-      const index = Number(indexIsMain);
+      await connection.beginTransaction();
 
-      const sqlCar = "call AddCar(?, ?, ?)";
-      const values = [licensePlate, capacity, type];
-      await this.db.execute(sqlCar, values);
+      const { licensePlate, capacity, type, currentLocationId } = newCar;
 
-      const car = await this.checkCar(licensePlate);
+      const sqlCar = "CALL AddCar(?, ?, ?, ?)";
+      const [rows] = await connection.query(sqlCar, [
+        currentLocationId,
+        licensePlate,
+        capacity,
+        type,
+      ]);
 
-      if (filesCloudinary?.length > 0) {
-        let count = 0;
-        const promise = filesCloudinary.map(async (image) => {
-          if (!image?.secure_url || !image?.public_id) return;
-          const [resultRows] = await (this.db.execute("call AddCarImage(?, ?, ?, ?)", [
-            car.id,
-            image.secure_url,
-            image.public_id,
-            index === count ? 1 : 0,
-          ]) as [ResultSetHeader]);
-          if (resultRows.affectedRows <= 0) {
-            deleteOldFile(image.public_id);
-          }
-          count++;
-        });
-        await Promise.all(promise);
+      const insertId = rows[0][0].insertedId;
+      console.log("insertId", insertId);
+      if (!insertId) {
+        for (const image of filesCloudinary) {
+          if (!image?.public_id) continue;
+          deleteOldFile(image.public_id);
+        }
+
+        await connection.rollback();
+
+        return {
+          status: "ERR",
+          message: "Thêm xe thất bại",
+        };
       }
 
-      return {};
+      if (filesCloudinary?.length > 0) {
+        for (const image of filesCloudinary) {
+          if (!image?.secure_url || !image?.public_id) continue;
+          const [resultRows]: any = (await connection.query("CALL AddCarImage(?, ?, ?, ?)", [
+            insertId,
+            image.secure_url,
+            image.public_id,
+            image.isMain,
+          ])) as [ResultSetHeader];
+
+          if (resultRows?.affectedRows <= 0) {
+            deleteOldFile(image.public_id);
+          }
+        }
+      }
+
+      await connection.commit();
+      return {
+        status: "OK",
+        message: "Thêm xe thành công",
+      };
     } catch (error) {
+      await connection.rollback();
       throw error;
+    } finally {
+      connection.release(); // Trả kết nối về pool
     }
   }
 
-  async updateCar(updateCar: CarRequest, filesCloudinary: CloudinaryAsset[]) {
+  async updateCar(updateCar: Car, filesCloudinary: CloudinaryAsset[]) {
+    const connection = await this.db.getConnection();
     try {
-      const { id, licensePlate, capacity, type, indexIsMain } = updateCar;
-      await this.checkCar(licensePlate);
+      await connection.beginTransaction();
 
-      const sql = "call UpdateCar(?, ?, ?, ?)";
-      const values = [id || null, licensePlate || null, capacity || null, type || null];
-      const [rowsUpdate] = await (this.db.execute(sql, values) as [ResultSetHeader]);
+      const { id, currentLocationId, licensePlate, capacity, type } = updateCar;
 
-      if (rowsUpdate.affectedRows > 0 && filesCloudinary?.length) {
-        const isMainIndex = indexIsMain != null ? Number(indexIsMain) : -1;
+      const sql = "CALL UpdateCar(?, ?, ?, ?)";
+      const values = [id, currentLocationId, licensePlate, capacity, type];
+      const [rowsUpdate]: any = await connection.execute(sql, values);
 
-        if (isMainIndex >= 0) {
-          const mainImg = await this.getMainImage(Number(id));
-          if (mainImg?.id) {
-            await this.db.execute("update img_car set is_main = 0 where id = ?", [mainImg.id]);
+      if (rowsUpdate?.affectedRows <= 0) {
+        await connection.rollback();
+        return {
+          status: "ERR",
+          message: "Cập nhật xe thất bại",
+        };
+      }
+
+      if (rowsUpdate.affectedRows > 0 && filesCloudinary?.length > 0) {
+        for (let img of filesCloudinary) {
+          if (!img?.secure_url || !img?.public_id) continue;
+
+          const addImageSql = "CALL AddCarImage(?, ?, ?, ?)";
+          const imageParams = [id, img.secure_url, img.public_id, img.isMain];
+
+          const [result] = (await connection.execute(addImageSql, imageParams)) as [
+            ResultSetHeader
+          ];
+
+          if (result?.affectedRows <= 0) {
+            await connection.rollback(); // rollback nếu thêm ảnh lỗi
+            deleteOldFile(img.public_id);
+            return {
+              status: "ERR",
+              message: "Cập nhật ảnh xe thất bại",
+            };
           }
-        }
-
-        let mainImageSet = false;
-        for (let i = 0; i < filesCloudinary.length; i++) {
-          const image = filesCloudinary[i];
-          if (!image?.secure_url || !image?.public_id) continue;
-
-          const isMain = i === isMainIndex && !mainImageSet ? 1 : 0;
-          if (isMain) mainImageSet = true;
-
-          await this.db.execute("call AddCarImage(?, ?, ?, ?)", [
-            id || null,
-            image.secure_url,
-            image.public_id,
-            isMain,
-          ]);
         }
       }
 
-      return {};
+      await connection.commit();
+      return {
+        status: "OK",
+        message: "Cập nhật xe thành công",
+      };
     } catch (error) {
+      await connection.rollback();
       throw error;
+    } finally {
+      connection.release();
     }
   }
 
@@ -140,7 +176,6 @@ export class CarService {
     type: CarType
   ) {
     try {
-      console.log("gat cars", limit, offset, arrangeType, licensePlateSearch, type);
       const total = await this.totalCar();
       const sql = "call getCars(?, ?, ?, ?, ?)";
       const [rows] = await this.db.execute(sql, [
@@ -171,25 +206,11 @@ export class CarService {
     }
   }
 
-  async addImgCar(newImg: Image, fileCloudinary: CloudinaryAsset) {
+  async getCarByTypeAndStatus(type: string, status: string) {
     try {
-      const { public_id, secure_url } = fileCloudinary;
-      const { carId, isMain } = newImg;
-
-      const hasMain = await this.checkIsMain(carId);
-      if (hasMain && isMain === 1) {
-        return {
-          status: "Error",
-          message: "Mỗi xe chỉ có một ảnh chính",
-        };
-      }
-
-      const sql = "call AddCarImage(?, ?, ?, ?)";
-      const values = [carId, secure_url, public_id, isMain];
-      const [rows] = await (this.db.execute(sql, values) as [ResultSetHeader]);
-
-      if (rows.affectedRows > 0) return { status: "OK" };
-      return { status: "Error" };
+      const sql = "call get_car_by_type_and_status(?, ?)";
+      const [rows] = await this.db.execute(sql, [type, status]);
+      return rows[0];
     } catch (error) {
       throw error;
     }
@@ -197,31 +218,22 @@ export class CarService {
 
   async updateImgCar(dataImgCar: Image, fileCloudinary: CloudinaryAsset) {
     try {
+      console.log("dataImgCar", dataImgCar);
+      console.log("fileCloudinary", fileCloudinary);
+      const { id, urlPublicImg } = dataImgCar;
       const { secure_url, public_id } = fileCloudinary;
-      const { id, isMain, carId } = dataImgCar;
 
-      const hasMain = await this.checkIsMain(carId);
-      if (hasMain && isMain === 1) {
-        return {
-          status: "Error",
-          message: "Mỗi xe chỉ có một ảnh chính",
-        };
-      }
-
-      if (fileCloudinary) {
-        const sql = "call UpdateCarImage(?, ?, ?, ?)";
-        const values = [id, secure_url, public_id, isMain];
-        const [rows] = await (this.db.execute(sql, values) as [ResultSetHeader]);
-        if (rows.affectedRows > 0) return { status: "OK" };
+      const sql = "call UpdateCarImage(?, ?, ?)";
+      const values = [id, secure_url, public_id];
+      const [rows] = await (this.db.execute(sql, values) as [ResultSetHeader]);
+      if (rows.affectedRows > 0) {
+        if (urlPublicImg) {
+          deleteOldFile(urlPublicImg);
+        }
+        return { status: "OK" };
       } else {
-        const [rows] = await (this.db.execute("update img_car set is_main = ? where id = ?", [
-          isMain,
-          id,
-        ]) as [ResultSetHeader]);
-        if (rows.affectedRows > 0) return { status: "OK" };
+        return { status: "ERR" };
       }
-
-      return { status: "Error" };
     } catch (error) {
       throw error;
     }

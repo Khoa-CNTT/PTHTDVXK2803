@@ -3,18 +3,16 @@ export type CarStatus = "sẵn sàng" | "sắp khởi hành" | "đang chạy" | 
 
 export interface Car {
   id?: number;
+  currentLocationId: number;
   name?: string;
   licensePlate?: string;
   capacity?: number;
   images: Image[];
   type?: CarType;
-  // status: "Sắp khởi hành" | "Đang chạy" | "Bảo trì";
+  status?: "Sắp khởi hành" | "Đang chạy" | "Bảo trì";
   createAt?: string; // timestamp
   updateAt?: string;
-}
-
-export interface CarRequest extends Car {
-  indexIsMain?: number; //index của img để làm ảnh chính
+  indexIsMian?: number;
 }
 
 export interface RequestWithCar extends Request {

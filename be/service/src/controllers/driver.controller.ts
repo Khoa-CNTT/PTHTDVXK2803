@@ -28,6 +28,10 @@ export class DriverController {
       }
 
       const data = await this.driverService.register(req.body);
+      if (data.status === "ERR") {
+        errorResponse(res, data.message, 400);
+      }
+
       const { refresh_token, ...response } = data;
 
       res.cookie("refresh_token", refresh_token, {
@@ -48,6 +52,9 @@ export class DriverController {
     try {
       const { email, otp } = req.body;
       const response = await this.driverService.verifyEmail(email, otp);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
       successResponse(res, 200, response);
     } catch (error) {
       errorResponse(res, "ERR Controller.verifyEmail", 404);
@@ -58,6 +65,9 @@ export class DriverController {
     const id = Number(req.params.id);
     try {
       const response = await this.driverService.fetch(id);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
       successResponse(res, 200, response);
     } catch (error) {
       errorResponse(res, "ERR Controller.fetch", 404);
@@ -67,9 +77,12 @@ export class DriverController {
   update = async (req: Request, res: Response) => {
     try {
       const id = Number(req.params.id);
-      if (!id) errorResponse(res, "id is required", 404);
+      if (!id) errorResponse(res, "id is required", 400);
       const updateData = req.body;
       const response = await this.driverService.update(id, updateData);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
       successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
@@ -82,8 +95,11 @@ export class DriverController {
       const id = Number(req.body.id);
       const file = req.uploadedImage as CloudinaryAsset;
       const publicId = req.body.publicId;
-      if (!id) errorResponse(res, "id is required", 404);
+      if (!id) errorResponse(res, "id is required", 400);
       const response = await this.driverService.updateImage(id, publicId, file);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
       successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
@@ -108,7 +124,7 @@ export class DriverController {
       successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      errorResponse(res, "ERR Controller.getAll", 404);
+      errorResponse(res, "ERR Controller.getAll", 500);
     }
   };
 
@@ -117,10 +133,13 @@ export class DriverController {
       const file = req.uploadedImage as CloudinaryAsset;
       const newDriver = JSON.parse(req.body.data);
       const response = await this.driverService.add(newDriver, file);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 400);
+      }
       successResponse(res, 200, response);
     } catch (error) {
       console.log("Err Controller", error);
-      errorResponse(res, "ERR Controller.create", 404);
+      errorResponse(res, "ERR Controller.create", 500);
     }
   };
 }

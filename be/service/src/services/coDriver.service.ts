@@ -6,8 +6,10 @@ import { ModelCoDriver } from "../models/user";
 import { convertToVietnamTime } from "../utils/convertTime";
 import deleteOldFile from "../utils/deleteOldFile.util";
 import testEmail from "../utils/testEmail";
+import { formatDate } from "../utils/formatDate";
 
 type CoDriver = {
+  currentLocationId?: number;
   email: string;
   fullName?: string;
   sex?: "male" | "female" | "other";
@@ -36,7 +38,7 @@ export class CoDriverService {
     }
   }
 
-  fetch(id: number): Promise<object> {
+  fetch(id: number): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
         const [rows] = await this.db.execute("call fetchCoDriver(?)", [id]);
@@ -49,9 +51,8 @@ export class CoDriverService {
 
         let detailCoDriver: ModelCoDriver = rows[0][0];
 
-        detailCoDriver.createAt = convertToVietnamTime(detailCoDriver.createAt);
-        detailCoDriver.updateAt = convertToVietnamTime(detailCoDriver.updateAt);
-        detailCoDriver.dateBirth = convertToVietnamTime(detailCoDriver.dateBirth);
+        detailCoDriver.createAt = formatDate(detailCoDriver.createAt, "MM/DD/YYYY", true);
+        detailCoDriver.updateAt = formatDate(detailCoDriver.updateAt, "MM/DD/YYYY", true);
 
         resolve(detailCoDriver);
       } catch (error) {
@@ -65,9 +66,10 @@ export class CoDriverService {
     return new Promise(async (resolve, reject) => {
       try {
         const hashPass = await bcrypt.hash(dataUpdate.password, 10);
-        const sql = "call updateCoDriver( ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "call updateCoDriver( ?, ?, ?, ?, ?, ?, ?, ?)";
         const values = [
           id,
+          dataUpdate.currentLocationId,
           dataUpdate.fullName,
           dataUpdate.sex,
           hashPass,
@@ -154,6 +156,8 @@ export class CoDriverService {
   add(newCoDriver: CoDriver, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
+        console.log("newCoDriver", newCoDriver);
+        console.log("fileCloudinary", fileCloudinary.secure_url, fileCloudinary.public_id);
         if (!testEmail(newCoDriver.email)) {
           deleteOldFile(fileCloudinary.public_id, "image");
           return reject({
@@ -162,8 +166,9 @@ export class CoDriverService {
           });
         }
         const hashPass = await bcrypt.hash(newCoDriver.password, 10);
-        const sql = "call addCoDriver(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        const sql = "call addCoDriver(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         const values = [
+          newCoDriver.currentLocationId,
           newCoDriver.email,
           newCoDriver.fullName,
           newCoDriver.sex,

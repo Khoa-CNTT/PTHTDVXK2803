@@ -1,4 +1,4 @@
-import { globalBookTicketsDB } from "../config/db";
+import { bookBusTicketsDB } from "../config/db";
 import bcrypt from "bcrypt";
 
 type OtpData = {
@@ -23,7 +23,7 @@ export class OtpService {
       const hash = await bcrypt.hash(otp, salt);
 
       const query = "call upsert_otp(?, ?, ?, ?, ?)";
-      const [result] = await globalBookTicketsDB.execute(query, [
+      const [result] = await bookBusTicketsDB.execute(query, [
         email,
         hash,
         passwordHash,
@@ -49,7 +49,7 @@ export class OtpService {
 
   async findOtp(email: string): Promise<OtpRecord | null> {
     try {
-      const [rowsCount] = await globalBookTicketsDB.execute(
+      const [rowsCount] = await bookBusTicketsDB.execute(
         "SELECT count(otp) FROM otp WHERE email = ?",
         [email]
       );
@@ -57,7 +57,7 @@ export class OtpService {
       const length = rowsCount[0]["count(otp)"];
       console.log("length", length);
 
-      const [rows] = await globalBookTicketsDB.execute(
+      const [rows] = await bookBusTicketsDB.execute(
         "SELECT email, full_name, password, otp FROM otp WHERE email = ?",
         [email]
       );

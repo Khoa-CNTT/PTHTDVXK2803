@@ -12,6 +12,7 @@ import { UserService } from "./user.service";
 import { generalAccessToken, generalRefreshToken } from "../services/auth.service";
 import { OtpService } from "./otp.service";
 import testEmail from "../utils/testEmail";
+import { formatDate } from "../utils/formatDate";
 
 const userService = new UserService(bookBusTicketsDB);
 const otpService = new OtpService();
@@ -132,9 +133,8 @@ export class CustomerService {
 
         let detailCus: ModelCustomer = rows[0][0];
 
-        detailCus.createAt = convertToVietnamTime(detailCus.createAt);
-        detailCus.updateAt = convertToVietnamTime(detailCus.updateAt);
-        detailCus.dateBirth = convertToVietnamTime(detailCus.dateBirth);
+        detailCus.createAt = formatDate(detailCus.createAt, "DD/MM/YYYY", true);
+        detailCus.updateAt = formatDate(detailCus.updateAt, "DD/MM/YYYY", true);
 
         resolve(detailCus);
       } catch (error) {
@@ -216,9 +216,8 @@ export class CustomerService {
           emailSearch,
         ]);
         let dataCustomer: ModelCustomer[] = row[0].map((item: ModelCustomer) => {
-          item.createAt = convertToVietnamTime(item.createAt);
-          item.updateAt = convertToVietnamTime(item.updateAt);
-          item.dateBirth = convertToVietnamTime(item.dateBirth);
+          item.createAt = formatDate(item.createAt, "DD/MM/YYYY", true);
+          item.updateAt = formatDate(item.updateAt, "DD/MM/YYYY", true);
           return item;
         });
         resolve({

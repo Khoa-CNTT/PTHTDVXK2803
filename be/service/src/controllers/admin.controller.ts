@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { errorResponse, successResponse } from "../utils/response.util";
-import { RequestFile } from "../middlewares/uploadHandler";
 import { ArrangeType } from "../@types/type";
 import { bookBusTicketsDB } from "../config/db";
 import { AdminService } from "../services/admin.service";
@@ -52,9 +51,9 @@ export class AdminController {
     }
   };
 
-  create = async (req: RequestFile, res: Response) => {
+  create = async (req: Request, res: Response) => {
     try {
-      const dataNewAdmin = JSON.parse(req.body.data);
+      const dataNewAdmin = req.body;
       const data = await this.adminService.add(dataNewAdmin);
       successResponse(res, 200, data);
     } catch (error) {

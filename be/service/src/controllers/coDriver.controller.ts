@@ -13,6 +13,9 @@ export class CoDriverController {
     try {
       const id = Number(req.params.id);
       const data = await this.coDriverService.fetch(id);
+      if (data.status === "ERR") {
+        errorResponse(res, data.message, 404);
+      }
       successResponse(res, 200, data);
     } catch (error) {
       errorResponse(res, "ERR Controller.fetch", 404);
@@ -26,6 +29,9 @@ export class CoDriverController {
 
       const updateData = req.body;
       const data = await this.coDriverService.update(id, updateData);
+      if (data.status === "ERR") {
+        errorResponse(res, data.message, 404);
+      }
       successResponse(res, 200, data);
     } catch (error) {
       console.log("Err Controller", error);
@@ -41,6 +47,9 @@ export class CoDriverController {
       if (!id) errorResponse(res, "id is required", 404);
 
       const data = await this.coDriverService.updateImage(id, publicId, file);
+      if (data.status === "ERR") {
+        errorResponse(res, data.message, 404);
+      }
       successResponse(res, 200, data);
     } catch (error) {
       console.log("Err Controller", error);
@@ -74,6 +83,9 @@ export class CoDriverController {
       const file = req.uploadedImage as CloudinaryAsset;
       const dataNewCoDriver = JSON.parse(req.body.data);
       const data = await this.coDriverService.add(dataNewCoDriver, file);
+      if (data.status === "ERR") {
+        errorResponse(res, data.message, 404);
+      }
       successResponse(res, 200, data);
     } catch (error) {
       console.log("Err Controller", error);

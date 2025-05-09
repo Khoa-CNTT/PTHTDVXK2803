@@ -5,7 +5,10 @@ import { UserController } from "../controllers/user.controller";
 const router = express.Router();
 const userController = new UserController();
 
-router.post("/auth/login", userController.login);
+router.post("/auth/admin/login", userController.loginByAdmin);
+router.post("/auth/customer/login", userController.loginByCustomer);
+router.post("/auth/driver/login", userController.loginByDriver);
+router.post("/auth/co-driver/login", userController.loginByCoDriver);
 router.post("/auth/logout", userController.logout);
 router.get("/auth/refresh-token", userController.refreshToken);
 

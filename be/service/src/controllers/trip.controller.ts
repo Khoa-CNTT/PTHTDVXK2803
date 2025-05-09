@@ -12,7 +12,7 @@ export class TripController {
       successResponse(res, 200, result);
     } catch (error) {
       console.log("err", error);
-      errorResponse(res, "err getFormData");
+      errorResponse(res, "err getFormData", 500);
     }
   };
 
@@ -23,7 +23,7 @@ export class TripController {
       successResponse(res, 200, result);
     } catch (error) {
       console.log("err", error);
-      errorResponse(res, "err add trip");
+      errorResponse(res, "err add trip", 500);
     }
   };
 
@@ -45,6 +45,18 @@ export class TripController {
     } catch (error) {
       console.log("Err Controller", error);
       errorResponse(res, "ERR Controller.getAll", 404);
+    }
+  };
+
+  fetch = async (req: Request, res: Response) => {
+    try {
+      const id = Number(req.params.id);
+      if (!id) errorResponse(res, "Id invalid", 404);
+      const result = await this.tripService.fetch(id);
+      successResponse(res, 200, result);
+    } catch (error) {
+      console.log("err", error);
+      errorResponse(res, "err fetch trip", 500);
     }
   };
 }

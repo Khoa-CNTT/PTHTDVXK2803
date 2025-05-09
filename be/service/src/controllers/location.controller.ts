@@ -29,7 +29,10 @@ export class LocationController {
   getAll = async (req: Request, res: Response) => {
     try {
       const response = await this.locationService.getAll();
-      successResponse(res, 200, response);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 404);
+      }
+      successResponse(res, 200, response.data);
     } catch (error: any) {
       errorResponse(res, error.message, 500);
     }

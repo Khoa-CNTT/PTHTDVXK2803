@@ -58,7 +58,7 @@ app.get("/", (_, res) => {
 routes(app);
 
 // Start server
-const port = config.PORT || 3006;
+const port = config.PORT || 3003;
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

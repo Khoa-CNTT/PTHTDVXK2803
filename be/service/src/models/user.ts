@@ -15,10 +15,12 @@ export interface ModelUser {
 }
 
 export interface ModelCoDriver extends ModelUser {
+  currentLocationId?: number; // id của vị trí hiện tại
   role: "co-driver";
 }
 
 export interface ModelDriver extends ModelUser {
+  currentLocationId?: number; // id của vị trí hiện tại
   licenseNumber?: string; // số bằng lái xe
   experienceYears?: string; // số năm kinh nghiệm lái xe
   role: "driver";
