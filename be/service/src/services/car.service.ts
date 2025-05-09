@@ -109,12 +109,11 @@ export class CarService {
     try {
       await connection.beginTransaction();
 
-      const { id, currentLocationId, licensePlate, capacity, type } = updateCar;
+      const { id, licensePlate, capacity, type, indexIsMian } = updateCar;
 
       const sql = "CALL UpdateCar(?, ?, ?, ?)";
-      const values = [id, currentLocationId, licensePlate, capacity, type];
-      const [rowsUpdate]: any = await connection.execute(sql, values);
-
+      const values = [id, licensePlate, capacity, type];
+      const [rowsUpdate] = (await connection.execute(sql, values)) as [ResultSetHeader];
       if (rowsUpdate?.affectedRows <= 0) {
         await connection.rollback();
         return {
@@ -122,8 +121,20 @@ export class CarService {
           message: "Cập nhật xe thất bại",
         };
       }
-
       if (rowsUpdate.affectedRows > 0 && filesCloudinary?.length > 0) {
+        if (indexIsMian) {
+          const [resetIsmain] = (await connection.execute(
+            "UPDATE img_car SET is_main = 0 WHERE car_id = ?",
+            [id]
+          )) as [ResultSetHeader];
+          if (resetIsmain?.affectedRows <= 0) {
+            await connection.rollback();
+            return {
+              status: "ERR",
+              message: "Cập nhật ảnh chính thất bại",
+            };
+          }
+        }
         for (let img of filesCloudinary) {
           if (!img?.secure_url || !img?.public_id) continue;
 
