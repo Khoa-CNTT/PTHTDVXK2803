@@ -36,7 +36,7 @@ const ManageDriver: React.FC = () => {
         limit: ITEMS_PER_PAGE,
         arrangeType: arrangeType,
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 
@@ -100,8 +100,8 @@ const ManageDriver: React.FC = () => {
               <th>Hình ảnh</th>
               <th>Họ và tên</th>
               <th>SĐT</th>
-              <th>Ngày sinh</th>
               <th>Mã giấy phép</th>
+              <th>Ngày sinh</th>
               <th>Thao Tác</th>
             </tr>
           </thead>
@@ -120,8 +120,8 @@ const ManageDriver: React.FC = () => {
                 </td>
                 <td>{driver.fullName}</td>
                 <td>{driver.phone}</td>
+                <td>{driver.licenseNumber}</td>
                 <td>{dateTimeTransform(driver.dateBirth, "DD/MM/YYYY", false)}</td>
-                <td>{dateTimeTransform(driver.experienceYears, "DD/MM/YYYY", false)}</td>
                 <td>
                   <div className={styles["btn-list"]}>
                     <Link

@@ -1,0 +1,42 @@
+@use "./mixin" as mix;
+
+.filter-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  @include mix.responsive(mobile) {
+    gap: 0.2rem;
+  }
+
+  .filter-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+
+    .filter-title {
+      font-size: 1.2rem;
+      text-transform: capitalize;
+    }
+
+    .type-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+
+      outline: none;
+      min-width: 5rem;
+      max-width: 15rem;
+
+      .checkbox {
+        width: 1.2rem;
+        height: 1.2rem;
+        cursor: pointer;
+        accent-color: #0dcaf0; // Màu sắc của checkbox
+      }
+    }
+  }
+}

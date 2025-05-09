@@ -10,7 +10,7 @@ import DefaultImage from "../../components/DefaultImage";
 import { debounce } from "../../utils/debounce.util";
 import { getBusList } from "../../services/bus.service";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 5;
 
 const BusManage: React.FC = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const BusManage: React.FC = () => {
         licensePlateSearch: searchLicensePlateValue,
         type: selectedType,
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 
@@ -68,8 +68,8 @@ const BusManage: React.FC = () => {
     });
   };
 
-  const handleRedirectDetail = (id: number) => {
-    navigate(`${urlMain}/detail/${id}`);
+  const handleRedirectDetail = (licensePlate: string) => {
+    navigate(`${urlMain}/detail/${licensePlate}`);
   };
 
   useEffect(() => {
@@ -142,7 +142,7 @@ const BusManage: React.FC = () => {
               <tr key={index}>
                 <td
                   className={styles["user-id"]}
-                  onClick={() => car.id && handleRedirectDetail(car.id)}
+                  onClick={() => car.licensePlate && handleRedirectDetail(car.licensePlate)}
                 >
                   {index + 1 + currentPage * ITEMS_PER_PAGE}
                 </td>

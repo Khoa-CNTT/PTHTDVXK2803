@@ -6,22 +6,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 import { addDriver } from "../../services/driver.service";
+import InputDropDownListCD from "../../components/InputDropDownListCD";
+import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../../components/Loading";
 
 const AddDriver = () => {
   const dateBirthRef = useRef<HTMLInputElement>(null);
   const experienceYearRef = useRef<HTMLInputElement>(null);
   const [statePassword, setStatePassword] = useState(false);
   const [image, setImage] = useState<File | null>(null);
+
+  const { data: locationsData, isLoading: isLocationLoading } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getAllLocation(),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
     address: "",
-    dateBirth: "",
+    dateBirth: new Date().toISOString().split("T")[0],
     email: "",
     sex: "",
     password: "",
-    experienceYears: "",
+    experienceYears: new Date().toISOString().split("T")[0],
     licenseNumber: "",
+    currentLocationId: 0,
   });
 
   const addMutate = useCustomNavMutation(
@@ -41,6 +53,11 @@ const AddDriver = () => {
         [name]: value,
       };
     });
+  };
+
+  const handleSelectedLocation = (selectedArrival: string) => {
+    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
   const handleAddDriver = async () => {
@@ -133,6 +150,23 @@ const AddDriver = () => {
                 );
               })}
             </select>
+          </li>
+
+          <li className={styles["form-group-item"]}>
+            <p className={styles.title}>Thành phố đang làm vệc</p>
+            {!isLocationLoading ? (
+              <InputDropDownListCD
+                idHTML="location"
+                titleModal={"Địa điểm"}
+                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                contentPlaceholder="Nhập địa điểm"
+                onSelected={handleSelectedLocation}
+                funcAddItem={addLocation}
+                funcDelItem={deleteLocation}
+              />
+            ) : (
+              <Loading />
+            )}
           </li>
 
           {[

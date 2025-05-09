@@ -26,12 +26,6 @@ export const updateInfoAdmin = async ({ id, data }: { id: number; data: object }
   return await bookTicketAPI.put(`/admin/update/${id}`, data).then((res) => res.data);
 };
 
-export const addAdmin = async (data: FormData) => {
-  return await bookTicketAPI
-    .post(`/admin/create`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-    .then((res) => res.data);
+export const addAdmin = async (data: { email: string; fullName: string; password: string }) => {
+  return await bookTicketAPI.post(`/admin/create`, data).then((res) => res.data);
 };

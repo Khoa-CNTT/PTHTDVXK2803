@@ -10,6 +10,7 @@ const AddAdmin = () => {
   const [statePassword, setStatePassword] = useState(false);
   const [form, setForm] = useState({
     email: "",
+    fullName: "",
     password: "",
   });
 
@@ -33,9 +34,7 @@ const AddAdmin = () => {
   };
 
   const handleAddCoDriver = async () => {
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(form));
-    addMutate.mutate(formData);
+    addMutate.mutate(form);
   };
 
   const handleTogglePassword = () => {
@@ -62,9 +61,12 @@ const AddAdmin = () => {
           <h2 className={styles["content-title"]}>Thêm mới admin</h2>
         </div>
         <ul className={styles["form-group-list"]}>
-          <li className={`${styles["form-group-item"]} ${styles["form-group-password"]}`}>
-            <p className={styles.title}>Email</p>
+          <li className={`${styles["form-group-item"]}`}>
+            <label htmlFor="email" className={styles.title}>
+              Email
+            </label>
             <input
+              id="email"
               name={"email"}
               type="text"
               className={styles["form-control"]}
@@ -73,9 +75,26 @@ const AddAdmin = () => {
             />
           </li>
 
-          <li className={`${styles["form-group-item"]} ${styles["form-group-password"]}`}>
-            <p className={styles.title}>Mật khẩu</p>
+          <li className={`${styles["form-group-item"]}`}>
+            <label htmlFor="full-name" className={styles.title}>
+              Họ và tên
+            </label>
             <input
+              id="full-name"
+              name={"fullName"}
+              type="text"
+              className={styles["form-control"]}
+              value={form.fullName}
+              onChange={handleChangeValue}
+            />
+          </li>
+
+          <li className={`${styles["form-group-item"]} ${styles["form-group-password"]}`}>
+            <label htmlFor="pass" className={styles.title}>
+              Mật khẩu
+            </label>
+            <input
+              id="pass"
               name={"password"}
               type={statePassword ? "text" : "password"}
               className={styles["form-control"]}

@@ -32,7 +32,7 @@ const ManageCustomer: React.FC = () => {
   }, [location.pathname]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["customerList", currentPage, arrangeType, searchEmailValue],
+    queryKey: ["customers", currentPage, arrangeType, searchEmailValue],
     queryFn: () =>
       getCustomerList({
         offset: currentPage * ITEMS_PER_PAGE,

@@ -1,5 +1,6 @@
 export type DriverType = {
   id: number;
+  currentLocationId?: number; // id vị trí hiện tại của tài xế
   email: string;
   fullName?: string;
   password?: string;
@@ -14,4 +15,8 @@ export type DriverType = {
   createAt?: string; // timestamp
   updateAt?: string; // timestamp
   role: "driver";
+  location: {
+    id: number;
+    name: string;
+  };
 };

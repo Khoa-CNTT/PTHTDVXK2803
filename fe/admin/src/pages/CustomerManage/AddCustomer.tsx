@@ -15,7 +15,7 @@ const AddCustomer = () => {
     fullName: "",
     phone: "",
     address: "",
-    dateBirth: "",
+    dateBirth: new Date().toISOString().split("T")[0],
     email: "",
     sex: "",
     password: "",

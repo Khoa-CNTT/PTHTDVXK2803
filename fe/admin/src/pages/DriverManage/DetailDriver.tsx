@@ -1,6 +1,5 @@
 import styles from "../../styles/detailCD.module.scss";
 import { Link } from "react-router-dom";
-import { dateTimeTransform } from "../../utils/transform";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import Loading from "../../components/Loading";
@@ -15,7 +14,7 @@ const DetailDriver = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["driver", idFetch],
     queryFn: () => fetchDriver(idFetch),
-    staleTime: 5 * 60 * 100,
+    staleTime: 5 * 60 * 1000,
   });
 
   const driver = data ?? null;
@@ -57,19 +56,20 @@ const DetailDriver = () => {
             { label: "email", value: driver?.email },
             { label: "họ và tên", value: driver?.fullName },
             { label: "giới tính", value: driver?.sex },
+            { label: "thành phố đang làm việc", value: driver?.location.name },
             { label: "số điện thoại", value: driver?.phone },
             {
               label: "ngày sinh",
-              value: dateTimeTransform(driver?.dateBirth, "DD-MM-YYYY", false),
+              value: driver?.dateBirth.split("T")[0],
             },
             { label: "Mã giấy phép lái xe", value: driver?.licenseNumber },
             {
               label: "Ngày cấp",
-              value: dateTimeTransform(driver.experienceYears?.split("T")[0], "DD-MM-YYYY", false),
+              value: driver?.experienceYears.split("T")[0],
             },
             { label: "địa chỉ", value: driver?.address },
-            { label: "ngày tạo", value: dateTimeTransform(driver?.createAt, "DD-MM-YYYY") },
-            { label: "ngày cập nhật", value: dateTimeTransform(driver?.updateAt, "DD-MM-YYYY") },
+            { label: "ngày tạo", value: driver?.createAt.split(" ")[1] },
+            { label: "ngày cập nhật", value: driver?.updateAt.split(" ")[1] },
           ].map((item, index) => (
             <li key={index} className={styles.group}>
               <p className={styles.title}>{item.label}</p>

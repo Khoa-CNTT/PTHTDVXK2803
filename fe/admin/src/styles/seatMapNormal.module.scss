@@ -1,41 +1,55 @@
 @use "./mixin" as mix;
 
 .normal-bus {
+  padding: 1.75rem;
+}
+.description {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 3rem;
+
+  .seat-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.seat-list {
   display: flex;
   justify-content: center;
   gap: 3rem;
   flex-wrap: wrap;
-  padding: 1.75rem;
 
-  // @include mix.responsive(mobile) {
-  //   flex-direction: column;
-  // }
-}
+  .floor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.floor {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .title {
-    font-size: 1.15rem;
-    margin-bottom: 0.725rem;
-    color: #333;
+    .title {
+      font-size: 1.15rem;
+      margin-bottom: 0.725rem;
+      color: #333;
+    }
   }
-}
 
-.floor-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+  .floor-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-.seat-row {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+  .seat-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 
-  &:first-child {
-    justify-content: space-between;
+    &:first-child {
+      justify-content: space-between;
+    }
   }
 }

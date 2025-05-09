@@ -6,6 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 import { addCoDriver } from "../../services/coDriver.service";
+import { useQuery } from "@tanstack/react-query";
+import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
+import InputDropDownListCD from "../../components/InputDropDownListCD";
+import Loading from "../../components/Loading";
 
 const AddCoDriver = () => {
   const dateBirthRef = useRef<HTMLInputElement>(null);
@@ -15,10 +19,16 @@ const AddCoDriver = () => {
     fullName: "",
     phone: "",
     address: "",
-    dateBirth: "",
+    dateBirth: new Date().toISOString().split("T")[0],
     email: "",
     sex: "",
     password: "",
+  });
+
+  const { data: locationsData, isLoading: isLocationLoading } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getAllLocation(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const addMutate = useCustomNavMutation(
@@ -35,9 +45,14 @@ const AddCoDriver = () => {
     setForm((prevForm) => {
       return {
         ...prevForm,
-        [name]: value,
+        [name]: value.toString(),
       };
     });
+  };
+
+  const handleSelectedLocation = (selectedArrival: string) => {
+    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
   const handleAddCoDriver = async () => {
@@ -122,6 +137,23 @@ const AddCoDriver = () => {
                 );
               })}
             </select>
+          </li>
+
+          <li className={styles["form-group-item"]}>
+            <p className={styles.title}>Thành phố đang làm vệc</p>
+            {!isLocationLoading ? (
+              <InputDropDownListCD
+                idHTML="location"
+                titleModal={"Địa điểm"}
+                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                contentPlaceholder="Nhập địa điểm"
+                onSelected={handleSelectedLocation}
+                funcAddItem={addLocation}
+                funcDelItem={deleteLocation}
+              />
+            ) : (
+              <Loading />
+            )}
           </li>
 
           {[

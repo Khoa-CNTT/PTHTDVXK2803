@@ -1,7 +1,9 @@
 .wrapper-layout {
+  overflow-x: hidden;
+
   display: flex;
   flex-direction: column;
-  min-width: 100vw;
+  width: 100vw;
   min-height: 100vh;
 }
 
@@ -16,18 +18,33 @@
 }
 
 .header {
+  z-index: 10;
+  position: fixed;
+
+  width: 100%;
+  padding: 1.2rem;
+
   background-color: rgb(46, 180, 252);
   color: #000;
-  padding: 1rem;
 }
 
 .main {
+  // overflow-x: hidden;
   z-index: 100 !important ;
+  display: flex;
+  justify-content: space-between;
 
   flex: 1;
-  padding: 2rem;
 
   background-color: #f0f0f0;
+
+  .wrapper-header-main {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+  }
 }
 
 .footer {

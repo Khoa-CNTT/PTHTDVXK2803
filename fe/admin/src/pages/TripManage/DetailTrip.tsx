@@ -1,35 +1,37 @@
 import styles from "../../styles/detailCD.module.scss";
 import { Link } from "react-router-dom";
-import { dateTimeTransform } from "../../utils/transform";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import Loading from "../../components/Loading";
 import { useEffect } from "react";
-import DefaultImage from "../../components/DefaultImage";
-import { fetchDriver } from "../../services/driver.service";
+import { fetchTrip } from "../../services/trip.service";
+import SeatMapNormal from "../../components/SeatMapNormal";
+import SeatMapSleeper from "../../components/SeatMapSleeper";
+import formatCurrency from "../../utils/formatCurrency";
+import { dateTimeTransform } from "../../utils/transform";
 
-const DetailDriver = () => {
+const DetailTrip = () => {
   const { id } = useParams();
   const idFetch = id ?? "0";
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["driver", idFetch],
-    queryFn: () => fetchDriver(idFetch),
-    staleTime: 5 * 60 * 100,
+    queryKey: ["trip", idFetch],
+    queryFn: () => fetchTrip(idFetch),
+    staleTime: 5 * 60 * 1000,
   });
 
-  const driver = data ?? null;
+  const trip = data?.detailTrip ?? null;
 
-  useEffect(() => {}, [driver]);
+  useEffect(() => {}, [trip]);
 
   if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
-  if (!driver) return <p className={styles.error}>Không tìm thấy thông tin khách hàng</p>;
+  if (!trip) return <p className={styles.error}>Không tìm thấy thông tin chuyến đi</p>;
 
   return (
     <div className={styles.container}>
       <div className={styles["feat-back"]}>
-        <Link to={`/driver-manage`} className={styles["btn-back"]}>
+        <Link to={`/trip-manage`} className={styles["btn-back"]}>
           Quay lại
         </Link>
       </div>
@@ -38,7 +40,7 @@ const DetailDriver = () => {
           <h2 className={styles["content-title"]}>Thông tin chi tiết</h2>
           <div className={styles["feat-list"]}>
             <Link
-              to={`/driver-manage/update/${driver?.id}`}
+              to={`/trip-manage/update/${idFetch}`}
               className={`${styles["btn-update"]} ${styles["feat-item"]}`}
             >
               Cập nhật
@@ -47,29 +49,53 @@ const DetailDriver = () => {
           </div>
         </div>
         <ul className={styles.detail}>
-          <li className={`${styles["item__img"]} ${styles.group}`}>
-            <p className={styles.title}>Ảnh đại diện</p>
-            <div className={styles.img}>
-              <DefaultImage src={driver?.urlImg} />
-            </div>
-          </li>
           {[
-            { label: "email", value: driver?.email },
-            { label: "họ và tên", value: driver?.fullName },
-            { label: "giới tính", value: driver?.sex },
-            { label: "số điện thoại", value: driver?.phone },
+            { label: "Tên chuyến đi", value: trip?.name },
+            { label: "Tài xế", value: `${trip?.driver.fullName} - ${trip?.driver.phone}` },
+          ].map((item, index) => (
+            <li key={index} className={styles.group}>
+              <p className={styles.title}>{item.label}</p>
+              <input className={styles.data} value={item.value ?? "N/A"} readOnly />
+            </li>
+          ))}
+
+          <li className={styles.group}>
+            <p className={styles.title}>Phụ xe</p>
+            {trip.coDrivers.map((cdr, index) => (
+              <input
+                key={index}
+                className={styles.data}
+                value={`${cdr.fullName ?? "N/A"} - ${cdr.phone ?? "N/A"}`}
+                readOnly
+              />
+            ))}
+          </li>
+
+          {trip.car.type === null ? null : trip.car.type === "xe thường" ? (
+            <li className={styles["form-group-item"]}>
+              <label className={styles.title}>Ghế</label>
+              <SeatMapNormal initialSeats={trip.seats} />
+            </li>
+          ) : (
+            <li className={styles["form-group-item"]}>
+              <label className={styles.title}>Ghế</label>
+              <SeatMapSleeper initialSeats={trip.seats} />
+            </li>
+          )}
+          {[
+            { label: "Địa điểm khởi hành", value: trip?.departure?.name },
+            { label: "Thời gian khởi hành", value: dateTimeTransform(trip?.startTime) },
+            { label: "Địa điểm Đón", value: trip?.arrival?.name },
             {
-              label: "ngày sinh",
-              value: dateTimeTransform(driver?.dateBirth, "DD-MM-YYYY", false),
+              label: "Thời gian kết thúc",
+              value: dateTimeTransform(trip?.endTime, "DD/MM/YYYY", true),
             },
-            { label: "Mã giấy phép lái xe", value: driver?.licenseNumber },
+            { label: "Giá tiền mỗi vé", value: formatCurrency(trip?.price) },
+            { label: "Ngày tạo", value: dateTimeTransform(trip?.createAt, "DD/MM/YYYY", true) },
             {
-              label: "Ngày cấp",
-              value: dateTimeTransform(driver.experienceYears?.split("T")[0], "DD-MM-YYYY", false),
+              label: "Ngày cập nhật",
+              value: dateTimeTransform(trip?.updateAt, "DD/MM/YYYY", true),
             },
-            { label: "địa chỉ", value: driver?.address },
-            { label: "ngày tạo", value: dateTimeTransform(driver?.createAt, "DD-MM-YYYY") },
-            { label: "ngày cập nhật", value: dateTimeTransform(driver?.updateAt, "DD-MM-YYYY") },
           ].map((item, index) => (
             <li key={index} className={styles.group}>
               <p className={styles.title}>{item.label}</p>
@@ -82,4 +108,4 @@ const DetailDriver = () => {
   );
 };
 
-export default DetailDriver;
+export default DetailTrip;

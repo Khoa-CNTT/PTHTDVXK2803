@@ -10,6 +10,8 @@ import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 import { fetchDriver, updateInfoDriver } from "../../services/driver.service";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
+import InputDropDownListCD from "../../components/InputDropDownListCD";
 
 const UpdateDriver = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +23,13 @@ const UpdateDriver = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["driver", idFetch],
     queryFn: () => fetchDriver(idFetch),
-    staleTime: 5 * 60 * 100,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: locationsData, isLoading: isLocationLoading } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getAllLocation(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const driver = data ?? null;
@@ -37,6 +45,7 @@ const UpdateDriver = () => {
     password: "",
     experienceYears: "",
     licenseNumber: "",
+    currentLocationId: 0,
   });
 
   const updateMutate = useCustomNavMutation(
@@ -88,19 +97,25 @@ const UpdateDriver = () => {
     setStatePassword((prev) => !prev);
   };
 
+  const handleSelectedLocation = (selectedArrival: string) => {
+    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
+  };
+
   useEffect(() => {
     if (driver) {
       setForm({
         id: id,
-        fullName: driver.fullName ?? "",
+        fullName: driver?.fullName ?? "",
         password: "",
-        sex: driver.sex ?? "",
-        licenseNumber: driver.licenseNumber ?? "",
-        experienceYears: driver.experienceYears?.split(" ")[0] ?? "",
-        phone: driver.phone ?? "",
-        address: driver.address ?? "",
-        dateBirth: driver.dateBirth?.split(" ")[0] ?? "",
-        email: driver.email ?? "",
+        sex: driver?.sex ?? "",
+        licenseNumber: driver?.licenseNumber ?? "",
+        experienceYears: driver?.experienceYears.split("T")[0] ?? "",
+        phone: driver?.phone ?? "",
+        address: driver?.address ?? "",
+        dateBirth: driver?.dateBirth?.split("T")[0] ?? "",
+        email: driver?.email ?? "",
+        currentLocationId: driver?.currentLocationId,
       });
     }
   }, [driver]);
@@ -171,6 +186,24 @@ const UpdateDriver = () => {
                 );
               })}
             </select>
+          </li>
+
+          <li className={styles.item}>
+            <p className={styles.title}>Thành phố đang làm vệc</p>
+            {!isLocationLoading ? (
+              <InputDropDownListCD
+                idHTML="location"
+                titleModal={"Địa điểm"}
+                valueIn={data.location.name}
+                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                contentPlaceholder="Nhập địa điểm"
+                onSelected={handleSelectedLocation}
+                funcAddItem={addLocation}
+                funcDelItem={deleteLocation}
+              />
+            ) : (
+              <Loading />
+            )}
           </li>
 
           {[

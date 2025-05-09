@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { login } from "../services/user.service";
+import { login } from "../services/auth.service";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import styled from "../styles/login.module.scss";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -10,8 +14,14 @@ const Login = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     const response = await login(form);
-    localStorage.setItem("accept", response.status);
-    localStorage.setItem("expirationTime", response.expirationTime);
+    if (response.status === "OK") {
+      toast.success("Đăng nhập thành công");
+      localStorage.setItem("accept", response.status);
+      localStorage.setItem("expirationTime", response.expirationTime);
+      navigate("/");
+    } else {
+      toast.error("Đăng nhập thất bại");
+    }
   };
 
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +33,7 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className={styled["login-container"]}>
       <form onSubmit={handleLogin}>
         <div className="ul">
           <label htmlFor="email">Email:</label>

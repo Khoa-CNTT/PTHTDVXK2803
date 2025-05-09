@@ -34,3 +34,49 @@ export interface TripData {
   totalSeatAvailable: number;
   totalSeatBooked: number;
 }
+
+export interface UserInfo {
+  id: number;
+  fullName: string;
+  phone: string;
+}
+
+export interface LocationInfo {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+}
+
+export interface CarInfo {
+  id: number;
+  type: TypeBus;
+  licensePlate: string;
+}
+
+interface SeatInfo {
+  id?: number;
+  tripId?: number;
+  position: string;
+  price?: number;
+  status: "available" | "booked" | "unavailable";
+  floor?: "top" | "bottom";
+}
+
+export interface TripInfo {
+  detailTrip: {
+    id?: number;
+    name: string;
+    car: CarInfo;
+    seats: SeatInfo[];
+    driver: UserInfo;
+    coDrivers: UserInfo[];
+    departure: LocationInfo;
+    startTime: string;
+    arrival: LocationInfo;
+    endTime: string;
+    price: number;
+    createAt: string;
+    updateAt: string;
+  };
+}

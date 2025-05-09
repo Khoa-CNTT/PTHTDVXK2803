@@ -1,9 +1,10 @@
 #root {
   width: var(--client-width);
   box-sizing: border-box;
+  overflow: hidden;
 }
 .custom-toast {
   white-space: normal !important;
   word-break: break-word;
-  max-width: 90vw;
+  max-width: 90%;
 }

@@ -8,6 +8,8 @@ import { fetchCoDriver, updateInfoCoDriver } from "../../services/coDriver.servi
 import Loading from "../../components/Loading";
 import DefaultImage from "../../components/DefaultImage";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
+import InputDropDownListCD from "../../components/InputDropDownListCD";
+import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
 
 const UpdateCoDriver = () => {
   const { id } = useParams<{ id: string }>();
@@ -17,7 +19,13 @@ const UpdateCoDriver = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["coDriver", idFetch],
     queryFn: () => fetchCoDriver(idFetch),
-    staleTime: 5 * 60 * 100,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: locationsData, isLoading: isLocationLoading } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getAllLocation(),
+    staleTime: 5 * 60 * 1000,
   });
 
   const coDriver = data ?? null;
@@ -31,6 +39,7 @@ const UpdateCoDriver = () => {
     address: "",
     dateBirth: "",
     email: "",
+    currentLocationId: 0,
   });
 
   const updateMutate = useCustomNavMutation(
@@ -70,6 +79,11 @@ const UpdateCoDriver = () => {
     }
   };
 
+  const handleSelectedLocation = (selectedArrival: string) => {
+    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
+  };
+
   useEffect(() => {
     if (coDriver) {
       setForm({
@@ -79,8 +93,9 @@ const UpdateCoDriver = () => {
         sex: coDriver.sex ?? "",
         phone: coDriver.phone ?? "",
         address: coDriver.address ?? "",
-        dateBirth: coDriver.dateBirth?.split(" ")[0] ?? "",
+        dateBirth: coDriver.dateBirth.split("T")[0] ?? "",
         email: coDriver.email ?? "",
+        currentLocationId: coDriver.location.id ?? 0,
       });
     }
   }, [coDriver]);
@@ -151,6 +166,24 @@ const UpdateCoDriver = () => {
                 );
               })}
             </select>
+          </li>
+
+          <li className={styles.item}>
+            <p className={styles.title}>Thành phố đang làm vệc</p>
+            {!isLocationLoading ? (
+              <InputDropDownListCD
+                idHTML="location"
+                titleModal={"Địa điểm"}
+                valueIn={coDriver.location.name}
+                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                contentPlaceholder="Nhập địa điểm"
+                onSelected={handleSelectedLocation}
+                funcAddItem={addLocation}
+                funcDelItem={deleteLocation}
+              />
+            ) : (
+              <Loading />
+            )}
           </li>
 
           {[

@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "../styles/dropDownList.module.scss";
 import sortString from "../utils/sort";
 

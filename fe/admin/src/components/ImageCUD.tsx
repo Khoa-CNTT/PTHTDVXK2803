@@ -26,7 +26,7 @@ const ImageCUD: React.FC<ImageCUDProps> = ({
   onIsMain,
 }) => {
   const fileRef = useRef<HTMLInputElement>(null);
-  const [imageFile, setImageFile] = useState<File | null>(imgFile);
+  const imageFileRef = useRef<File | null>(imgFile);
   const [previewImgFile, setPreviewImgFile] = useState<string | null>(previewImg);
 
   const handleClickUpdate = () => {
@@ -38,10 +38,9 @@ const ImageCUD: React.FC<ImageCUDProps> = ({
       const newImg = e.target.files[0];
       const newPreview = URL.createObjectURL(newImg);
 
-      setImageFile(newImg);
+      imageFileRef.current = newImg;
       setPreviewImgFile(newPreview);
 
-      //
       if (onUpdate && id !== undefined) {
         onUpdate(id, newImg, newPreview);
       }
@@ -57,10 +56,9 @@ const ImageCUD: React.FC<ImageCUDProps> = ({
     e.preventDefault(); // Prevent form submission
     if (onDelete && id !== undefined) onDelete(id);
   };
-  console.log(imageFile);
   return (
     <div className={styles.container}>
-      <DefaultImage src={previewImgFile ?? ""} />
+      <DefaultImage key={previewImgFile} src={previewImgFile ?? ""} />
       {imgCUD ? (
         <div className={styles.actions}>
           <button

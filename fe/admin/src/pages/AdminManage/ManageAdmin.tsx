@@ -76,7 +76,7 @@ const ManageAdmin: React.FC = () => {
         </div>
 
         <Link to={"/admin-manage/add"} className={styles["btn-add"]}>
-          Thêm phụ xe
+          Thêm quản trị viên
         </Link>
       </div>
       <div className={styles["table-wrapper"]}>

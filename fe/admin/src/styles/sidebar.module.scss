@@ -1,16 +1,27 @@
-.sidebar {
-  width: 250px;
-  min-height: 100vh;
-  background-color: #fff;
-  transition: all 0.3s ease;
-  padding: 1rem;
-  border-right: 1px solid #ddd;
+@use "./mixin" as mix;
+
+.side-bar {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
+
+  max-width: 24rem;
+  min-height: 100vh;
+
+  background-color: #fff;
+
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+
+  transition: max-width 0.4s linear;
+
+  @include mix.responsive(mobile) {
+    display: none;
+  }
+
+  .side-bar__top-section {
+    position: sticky;
+  }
 
   &.dark {
     background-color: #181818;
@@ -18,29 +29,15 @@
     border-right: 1px solid #333;
   }
 
-  &.collapsed {
-    width: 80px;
+  &__top-section {
+    overflow-x: hidden;
 
-    .logo {
-      display: none;
-    }
-
-    .menu li a {
-      justify-content: center;
-    }
-
-    .sectionTitle {
-      display: none;
-    }
-  }
-
-  .topSection {
     display: flex;
     align-items: center;
     margin-bottom: 2rem;
   }
 
-  .toggleBtn {
+  &__toggle-btn {
     background: none;
     border: none;
     font-size: 1.5rem;
@@ -48,43 +45,110 @@
     color: inherit;
   }
 
-  .logo {
+  &__logo {
     font-weight: bold;
     font-size: 1.2rem;
   }
 
-  .menu {
+  &__menu {
     flex: 1;
-    ul {
-      list-style: none;
-      padding: 0;
 
-      li {
-        margin-bottom: 1rem;
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
 
-        a {
+      .side-bar__menu-item {
+        overflow-x: hidden;
+
+        display: flex;
+
+        padding: 0.5rem;
+
+        .side-bar__menu-link {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 1rem;
+
           color: inherit;
           text-decoration: none;
           font-size: 1rem;
+          line-height: 1.2rem;
 
-          &:hover {
-            color: red;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+
+          .icon {
+            font-size: 1rem;
+          }
+
+          // Ẩn chữ khi collapsed
+          .side-bar__section-title {
+            display: block;
           }
         }
       }
     }
   }
 
-  .sectionTitle {
+  &__section-title {
     font-size: 0.9rem;
     font-weight: bold;
     margin: 1rem 0 0.5rem 0;
   }
 
-  .bottomSection {
+  &__bottom-section {
     margin-top: auto;
+  }
+}
+
+.collapsed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  max-width: 4rem;
+  min-height: 100vh;
+
+  background-color: #fff;
+
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+
+  transition: max-width 0.4s linear;
+
+  @include mix.responsive(mobile) {
+    display: none;
+  }
+}
+
+.ic-wrapper {
+  position: relative;
+
+  .ic-default,
+  .ic-hover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    cursor: pointer;
+
+    transition: opacity 0.2s ease;
+  }
+
+  .ic-hover {
+    opacity: 0;
+  }
+
+  &:hover {
+    .ic-default {
+      opacity: 0;
+    }
+
+    .ic-hover {
+      opacity: 1;
+      color: var(--primary);
+    }
   }
 }

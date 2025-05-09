@@ -25,7 +25,7 @@ const PromotionManage: React.FC = () => {
   );
   const [searchCodeValue, setSearchCodeValue] = useState<string>("");
   const [selectedType, setSelectedType] = useState<"all" | "percentage" | "fixed">("all");
-  const [selectedCarTypes, setSelectedCarTypes] = useState<string[]>([]); // Đã thêm state cho car_type
+  const [selectedCarTypes, setSelectedCarTypes] = useState<string[]>([]);
 
   const urlMain = "/promotion-manage";
 

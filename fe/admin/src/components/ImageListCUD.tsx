@@ -1,6 +1,7 @@
 import { memo, useRef } from "react";
 import ImageCUD from "./ImageCUD";
 import styles from "../styles/imageListCUD.module.scss";
+import { toast } from "react-toastify";
 
 export interface ImageCUDType {
   id: number;
@@ -19,6 +20,10 @@ const ImageListCUD: React.FC<ImageListCUDProps> = ({ images, setImages }) => {
   // const [images, setImages] = useState<ImageType[]>([]);
 
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length > 5) {
+      toast.warning("Chỉ được chọn tối đa 5 ảnh");
+      return;
+    }
     if (e.target.files) {
       const newImgs = Array.from(e.target.files).map((file) => ({
         id: Date.now() + Math.random(),

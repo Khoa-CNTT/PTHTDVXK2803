@@ -16,7 +16,7 @@ const UpdateBus = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["bus", licensePlate],
     queryFn: () => getDetailBus(licensePlate),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
   });
 
   const bus = data ?? null;
@@ -96,7 +96,12 @@ const UpdateBus = () => {
         </div>
         <ul className={styles["data-list"]}>
           {[
-            { label: "Biển số xe", value: form?.licensePlate, name: "licensePlate" },
+            {
+              label: "Biển số xe",
+              value: form?.licensePlate,
+              name: "licensePlate",
+              readonly: true,
+            },
             { label: "Sức chứa", value: form?.capacity, name: "capacity" },
             { label: "Loại xe", value: form?.type, type: "select", name: "type" },
             {

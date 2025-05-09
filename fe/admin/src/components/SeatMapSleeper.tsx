@@ -1,24 +1,31 @@
 import { useEffect, useState } from "react";
 import styles from "../styles/seatMapSleeper.module.scss";
 import Seat, { SeatType } from "./Seat";
+import { toast } from "react-toastify";
 
 const SeatMapSleeper = ({
   initialSeats,
   onSelected,
 }: {
   initialSeats: SeatType[];
-  onSelected: (seats: SeatType[]) => void;
+  onSelected?: (seats: SeatType[]) => void;
 }) => {
   const [seats, setSeats] = useState<SeatType[]>(initialSeats);
 
   const handleSelectedSeat = (updatedSeat: SeatType) => {
-    setSeats((prevSeats) =>
-      prevSeats.map((seat) => (seat.position === updatedSeat.position ? updatedSeat : seat))
-    );
+    if (onSelected) {
+      setSeats((prevSeats) =>
+        prevSeats.map((seat) => (seat.position === updatedSeat.position ? updatedSeat : seat))
+      );
+    } else {
+      toast.warning("Bạn không có quyền thay đổi trạng thái của nó");
+    }
   };
 
   useEffect(() => {
-    onSelected(seats);
+    if (onSelected) {
+      onSelected(seats);
+    }
   }, [seats, onSelected]);
 
   const renderFloor = (floor: "top" | "bottom") => {

@@ -53,10 +53,10 @@ const UpdateCustomer = () => {
     });
   };
 
-  const handleUpdateCustomer = async () => {
+  const handleUpdateCustomer = () => {
     const { id, ...data } = form;
     if (id) {
-      await updateMutate.mutateAsync({ id: Number(id), data });
+      updateMutate.mutate({ id: Number(id), data });
     } else {
       return;
     }
@@ -79,7 +79,7 @@ const UpdateCustomer = () => {
         sex: customer.sex ?? "",
         phone: customer.phone ?? "",
         address: customer.address ?? "",
-        dateBirth: customer.dateBirth?.split(" ")[0] ?? "",
+        dateBirth: customer.dateBirth?.split("T")[0] ?? "",
         email: customer.email ?? "",
       });
     }

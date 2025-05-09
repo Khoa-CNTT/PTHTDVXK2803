@@ -1,4 +1,4 @@
-import { FormDataType, TripData } from "../types/trip";
+import { FormDataType, TripData, TripInfo } from "../types/trip";
 import { ArrangeType } from "../types/type";
 import { bookTicketAPI } from "./customize.service";
 
@@ -26,4 +26,8 @@ export const getAllTrip = async ({
       `/trip/get-all?license_plate=${licensePlateSearch}&offset=${offset}&limit=${limit}&arrangeType=${arrangeType}`
     )
     .then((res) => res.data);
+};
+
+export const fetchTrip = async (id: string) => {
+  return await bookTicketAPI.get<TripInfo>(`/trip/get-detail/${id}`).then((res) => res.data);
 };

@@ -133,7 +133,6 @@ const AddTrip = () => {
       setSeats(generateSleeperSeats());
     }
   };
-
   const handleSelectedSeat = useCallback((seatsUpdate) => {
     setSeats(seatsUpdate);
   }, []);
