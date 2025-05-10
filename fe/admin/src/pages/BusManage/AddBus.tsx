@@ -8,6 +8,7 @@ import { addLocation, deleteLocation, getAllLocation } from "../../services/loca
 import { useQuery } from "@tanstack/react-query";
 import InputDropDownListCD from "../../components/InputDropDownListCD";
 import Loading from "../../components/Loading";
+import { toast } from "react-toastify";
 
 const AddBus = () => {
   const [images, setImages] = useState<ImageCUDType[]>([]);
@@ -32,8 +33,6 @@ const AddBus = () => {
     "Thêm xe thất bại"
   );
 
-  // const imageList = car?.images ?? null;
-
   const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
@@ -54,6 +53,8 @@ const AddBus = () => {
         const updateForm = { ...form };
         updateForm.indexIsMain = index.toString();
         formData.set("data", JSON.stringify(updateForm));
+      } else {
+        return toast.error("Vui lòng chọn ảnh chính");
       }
     });
 
@@ -122,7 +123,7 @@ const AddBus = () => {
           ))}
 
           <li className={styles.item}>
-            <label className={styles.label}>Thành phố đang làm vệc</label>
+            <label className={styles.label}>Thành phố đang ở hiện tại:</label>
             {!isLocationLoading ? (
               <InputDropDownListCD
                 idHTML="location"

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { GoTriangleDown } from "react-icons/go";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Loading from "../../components/Loading";
 import Pagination from "../../components/Pagination";
 import styles from "../../styles/busManage.module.scss";
@@ -13,70 +13,73 @@ import { getBusList } from "../../services/bus.service";
 const ITEMS_PER_PAGE = 5;
 
 const BusManage: React.FC = () => {
-  const navigate = useNavigate();
-  const { page } = useParams<{ page?: string }>();
-  const location = useLocation();
-  const [arrangeType, setArrangeType] = useState<ArrangeType>("desc");
-  const [currentPage, setCurrentPage] = useState<number>(
-    page ? Math.max(1, parseInt(page, 10)) - 1 : 0
-  );
-  const [searchLicensePlateValue, setSearchLicensePlateValue] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<"xe-thuong" | "xe-giuong-nam" | "all">("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [arrangeType, setArrangeType] = React.useState<ArrangeType>("desc");
 
-  const urlMain = "/bus-manage";
+  const licensePlate = searchParams.get("license_plate") ?? "";
+  const selectedType = (
+    ["all", "xe-thuong", "xe-giuong-nam"].includes(searchParams.get("type") || "")
+      ? searchParams.get("type")
+      : "all"
+  ) as "all" | "xe-thuong" | "xe-giuong-nam";
 
-  // Khi URL thay đổi, cập nhật currentPage
-  useEffect(() => {
-    const pageNum = page ? Math.max(1, parseInt(page, 10)) - 1 : 0;
-    setCurrentPage(pageNum);
-  }, [location.pathname]);
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["busList", currentPage, arrangeType, searchLicensePlateValue, selectedType],
+    queryKey: ["busList", currentPage, arrangeType, licensePlate, selectedType],
     queryFn: () =>
       getBusList({
-        offset: currentPage * ITEMS_PER_PAGE,
+        offset: (currentPage - 1) * ITEMS_PER_PAGE,
         limit: ITEMS_PER_PAGE,
-        arrangeType: arrangeType,
-        licensePlateSearch: searchLicensePlateValue,
+        arrangeType,
+        licensePlateSearch: licensePlate,
         type: selectedType,
       }),
     staleTime: 5 * 60 * 1000,
-    placeholderData: (previousData) => previousData,
+    placeholderData: (prev) => prev,
   });
 
   const total = data?.total ?? 0;
   const carsData = data?.data || [];
 
-  const toggleArrangeType = () => {
-    setArrangeType((prevArrangeType) => (prevArrangeType === "asc" ? "desc" : "asc"));
-  };
+  const urlMain = "/bus-manage";
 
   const handleChangeValueSearch = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchLicensePlateValue(e.target.value);
-  }, 200);
+    const value = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+
+    if (value) newParams.set("license_plate", value);
+    else newParams.delete("license_plate");
+
+    newParams.set("page", "1"); // Reset trang
+    setSearchParams(newParams);
+  }, 300);
 
   const handleSelectedTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedType(e.target.value as "all" | "xe-thuong" | "xe-giuong-nam");
+    const value = e.target.value;
+    const newParams = new URLSearchParams(searchParams);
+
+    if (value) newParams.set("type", value);
+    else newParams.delete("type");
+
+    newParams.set("page", "1"); // Reset trang
+    setSearchParams(newParams);
   };
 
   const handlePageClick = (selectedItem: { selected: number }) => {
-    const newPage = selectedItem.selected + 1;
-    setCurrentPage(selectedItem.selected); // Cập nhật state ngay lập tức
-    navigate(newPage > 1 ? `/bus-manage/page/${newPage}` : `/bus-manage`, {
-      replace: true,
-    });
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set("page", (selectedItem.selected + 1).toString());
+    setSearchParams(newParams);
   };
 
-  const handleRedirectDetail = (licensePlate: string) => {
-    navigate(`${urlMain}/detail/${licensePlate}`);
+  const toggleArrangeType = () => {
+    setArrangeType((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0); // Scroll lên đầu khi chuyển trang
+    window.scrollTo(0, 0);
   }, [data]);
 
-  if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
 
   return (
@@ -88,6 +91,7 @@ const BusManage: React.FC = () => {
             placeholder="Tìm kiếm..."
             className={styles["search-input"]}
             onChange={handleChangeValueSearch}
+            defaultValue={licensePlate}
           />
         </div>
         <div className={`${"filter-type"} ${styles["type-list"]}`}>
@@ -111,75 +115,75 @@ const BusManage: React.FC = () => {
             </div>
           ))}
         </div>
-        <Link to={"/bus-manage/add"} className={styles["btn-add"]}>
+        <Link to={`${urlMain}/add`} className={styles["btn-add"]}>
           Thêm xe khách
         </Link>
       </div>
+
       <div className={styles["table-wrapper"]}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>
-                <div className={styles["numerical-order"]}>
-                  <p>STT</p>
-                  <GoTriangleDown
-                    className={`${styles.icon} ${
-                      arrangeType === "desc" ? styles.desc : styles.asc
-                    }`}
-                    onClick={toggleArrangeType}
-                  />
-                </div>
-              </th>
-              <th>Hình ảnh</th>
-              <th>Biển số xe</th>
-              <th>Sức chứa</th>
-              <th>Loại xe</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {carsData.map((car, index) => (
-              <tr key={index}>
-                <td
-                  className={styles["user-id"]}
-                  onClick={() => car.licensePlate && handleRedirectDetail(car.licensePlate)}
-                >
-                  {index + 1 + currentPage * ITEMS_PER_PAGE}
-                </td>
-                <td>
-                  <DefaultImage src={car.image.urlImg} />
-                </td>
-                <td>{car.licensePlate}</td>
-                <td>{car.capacity ? `${car.capacity} chỗ` : "N/A"} </td>
-                <td>{car.type}</td>
-                <td>
-                  <div className={styles["btn-list"]}>
-                    <Link
-                      to={`${urlMain}/detail/${car.licensePlate}`}
-                      className={`${styles["btn-detail"]} ${styles.btn}`}
-                    >
-                      Chi tiết
-                    </Link>
-                    <Link
-                      to={`${urlMain}/update/${car.licensePlate}`}
-                      className={`${styles["btn-edit"]} ${styles.btn}`}
-                    >
-                      Cập nhật
-                    </Link>
-                    <button className={`${styles["btn-delete"]} ${styles.btn}`}>Xóa</button>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>
+                  <div className={styles["numerical-order"]}>
+                    <p>STT</p>
+                    <GoTriangleDown
+                      className={`${styles.icon} ${
+                        arrangeType === "desc" ? styles.desc : styles.asc
+                      }`}
+                      onClick={toggleArrangeType}
+                    />
                   </div>
-                </td>
+                </th>
+                <th>Hình ảnh</th>
+                <th>Biển số xe</th>
+                <th>Sức chứa</th>
+                <th>Loại xe</th>
+                <th>Thao Tác</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {carsData.map((car, index) => (
+                <tr key={index}>
+                  <td>{index + 1 + (currentPage - 1) * ITEMS_PER_PAGE}</td>
+                  <td>
+                    <DefaultImage src={car.image.urlImg} />
+                  </td>
+                  <td>{car.licensePlate}</td>
+                  <td>{car.capacity ? `${car.capacity} chỗ` : "N/A"} </td>
+                  <td>{car.type}</td>
+                  <td>
+                    <div className={styles["btn-list"]}>
+                      <Link
+                        to={`${urlMain}/detail/${car.licensePlate}`}
+                        className={`${styles["btn-detail"]} ${styles.btn}`}
+                      >
+                        Chi tiết
+                      </Link>
+                      <Link
+                        to={`${urlMain}/update/${car.licensePlate}`}
+                        className={`${styles["btn-edit"]} ${styles.btn}`}
+                      >
+                        Cập nhật
+                      </Link>
+                      <button className={`${styles["btn-delete"]} ${styles.btn}`}>Xóa</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       <div className={styles.pagination}>
         <Pagination
           pageCount={Math.ceil(total / ITEMS_PER_PAGE)}
           onPageChange={handlePageClick}
-          currentPage={currentPage}
+          currentPage={currentPage - 1}
         />
       </div>
     </div>

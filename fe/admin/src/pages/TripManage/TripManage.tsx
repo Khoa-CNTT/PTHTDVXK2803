@@ -112,6 +112,7 @@ const TripManage: React.FC = () => {
               <th>Điểm đến</th>
               <th>Thời gian kết thúc</th>
               <th>Số ghế còn trống</th>
+              <th>Số ghế đã đặt</th>
               <th>Giá cho mỗi ghế</th>
               <th>Thao Tác</th>
             </tr>
@@ -133,6 +134,7 @@ const TripManage: React.FC = () => {
                 <td>{trip.arrivalLocation}</td>
                 <td>{dateTimeTransform(trip.endTime, "DD/MM/YYYY", true)}</td>
                 <td>{trip.totalSeatAvailable}</td>
+                <td>{trip.totalSeatBooked}</td>
                 <td>{formatCurrency(trip.price)}</td>
                 <td>
                   <div className={styles["actions"]}>

@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "../styles/header.module.scss";
 import { FaBars, FaBus, FaHome, FaTicketAlt, FaUsers, FaUserTie } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { RiAdminFill, RiUserStarFill } from "react-icons/ri";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { logout } from "../services/auth.service";
+import { toast } from "react-toastify";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const sideBarRef = useRef<HTMLDivElement>(null);
 
@@ -18,6 +21,18 @@ const Header = () => {
     e.stopPropagation();
     if (!collapsed && sideBarRef.current && !sideBarRef.current.contains(e.target as Node)) {
       setCollapsed(true);
+    }
+  };
+
+  const handleLogout = async () => {
+    const response = await logout();
+    if (response.status === "OK") {
+      toast.success("Đăng xuất thành công");
+      localStorage.removeItem("accept");
+      localStorage.removeItem("expirationTime");
+      navigate("/login");
+    } else {
+      toast.error("Đăng xuất thất bại");
     }
   };
 
@@ -115,7 +130,11 @@ const Header = () => {
               </NavLink>
             </li>
             <li className={`${styled["side-bar-mobile__menu-item"]} ${styled["action-logout"]}`}>
-              <FontAwesomeIcon icon={faRightFromBracket} className={styled["ic-default"]} />
+              <FontAwesomeIcon
+                icon={faRightFromBracket}
+                className={styled["ic-default"]}
+                onClick={handleLogout}
+              />
             </li>
           </ul>
         </nav>

@@ -68,7 +68,6 @@ function App() {
               {/* Car Manage */}
               <Route path="/bus-manage" element={<ManageLayout />}>
                 <Route index element={<BusManage />} />
-                <Route path="page/:page" element={<BusManage />} />
                 <Route path="detail/:licensePlate" element={<DetailCar />} />
                 <Route path="add" element={<AddCar />} />
                 <Route path="update/:licensePlate" element={<UpdateCar />} />

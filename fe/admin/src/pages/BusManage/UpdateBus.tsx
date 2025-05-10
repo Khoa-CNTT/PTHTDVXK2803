@@ -23,6 +23,7 @@ const UpdateBus = () => {
   const [images, setImages] = useState<ImageCUDType[]>([]);
 
   const [form, setForm] = useState({
+    id: bus?.id,
     licensePlate: licensePlate,
     capacity: 0,
     type: "",
@@ -63,6 +64,7 @@ const UpdateBus = () => {
   useEffect(() => {
     if (bus) {
       setForm({
+        id: bus.id,
         licensePlate: bus.licensePlate,
         capacity: bus.capacity,
         type: bus.type,
@@ -104,16 +106,6 @@ const UpdateBus = () => {
             },
             { label: "Sức chứa", value: form?.capacity, name: "capacity" },
             { label: "Loại xe", value: form?.type, type: "select", name: "type" },
-            {
-              label: "Ngày tạo",
-              value: dateTimeTransform(bus?.createAt, "DD-MM-YYYY"),
-              readonly: true,
-            },
-            {
-              label: "Ngày cập nhật",
-              value: dateTimeTransform(bus?.updateAt, "DD-MM-YYYY"),
-              readonly: true,
-            },
           ].map((item, index) => (
             <li key={index} className={` ${styles.item}`}>
               <label htmlFor={item.label} className={styles.title}>
@@ -180,6 +172,27 @@ const UpdateBus = () => {
               </div>
             </div>
           </li>
+
+          {[
+            {
+              label: "Ngày tạo",
+              value: dateTimeTransform(bus?.createAt, "DD-MM-YYYY"),
+              readonly: true,
+            },
+            {
+              label: "Ngày cập nhật",
+              value: dateTimeTransform(bus?.updateAt, "DD-MM-YYYY"),
+              readonly: true,
+            },
+          ].map((item, index) => (
+            <li key={index} className={` ${styles.item}`}>
+              <label htmlFor={item.label} className={styles.title}>
+                {item.label}
+              </label>
+              <input className={styles.data} id={item.label} value={item.value ?? "N/A"} readOnly />
+            </li>
+          ))}
+
           <div className={styles["feat-update"]}>
             <button type="submit" className={styles["btn-update"]}>
               Cập Nhật

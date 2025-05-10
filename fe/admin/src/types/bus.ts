@@ -8,6 +8,10 @@ export interface BusType {
   // status?: "Sắp khởi hành" | "Đang chạy" | "Bảo trì";
   image?: ImgBus;
   images?: ImgBus[];
+  location: {
+    id: number;
+    name: string;
+  };
   createAt?: string; // timestamp
   updateAt?: string;
 }

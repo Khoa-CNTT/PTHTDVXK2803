@@ -47,6 +47,7 @@ const DetailBus = () => {
             { label: "Biển số xe", value: bus?.licensePlate },
             { label: "Sức chứa", value: bus?.capacity },
             { label: "Loại xe", value: bus?.type },
+            { label: "Thành phố đang ở hiện tại:", value: bus?.location?.name },
             { label: "Ngày tạo", value: dateTimeTransform(bus?.createAt, "DD-MM-YYYY") },
             { label: "Ngày cập nhật", value: dateTimeTransform(bus?.updateAt, "DD-MM-YYYY") },
           ].map((item, index) => (

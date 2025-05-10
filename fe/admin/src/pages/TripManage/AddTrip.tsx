@@ -213,6 +213,21 @@ const AddTrip = () => {
                 onSelected={handleSelectedBus}
               />
             </li>
+            {typeBus === null ? null : typeBus === "xe thường" ? (
+              <li className={styles["form-group-item"]}>
+                <label htmlFor="trip-name" className={styles.title}>
+                  Loại xe{" "}
+                </label>
+                <p className={styles["form-control"]}>Xe thường</p>
+              </li>
+            ) : (
+              <li className={styles["form-group-item"]}>
+                <label htmlFor="trip-name" className={styles.title}>
+                  Loại xe{" "}
+                </label>
+                <p className={styles["form-control"]}>Xe giường nằm</p>
+              </li>
+            )}
 
             <li className={styles["form-group-item"]}>
               <label htmlFor="bus" className={styles.title}>
