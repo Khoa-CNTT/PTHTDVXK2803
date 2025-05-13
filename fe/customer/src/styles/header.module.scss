@@ -1,0 +1,283 @@
+@use "./mixin" as mix;
+
+.container-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  .top-header {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+
+    @include mix.responsive(desktop) {
+      width: 70.5rem;
+    }
+
+    .actions {
+      flex: 1;
+      display: flex;
+      gap: 0.25rem;
+
+      margin-left: 1rem;
+
+      @include mix.responsive(desktop) {
+        margin-left: 0;
+      }
+
+      .action__show-side-bar {
+        display: block;
+        height: 0;
+
+        @include mix.responsive(desktop) {
+          display: none;
+        }
+
+        .action__show-side-bar__icon {
+          font-size: 1.5rem;
+          color: var(--white);
+        }
+      }
+
+      .languages {
+        cursor: pointer;
+      }
+    }
+
+    .logo-banner {
+      flex: 1 1 0%;
+      display: flex;
+      justify-content: center;
+      background-color: var(--white);
+
+      border-radius: 0 0 10rem 10rem;
+
+      @include mix.responsive(mobile) {
+        max-width: 14rem;
+      }
+
+      .logo-banner__img {
+        object-fit: cover;
+        max-width: 3rem;
+        max-height: 3rem;
+      }
+    }
+    .login-register {
+      flex: 1;
+      margin-right: 1rem;
+
+      @include mix.responsive(desktop) {
+        margin-left: 0;
+      }
+
+      .login-register__link {
+        display: flex;
+        justify-content: end;
+
+        color: var(--black);
+        font-weight: 400;
+
+        .login-register__link-text {
+          display: none;
+
+          width: max-content;
+
+          padding: 0.5rem;
+          border-radius: 0.225rem;
+
+          background-color: var(--light-gray);
+
+          @include mix.responsive(desktop) {
+            display: block;
+          }
+        }
+
+        .login-register__link-ic {
+          display: block;
+          color: var(--white);
+          @include mix.responsive(desktop) {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+
+  .bottom-header {
+    display: none;
+
+    margin-top: 1rem;
+    padding-bottom: 1.2rem;
+
+    @include mix.responsive(desktop) {
+      display: block;
+    }
+
+    .bottom-header__menu {
+      .list {
+        display: flex;
+        gap: 5rem;
+
+        font-size: 1.2rem;
+
+        .bottom-header__menu-item {
+          position: relative;
+
+          .bottom-header__section-title {
+            color: #ffffff;
+          }
+
+          &:after {
+            content: "";
+            display: block;
+
+            position: absolute;
+            bottom: -0.5rem;
+
+            width: 0;
+            height: 2px;
+            background-color: var(--white);
+          }
+          &:hover:after {
+            width: 100%;
+            transition: width 0.3s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+
+  .overlay {
+    z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .collapsed {
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    max-width: 24rem;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: var(--white);
+
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.3s ease-in-out, visibility 0.3s;
+  }
+
+  .side-bar-mobile {
+    transform: translateX(1);
+    visibility: visible;
+    transition: transform 0.3s ease-in-out, visibility 0.3s;
+
+    // giữ lại những thuộc tính có sẵn
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60%;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #ddd;
+
+    &.dark {
+      background-color: #181818;
+      color: white;
+      border-right: 1px solid #333;
+    }
+
+    &__top-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+
+      margin-bottom: 2rem;
+    }
+
+    &__toggle-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      color: inherit;
+    }
+
+    &__logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    &__menu {
+      flex: 1;
+
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .side-bar-mobile__menu-item {
+          overflow-x: hidden;
+
+          display: flex;
+
+          padding: 0.225rem;
+          border-bottom: 0.5px solid var(--primary);
+
+          &:nth-last-child(1) {
+            border: none;
+          }
+
+          .side-bar-mobile__menu-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            color: inherit;
+            text-decoration: none;
+            font-size: 1rem;
+            line-height: 1.2rem;
+
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            .icon {
+              font-size: 1rem;
+            }
+
+            // Ẩn chữ khi collapsed
+            .side-bar-mobile__section-title {
+              display: block;
+            }
+          }
+        }
+      }
+    }
+
+    &__section-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin: 1rem 0 0.5rem 0;
+    }
+
+    &__bottom-section {
+      margin-top: auto;
+    }
+    .action-logout {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

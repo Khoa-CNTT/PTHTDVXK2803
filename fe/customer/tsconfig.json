@@ -1,7 +1,19 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "compilerOptions": {
+    // "noImplicitAny": false,
+    // "strict": true,
+    // "skipLibCheck": true,
+    // "target": "ES2020",
+    // "module": "ESNext",
+    // "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      ".": ["type/*"],
+      "@/": ["./*"] //  alias path
+    },
+    "types": ["node"]
+  },
+  "include": ["vite-env.d.ts", "@type/assets.d.ts"]
 }

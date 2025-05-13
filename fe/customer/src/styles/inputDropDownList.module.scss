@@ -1,0 +1,61 @@
+@use "./mixin" as mix;
+
+.input-drop-list {
+  position: relative;
+
+  width: 12rem;
+  height: auto;
+  padding: 0.6rem;
+  border-radius: 1.2rem /1.2rem;
+
+  cursor: pointer;
+
+  @include mix.responsive(mobile) {
+    border-bottom: 1px solid #c3c3c3;
+  }
+
+  .input-location {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.325rem;
+    .ic-search {
+      display: flex;
+      border: none;
+      width: 1.4rem;
+      height: 1.4rem;
+      .ic {
+        width: 100%;
+        height: 100%;
+      }
+      .ic-departure {
+        color: #e01010;
+      }
+    }
+    .search-locations {
+      // background-color: #f0f7fd;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      .title {
+        font-size: 0.8rem;
+        color: var(--gray);
+
+        cursor: pointer;
+      }
+    }
+  }
+
+  .drop-down-list {
+    z-index: 10;
+    position: absolute;
+    top: calc((100% - 1rem));
+    left: 0;
+
+    width: 12rem;
+    height: 12rem;
+    padding-top: 0.725rem;
+    border-radius: 0.825rem;
+  }
+}

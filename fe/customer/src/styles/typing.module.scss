@@ -1,0 +1,56 @@
+.animated-text {
+  min-width: 18rem;
+  font-size: 1.2rem;
+  & .content {
+    position: relative;
+  }
+
+  & .content::before {
+    content: var(--content, "Oh no");
+    color: #ff7f50;
+    animation: words 20s infinite steps(1);
+  }
+
+  & .content::after {
+    content: "";
+    position: absolute;
+    width: calc(100% + 8px);
+    height: 100%;
+    background-color: #242424;
+    border-left: 2px solid #ff7f50;
+    right: -6px;
+    animation: cursor 0.8s infinite, typing 20s steps(14) infinite;
+  }
+}
+
+@keyframes cursor {
+  to {
+    border-left: 2px solid transparent;
+  }
+}
+
+@keyframes typing {
+  10%,
+  15%,
+  30%,
+  35%,
+  50%,
+  55%,
+  70%,
+  75%,
+  90%,
+  95% {
+    width: 0;
+  }
+  5%,
+  20%,
+  25%,
+  40%,
+  45%,
+  60%,
+  65%,
+  80%,
+  85% {
+    width: calc(100% + 8px);
+  }
+}

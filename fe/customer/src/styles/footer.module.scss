@@ -1,0 +1,80 @@
+@use "./mixin" as mix;
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 1rem;
+
+  background-color: var(--light);
+
+  text-align: start;
+  word-wrap: break-word;
+
+  .footer-top {
+    display: flex;
+    gap: 4rem;
+
+    padding-bottom: 2rem;
+    margin: 0 auto;
+
+    @include mix.responsive(mobile) {
+      display: block;
+      max-width: 18.75rem;
+    }
+
+    .footer-t-right {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+
+      .footer-contact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        max-width: 34rem;
+
+        .footer-contact-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .footer-contact-phone {
+          margin: 0.5rem 0;
+          font-size: 2rem;
+        }
+        .info-social {
+          display: inline-block;
+          gap: 1rem;
+          .ic {
+            height: 1.6rem;
+            mix-blend-mode: multiply;
+          }
+          .ic-fb {
+            color: #005eff;
+          }
+          .ic-yt {
+            margin: 0 0.4rem;
+            color: #ea3939;
+          }
+          .ic-github {
+            color: #121212;
+          }
+        }
+      }
+    }
+    .footer-t-left {
+      @include mix.responsive(mobile) {
+        margin-top: 1rem;
+      }
+
+      .layout-footer-links {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
+}

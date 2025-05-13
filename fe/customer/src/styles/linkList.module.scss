@@ -1,0 +1,12 @@
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  margin-bottom: 0.5rem;
+
+  .link-item {
+    line-height: normal;
+    width: max-content;
+  }
+}

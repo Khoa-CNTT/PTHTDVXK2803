@@ -1,0 +1,74 @@
+@use "./mixin" as mix;
+
+.first-row {
+  width: 11.06rem;
+  height: 2.25rem;
+  text-align: center;
+
+  @include mix.responsive(tablet) {
+    width: 9rem;
+    height: 2rem;
+  }
+
+  @include mix.responsive(mobile) {
+    width: 7rem;
+    height: 1.8rem;
+  }
+}
+
+.upper-floor {
+  margin: 0 0.6rem;
+  display: flex;
+  justify-content: space-between;
+
+  @include mix.responsive(mobile) {
+    margin: 0 0.4rem;
+  }
+}
+
+.downstairs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+
+  @include mix.responsive(tablet) {
+    gap: 0.8rem;
+  }
+
+  @include mix.responsive(mobile) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}
+
+.seat-container {
+  position: relative;
+}
+
+.seat-image {
+  width: 1.8rem;
+  height: 1.8rem;
+
+  @include mix.responsive(tablet) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  @include mix.responsive(mobile) {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+}
+
+.seat-number {
+  font-size: 0.8rem;
+  position: absolute;
+  top: 0.2rem;
+  left: 20%;
+
+  @include mix.responsive(mobile) {
+    font-size: 0.6rem;
+    top: 0.1rem;
+  }
+}

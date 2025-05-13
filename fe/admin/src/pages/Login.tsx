@@ -14,6 +14,8 @@ const Login = () => {
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
     const response = await login(form);
+    console.log("response: ", response);
+    
     if (response.status === "OK") {
       toast.success("Đăng nhập thành công");
       localStorage.setItem("accept", response.status);

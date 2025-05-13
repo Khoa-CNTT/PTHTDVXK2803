@@ -1,0 +1,75 @@
+@use "./mixin" as mix;
+
+.slider-container {
+  width: 300px;
+  height: 150px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.slide {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: #ddd;
+  color: black;
+  border-radius: 10px;
+  // opacity: 0.5;
+  // transition: opacity 0.3s ease-in-out;
+
+  &.active {
+    // background: #3498db;
+    // color: white;
+    // opacity: 1;
+  }
+
+  // &.next {
+  //   @include mix.slideInRight(0.6s);
+  // }
+
+  // &.prev {
+  //   @include mix.slideInLeft(0.6s);
+  // }
+
+  .img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: black;
+  }
+
+  &.prev {
+    left: 10px;
+  }
+
+  &.next {
+    right: 10px;
+  }
+}

@@ -1,0 +1,48 @@
+.information {
+        width: 1000px;
+        margin: 30px auto;
+
+        span {
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .newsGrid {
+            margin-top: 15px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+        .newsCard {
+            margin-bottom: 10px;
+            cursor: pointer;
+            width: calc(25% - 12px); // 4 cột
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
+            &:hover {
+                transform: translateY(-4px);
+            }
+        img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin: 12px;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 14px;
+            color: #777;
+            margin: 0 12px 12px;
+        }
+        }
+
+    }
+    }

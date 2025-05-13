@@ -13,6 +13,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -65,4 +71,11 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+html,
+body {
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 100%;
 }

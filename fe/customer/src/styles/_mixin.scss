@@ -1,0 +1,41 @@
+@use "./animations.scss";
+
+@mixin responsive($size) {
+  @if $size == mobile {
+    @media (max-width: 767px) {
+      @content;
+    }
+  } @else if $size == tablet {
+    @media (max-width: 1024px) {
+      @content;
+    }
+  } @else if $size == desktop {
+    @media (min-width: 1025px) {
+      @content;
+    }
+  }
+}
+
+@mixin fadeIn($time) {
+  animation: fadeIn $time ease-in-out;
+}
+
+@mixin fadeOut($time) {
+  animation: fadeOut $time ease-in-out;
+}
+
+@mixin slideUp($time) {
+  animation: slideUp $time ease-in-out;
+}
+
+@mixin slideDown($time) {
+  animation: slideDown $time ease-in-out;
+}
+
+@mixin slideInLeft($time) {
+  animation: slideInLeft $time ease;
+}
+
+@mixin slideInRight($time) {
+  animation: slideInRight $time ease;
+}

@@ -56,6 +56,12 @@ const Sidebar = () => {
             </NavLink>
           </li>
           <li className={styled["side-bar__menu-item"]}>
+            <NavLink to="/schedule" className={styled["side-bar__menu-link"]}>
+              <FaUsers className={styled.icon} />
+              <span className={styled["side-bar__section-title"]}>Lịch trình</span>
+            </NavLink>
+          </li>
+          <li className={styled["side-bar__menu-item"]}>
             <NavLink to="/admin-manage" className={styled["side-bar__menu-link"]}>
               <RiAdminFill className={styled.icon} />
               <span className={styled["side-bar__section-title"]}>Quản lý quản trị viên</span>

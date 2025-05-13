@@ -1,0 +1,47 @@
+ .aboutSection {
+        width: 1000px;
+        margin: 25px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 32px;
+        text-align: center;
+
+        .block {
+            p {
+                font-weight: 500;
+                font-size: 16px;
+                line-height: 1.8;
+                margin: 12px 0;
+                text-align: justify;
+            }
+        }
+
+        .heading {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2eb4fc;
+            margin-bottom: 20px;
+        }
+
+        .slogan {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .imageContainer {
+            display: flex;
+            gap: 20px;
+            img {
+                width: 50%;
+                height: auto;
+                overflow: hidden;
+                border-radius: 10px;
+            }
+            .block {
+                width: 50%;
+            }
+        }
+        }

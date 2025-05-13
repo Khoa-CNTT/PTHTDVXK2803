@@ -1,0 +1,66 @@
+@use "./mixin" as mix;
+
+.content-hotline {
+  z-index: 10;
+  position: absolute;
+  top: calc(var(--anchor-hotline-top) + 2rem);
+  left: calc(var(--anchor-hotline-left) - 17.75rem);
+
+  visibility: hidden;
+
+  width: max-content;
+
+  padding: 0.5rem;
+  border-radius: 0.8rem;
+
+  background-color: #fff;
+
+  cursor: default;
+
+  transition: visibility 0.2s ease-in;
+
+  &.show {
+    visibility: visible;
+    @include mix.fadeIn(0.2s);
+    @include mix.slideDown(0.2s);
+  }
+
+  &:not(.show) {
+    @include mix.fadeOut(0.2s);
+    @include mix.slideUp(0.2s);
+  }
+
+  .triangle {
+    position: absolute;
+    top: -0.3rem;
+    right: 1.25rem;
+    width: 0.7rem;
+    height: 0.7rem;
+    background-color: #fff;
+    transform: rotate(45deg);
+  }
+  .list-hotline {
+    .item-hotline {
+      display: flex;
+      padding: 0.6rem;
+
+      .font-size {
+        font-size: 0.875rem;
+      }
+      .phone {
+        color: #5673d5;
+
+        &::after {
+          content: " - ";
+        }
+      }
+      .note {
+        color: #000;
+        cursor: auto;
+        &::before {
+          content: "- ";
+        }
+      }
+    }
+  }
+}

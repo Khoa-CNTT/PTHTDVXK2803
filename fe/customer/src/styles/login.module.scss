@@ -1,0 +1,219 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 1000px;
+  margin: 50px auto;
+  .left {
+    width: 50%;
+    padding: 40px;
+    background: #fff7f2;
+
+    .brand {
+      color: rgb(46, 180, 252);
+      font-weight: bold;
+      font-size: 32px;
+    }
+
+    .slogan {
+      color: black;
+      font-size: 18px;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .serviceTitle {
+      color: #007236;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .serviceDesc {
+      color: #007236;
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+
+    .busImage {
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+  }
+
+  .right {
+    width: 50%;
+    padding: 40px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h2 {
+      margin-bottom: 20px;
+      margin: 15px auto;
+      font-weight: 500;
+      font-size: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 20px;
+
+      .tab {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #555;
+
+        .active {
+          color: rgb(46, 180, 252);
+          border-bottom: 3px solid rgb(46, 180, 252);
+        }
+
+        .hide {
+          color: black;
+          border-bottom: 1px solid gray;
+        }
+      }
+      
+    }
+    .contentLogin {
+      .inputGroup {
+      position: relative;
+      margin-bottom: 20px;
+
+      .iconEmail {
+        position: absolute;
+        left: 10px;
+        top: 32px;
+        color: rgb(46, 180, 252);
+      }
+
+      .iconPassword {
+        position: absolute;
+        left: 10px;
+        top: 95px;
+        color: rgb(46, 180, 252);
+      }
+      .email , .password {
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px 10px 10px 35px;
+        border: 1px solid rgb(46, 180, 252);
+        border-radius: 6px;
+        outline: none;
+
+        &::placeholder {
+          color: #aaa;
+        }
+      }
+    }
+
+    .button {
+      padding: 12px;
+      background-color: rgb(46, 180, 252);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    .forgotPassword {
+      margin-top: 10px;
+      color: black;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: right;
+      font-weight: 500;
+    }
+    }
+
+    .contentRegister {
+      .inputGroup {
+      position: relative;
+      margin-bottom: 20px;
+
+      .iconEmail {
+        position: absolute;
+        left: 10px;
+        top: 32px;
+        color: rgb(46, 180, 252);
+      }
+
+      .iconName {
+        position: absolute;
+        left: 10px;
+        top: 95px;
+        color: rgb(46, 180, 252);
+      }
+
+       .iconPassword {
+        position: absolute;
+        left: 10px;
+        top: 160px;
+        color: rgb(46, 180, 252);
+      }
+      .email , .password, .name{
+        margin-top: 20px;
+        width: 100%;
+        padding: 10px 10px 10px 35px;
+        border: 1px solid rgb(46, 180, 252);
+        border-radius: 6px;
+        outline: none;
+
+        &::placeholder {
+          color: #aaa;
+        }
+      }
+    }
+
+    .button {
+      padding: 12px;
+      background-color: rgb(46, 180, 252);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    .forgotPassword {
+      margin-top: 10px;
+      color: black;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: right;
+      font-weight: 500;
+    }
+    }
+  }
+}
+.buttonForgot {
+  padding: 12px;
+      background-color: rgb(46, 180, 252);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+}
+
+.back {
+  margin-top: 8px;
+  display: flex;
+}
