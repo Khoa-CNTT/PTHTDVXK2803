@@ -29,8 +29,7 @@ const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams): Promise<SentMes
     console.log("Email sent:", info.messageId);
     return info; // Return the sent email information
   } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Failed to send OTP email");
+    throw error;
   }
 };
 

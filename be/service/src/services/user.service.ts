@@ -11,6 +11,17 @@ interface LoginType {
   password: string;
 }
 
+interface UserType {
+  email: string;
+  fullName: string;
+  phone: string;
+  dateBirth: string;
+  urlImg: string;
+  urlPublicImg: string;
+  password?: string;
+  role?: string;
+}
+
 export class UserService {
   private db;
   constructor(db: any) {
@@ -33,7 +44,7 @@ export class UserService {
 
   async checkUser(email: string): Promise<boolean> {
     const [rows] = await this.db.execute(
-      "select count(email) as countUser from usr where email = ?",
+      "select count(email) as countUser from user where email = ?",
       [email]
     );
     const countUser = (rows as any)[0].countUser;
@@ -55,7 +66,8 @@ export class UserService {
   async getCustomerByEmail(email: string): Promise<any> {
     try {
       const [rows] = await this.db.execute(
-        "select email, password, role from user where email = ? and role = 'customer'",
+        `select email, full_name as fullName, phone, date_birth as dateBirth, url_img as urlImg,
+         url_public_img as urlPublicImg, password, role from user where email = ? and role = 'customer'`,
         [email]
       );
       return rows[0];
@@ -152,8 +164,9 @@ export class UserService {
 
   loginByCustomer(userLogin: LoginType): Promise<
     | {
-        access_token: string;
         status: string;
+        data: UserType;
+        access_token: string;
         expirationTime: number;
         refresh_token: string;
       }
@@ -165,7 +178,6 @@ export class UserService {
     return new Promise(async (resolve, reject) => {
       try {
         const checkPerson = await this.getCustomerByEmail(userLogin.email);
-        console.log("checkPerson", checkPerson);
         if (!checkPerson) {
           resolve({
             status: "ERR",
@@ -179,6 +191,15 @@ export class UserService {
               message: "Password error",
             });
           } else {
+            const detailCustomer: UserType = {
+              email: checkPerson?.email,
+              fullName: checkPerson?.fullName,
+              phone: checkPerson?.phone,
+              dateBirth: checkPerson?.dateBirth,
+              urlImg: checkPerson?.urlImg,
+              urlPublicImg: checkPerson?.urlPublicImg,
+            };
+
             const access_token = generalAccessToken({
               id: checkPerson?.email,
               role: checkPerson?.role,
@@ -193,6 +214,7 @@ export class UserService {
 
             resolve({
               status: "OK",
+              data: detailCustomer,
               access_token,
               refresh_token,
               expirationTime,

@@ -11,6 +11,8 @@ const router = express.Router();
 const customerController = new CustomerController();
 const userController = new UserController();
 
+router.post("/register", customerController.register);
+router.post("/verify-email", customerController.verifyEmail);
 router.get("/get-all", verifyAccessToken, authorizeRoles("admin"), customerController.getAll);
 router.get("/get-detail/:id", verifyAccessToken, authorizeRoles("admin"), customerController.fetch);
 router.post(

@@ -1,3 +1,4 @@
+import { ResultSetHeader } from "mysql2";
 import { bookBusTicketsDB } from "../config/db";
 import bcrypt from "bcrypt";
 
@@ -23,15 +24,17 @@ export class OtpService {
       const hash = await bcrypt.hash(otp, salt);
 
       const query = "call upsert_otp(?, ?, ?, ?, ?)";
-      const [result] = await bookBusTicketsDB.execute(query, [
-        email,
-        hash,
-        passwordHash,
-        fullName,
-        role,
-      ]);
+      const value = [email, hash, passwordHash, fullName, role];
+      const [result, fields] = (await bookBusTicketsDB.execute(query, value)) as [
+        ResultSetHeader,
+        any
+      ];
 
-      return { data: result };
+      if (result.affectedRows <= 0) {
+        return { data: { status: "ERR", message: "Create OTP failed" } };
+      } else {
+        return { data: result };
+      }
     } catch (error) {
       console.error("ERR Insert OTP", error);
       throw error;
@@ -49,26 +52,19 @@ export class OtpService {
 
   async findOtp(email: string): Promise<OtpRecord | null> {
     try {
-      const [rowsCount] = await bookBusTicketsDB.execute(
-        "SELECT count(otp) FROM otp WHERE email = ?",
-        [email]
-      );
-
-      const length = rowsCount[0]["count(otp)"];
-      console.log("length", length);
-
       const [rows] = await bookBusTicketsDB.execute(
-        "SELECT email, full_name, password, otp FROM otp WHERE email = ?",
+        "SELECT email, full_name as fullName, password, otp FROM otp WHERE email = ?",
         [email]
       );
 
-      const result = rows as OtpRecord[];
+      const result: OtpRecord = rows[0];
 
-      console.log(result[length - 1]);
-
-      return result.length > 0 ? result[length - 1] : null;
+      if (!result) {
+        return null;
+      } else {
+        return result;
+      }
     } catch (error) {
-      console.error("ERR findOtp", error);
       throw error;
     }
   }

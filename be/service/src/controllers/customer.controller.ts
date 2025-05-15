@@ -5,6 +5,7 @@ import { CloudinaryAsset } from "../@types/cloudinary";
 import { ArrangeType } from "../@types/type";
 import { CustomerService } from "../services/customer.service";
 import { bookBusTicketsDB } from "../config/db";
+import testEmail from "../utils/testEmail";
 
 export class CustomerController {
   private customerService = new CustomerService(bookBusTicketsDB);
@@ -12,8 +13,8 @@ export class CustomerController {
   register = async (req: Request, res: Response) => {
     try {
       const { email, password, confirmPassword } = req.body;
-      const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-      const isCheckEmail = reg.test(email);
+
+      const isCheckEmail = testEmail(email);
 
       if (!email || !password || !confirmPassword) {
         errorResponse(res, "The input is required", 200);
@@ -27,17 +28,13 @@ export class CustomerController {
         errorResponse(res, "Password and confirm password are not the same", 200);
       }
 
-      const data = await this.customerService.register(req.body);
-      const { refresh_token, ...newData } = data;
+      const response = await this.customerService.register(req.body);
 
-      res.cookie("refresh_token", refresh_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
-      successResponse(res, newData, "Register success");
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
     } catch (error) {
       console.log("Err Controller", error);
       errorResponse(res, "Controller.register", 404);
@@ -48,7 +45,40 @@ export class CustomerController {
     try {
       const { email, otp } = req.body;
       const response = await this.customerService.verifyEmail(email, otp);
-      successResponse(res, response, "Verify email success");
+      if (
+        "access_token" in response &&
+        "refresh_token" in response &&
+        "expirationTime" in response
+      ) {
+        const { access_token, data, refresh_token, status, expirationTime } = response;
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
+        res.cookie("refresh_token", refresh_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+          path: "/",
+        });
+        successResponse(res, 200, {
+          status,
+          message: "Verify email success",
+          data,
+          expirationTime: expirationTime,
+        });
+      } else {
+        if ("message" in response) {
+          errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
+      }
     } catch (error) {
       errorResponse(res, "ERR Controller.verifyEmail", 404);
     }

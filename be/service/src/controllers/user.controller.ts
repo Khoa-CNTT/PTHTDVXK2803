@@ -93,7 +93,7 @@ export class UserController {
         "refresh_token" in response &&
         "expirationTime" in response
       ) {
-        const { access_token, refresh_token, status, expirationTime } = response;
+        const { access_token, data, refresh_token, status, expirationTime } = response;
         res.cookie("access_token", access_token, {
           httpOnly: true,
           secure: true,
@@ -109,7 +109,7 @@ export class UserController {
           maxAge: 7 * 24 * 60 * 60 * 1000,
           path: "/",
         });
-        successResponse(res, 200, { status, expirationTime: expirationTime });
+        successResponse(res, 200, { status, data, expirationTime: expirationTime });
       } else {
         if ("message" in response) {
           errorResponse(res, response.message, 400);
