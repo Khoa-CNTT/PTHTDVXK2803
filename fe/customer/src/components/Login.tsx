@@ -3,6 +3,7 @@ import styles from "../styles/login.module.scss";
 import { MdOutlineMail } from "react-icons/md";
 import { MdOutlinePassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
+import Register from './Register';
 
 const Login: React.FC = () => {
     const [login, setLogin] = useState(true);
@@ -29,6 +30,8 @@ const Login: React.FC = () => {
     setLogin(true)
     setRegister(false)
   }
+
+
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -89,29 +92,7 @@ const Login: React.FC = () => {
         <div className={styles.forgotPassword} onClick={onClickForgotPassword}>Quên mật khẩu</div>
         </div>
           :
-            <div className={styles.contentRegister}>
-          <div className={styles.inputGroup}>
-          <MdOutlineMail className={styles.iconEmail} />
-          <input
-            type="tel"
-            placeholder="Nhập số điện thoại"
-            className={styles.email}
-          />
-          <MdDriveFileRenameOutline className={styles.iconName} />
-          <input
-            type="text"
-            placeholder="Nhập họ và tên"
-            className={styles.name}
-          />
-          <MdOutlinePassword className={styles.iconPassword} />
-           <input
-            type="password"
-            placeholder="Nhập mật khẩu"
-            className={styles.password}
-          />
-        </div>
-        <button className={styles.button}>Tiếp tục</button>
-        </div>
+            <Register />
         }
           </>
           

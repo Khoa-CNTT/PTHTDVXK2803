@@ -11,6 +11,8 @@ import RentalCar from "./components/RentalCar";
 import News from "./components/News";
 import AboutUs from "./components/AboutUs";
 import Login from "./components/Login";
+import { ToastContainer } from "react-toastify";
+import VerifyOTP from "./components/VerifyOTP";
 
 function App() {
   useClientWidth();
@@ -74,7 +76,22 @@ function App() {
             </Layout>
           }
         />
+        <Route path="/verify-otp" element={<VerifyOTP />}/>
       </Routes>
+      <ToastContainer
+        className="custom-toast"
+        position="top-center"
+        autoClose={700}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+
     </Router>
   );
 }

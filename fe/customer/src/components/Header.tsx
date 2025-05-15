@@ -4,16 +4,21 @@ import { FaBars } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FaRegUserCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { logout } from "../services/auth.service";
-import logo from "../assets/logo.svg";
+// import { logout } from "../services/auth.service";
+import logo3 from "../assets/images/logo3.jpg";
+import { useUserStore } from "../store/userStore";
 
 const Header = () => {
+ const { user, setUser } = useUserStore();
   const navigate = useNavigate();
   const sideBarRef = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [labguageIcon, setLanguageIcon] = useState<boolean>(true);
-
+  const [btnLogin, setBtnLogin] = useState<boolean>(true);
+  const [btnRegister, setBtnRegister] = useState<boolean>(false);
+  
   const handleToggleSideBar = () => {
     setCollapsed(!collapsed);
   };
@@ -29,17 +34,17 @@ const Header = () => {
     }
   };
 
-  const handleLogout = async () => {
-    const response = await logout();
-    if (response.status === "OK") {
-      toast.success("Đăng xuất thành công");
-      localStorage.removeItem("accept");
-      localStorage.removeItem("expirationTime");
-      navigate("/");
-    } else {
-      toast.error("Đăng xuất thất bại");
-    }
-  };
+  // const handleLogout = async () => {
+  //   const response = await logout();
+  //   if (response.status === "OK") {
+  //     toast.success("Đăng xuất thành công");
+  //     localStorage.removeItem("accept");
+  //     localStorage.removeItem("expirationTime");
+  //     navigate("/");
+  //   } else {
+  //     toast.error("Đăng xuất thất bại");
+  //   }
+  // };
 
   useEffect(() => {
     if (!collapsed) {
@@ -48,6 +53,16 @@ const Header = () => {
     }
   }, [collapsed]);
 
+  const onClickLogin = () => {
+    setBtnLogin(true)
+    setBtnRegister(false)
+  }
+
+  const onClickRegister = () => {
+    setBtnLogin(false)
+    setBtnRegister(true)
+  }
+  
   return (
     <div className={styled["container-header"]}>
       <div className={styled["top-header"]}>
@@ -61,7 +76,10 @@ const Header = () => {
               className={styled["action__show-side-bar__icon"]}
             />
           </div>
-          <div className={styled.languages}>
+          <div className={styled.logoContainer}>
+          <img src={logo3} alt="logo" className={styled["logo-banner__img"]} />
+              
+              <div className={styled.languages}>
             <img
               src={
                 labguageIcon === true
@@ -72,17 +90,34 @@ const Header = () => {
               onClick={handleToggleLanguage}
             />
           </div>
-        </div>
-
-        <div className={styled["logo-banner"]}>
-          <img src={logo} alt="logo" className={styled["logo-banner__img"]} />
+          </div>
+          
         </div>
 
         <div className={styled["login-register"]}>
+          {user && user?.email
+          ? 
+          <div className={styled.name}>
+            <FaRegUserCircle />
+            <span>
+            {user?.email}
+            </span>
+          
+          </div>
+          :
           <NavLink to="/login" className={styled["login-register__link"]}>
-            <span className={styled["login-register__link-text"]}>Đăng nhập/Đăng ký</span>
+            <span className={`${styled["login-text"]} ${btnLogin ? styled.active :  styled.hide}`} onClick={onClickLogin}>Đăng nhập</span>
+            <span className={`${styled["register-text"]} ${btnRegister ? styled.active :  styled.hide}`} onClick={onClickRegister}>Đăng ký</span>
             <FontAwesomeIcon icon={faUser} className={styled["login-register__link-ic"]} />
           </NavLink>
+          }
+        </div>
+        <div className={styled.information}>
+          <ul>
+            <li>Cập nhật thông tin</li>
+            <li>Lích sử đặt vé</li>
+            <li>Đăng xuất</li>
+          </ul>
         </div>
       </div>
       <div className={styled["bottom-header"]}>
@@ -182,7 +217,7 @@ const Header = () => {
               <FontAwesomeIcon
                 icon={faRightFromBracket}
                 className={styled["ic-default"]}
-                onClick={handleLogout}
+                // onClick={handleLogout}
               />
             </li>
           </ul>

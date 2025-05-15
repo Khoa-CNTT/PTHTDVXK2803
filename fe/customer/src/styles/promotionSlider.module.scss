@@ -1,0 +1,26 @@
+.sliderWrapper {
+  padding: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+
+  .title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #006838;
+    margin-bottom: 1.5rem;
+  }
+
+  .slide {
+    padding: 10px;
+    img {
+      width: 100%;
+      height: auto;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  }
+}

@@ -1,0 +1,86 @@
+import { MdDriveFileRenameOutline, MdOutlineMail, MdOutlinePassword } from "react-icons/md";
+import styles from "../styles/register.module.scss";
+import { useState } from "react";
+import { register } from "../services/customer.service";
+import { RegisterPayLoad } from "../types";
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
+
+const Register = () => {
+    const navigate = useNavigate()
+
+    const [dataRegister, setDataRegister] = useState<RegisterPayLoad>({
+    email: "",
+    fullName: "",
+    password: "",
+    confirmPassword: "",
+  });
+  
+
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDataRegister((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+    const handleSubmit = async () => {
+    const result = await register(dataRegister);
+    
+    if (result?.status === "OK") {
+      navigate("/verify-otp", {
+      state: {
+        email: dataRegister?.email
+      }})
+    } else {
+      return toast.error(result?.message);
+    }
+  };
+
+  return (
+    <div className={styles.contentRegister}>
+          <div className={styles.inputGroup}>
+          <MdOutlineMail className={styles.iconEmail} />
+          <input
+            type="email"
+            placeholder="Nhập email"
+            name="email"
+            className={styles.email}
+            value={dataRegister?.email}
+            onChange={handleChangeValue}
+          />
+          <MdDriveFileRenameOutline className={styles.iconName} />
+          <input
+            type="text"
+            placeholder="Nhập họ và tên"
+            name="fullName"
+            className={styles.name}
+             value={dataRegister?.fullName}
+            onChange={handleChangeValue}
+          />
+          <MdOutlinePassword className={styles.iconPassword} />
+           <input
+            type="password"
+            placeholder="Nhập mật khẩu"
+            name="password"
+            className={styles.password}
+            value={dataRegister?.password}
+            onChange={handleChangeValue}
+          />
+          <MdOutlinePassword className={styles.iconConfirmPassword} />
+           <input
+            type="password"
+            placeholder="Xác nhận mật khẩu"
+            name="confirmPassword"
+            className={styles.password}
+            value={dataRegister?.confirmPassword}
+            onChange={handleChangeValue}
+          />
+        </div>
+        <button type="button" className={styles.button} onClick={handleSubmit}>Đăng ký</button>
+            </div>
+  );
+};
+
+export default Register;
