@@ -39,7 +39,6 @@ import ManagePromotion from "./pages/PromotionManage/ManagePromotion";
 import AddPromotion from "./pages/PromotionManage/AddPromotion";
 import DetailPromotion from "./pages/PromotionManage/DetailPromotion";
 import UpdatePromotion from "./pages/PromotionManage/UpdatePromotion";
-import Schedule from "./components/Schedule";
 
 function App() {
   useClientWidth();
@@ -61,16 +60,10 @@ function App() {
       <Router>
         <Layout>
           <Routes>
-             <Route path="/schedule" element={<Schedule />}>
-              </Route>
             <Route path="/login" element={<Login />} />
             {/* Route bảo vệ */}
             <Route element={<PrivateRoute />}>
               <Route index element={<div>Home</div>} />
-              
-              <Route path="/schedule" element={<Schedule />}>
-              </Route>
-
 
               {/* Car Manage */}
               <Route path="/bus-manage" element={<ManageLayout />}>

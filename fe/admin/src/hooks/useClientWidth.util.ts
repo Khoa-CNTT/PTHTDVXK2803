@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { debounce } from "../utils/debounce.util";
+import { debounce } from "../utils/debounce";
 
 const useClientWidth = () => {
   const updateClientWidth = () => {

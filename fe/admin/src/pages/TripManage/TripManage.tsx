@@ -9,7 +9,7 @@ import { ArrangeType } from "../../types/type";
 import { dateTimeTransform } from "../../utils/transform";
 import { getAllTrip } from "../../services/trip.service";
 import formatCurrency from "../../utils/formatCurrency";
-import { debounce } from "../../utils/debounce.util";
+import { debounce } from "../../utils/debounce";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -39,7 +39,7 @@ const TripManage: React.FC = () => {
         arrangeType: arrangeType,
         licensePlateSearch: valueSearch,
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 

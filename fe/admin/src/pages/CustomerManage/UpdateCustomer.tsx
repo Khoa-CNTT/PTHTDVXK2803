@@ -17,7 +17,7 @@ const UpdateCustomer = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["customer", idFetch],
     queryFn: () => fetchCustomer(idFetch),
-    staleTime: 5 * 60 * 100,
+    staleTime: 5 * 60 * 1000,
   });
 
   const customer = data ?? null;

@@ -10,7 +10,7 @@ import SelectType from "../../components/SelectType";
 import { getPromotionList } from "../../services/promotion.service";
 import styles from "../../styles/promotionManage.module.scss";
 import { ArrangeType } from "../../types/type";
-import { debounce } from "../../utils/debounce.util";
+import { debounce } from "../../utils/debounce";
 import formatCurrency from "../../utils/formatCurrency";
 
 const ITEMS_PER_PAGE = 2;
@@ -52,7 +52,7 @@ const PromotionManage: React.FC = () => {
         type: selectedType,
         carTypes: selectedCarTypes, // Truyền selectedCarTypes vào API
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 

@@ -34,7 +34,7 @@ const ManageAdmin: React.FC = () => {
         limit: ITEMS_PER_PAGE,
         arrangeType: arrangeType,
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 

@@ -4,6 +4,8 @@
   display: flex;
   justify-content: space-between;
 
+  padding: 0.5rem;
+
   .actions {
     width: 100%;
     display: flex;
@@ -105,7 +107,6 @@
       .list {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
 
         .side-bar-mobile__menu-item {
           overflow-x: hidden;

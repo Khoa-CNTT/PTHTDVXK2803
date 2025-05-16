@@ -7,7 +7,7 @@ import Pagination from "../../components/Pagination";
 import styles from "../../styles/busManage.module.scss";
 import { ArrangeType } from "../../types/type";
 import DefaultImage from "../../components/DefaultImage";
-import { debounce } from "../../utils/debounce.util";
+import { debounce } from "../../utils/debounce";
 import { getBusList } from "../../services/bus.service";
 
 const ITEMS_PER_PAGE = 5;

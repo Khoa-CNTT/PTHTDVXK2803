@@ -15,7 +15,7 @@ const UpdateAdmin = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["admin", idFetch],
     queryFn: () => fetchAdmin(idFetch),
-    staleTime: 5 * 60 * 100,
+    staleTime: 5 * 60 * 1000,
   });
 
   const admin = data ?? null;

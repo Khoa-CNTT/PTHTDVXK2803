@@ -15,26 +15,7 @@ import { addTrip, getFormData } from "../../services/trip.service";
 import styles from "../../styles/addTrip.module.scss";
 import { TypeBus } from "../../types/bus";
 import { CoAndDriverType } from "../../types/trip";
-
-const generateNormalSeats = (): SeatType[] => {
-  const seats: SeatType[] = [];
-  for (let i = 1; i <= 14; i++) {
-    const padded = i.toString().padStart(2, "0");
-    seats.push({ position: `A${padded}`, status: "available" });
-    seats.push({ position: `B${padded}`, status: "available" });
-  }
-  return seats;
-};
-
-const generateSleeperSeats = (): SeatType[] => {
-  const seats: SeatType[] = [];
-  for (let i = 1; i <= 20; i++) {
-    const padded = i.toString().padStart(2, "0");
-    seats.push({ position: `A${padded}`, status: "available", floor: "bottom" });
-    seats.push({ position: `B${padded}`, status: "available", floor: "top" });
-  }
-  return seats;
-};
+import { generateNormalSeats, generateSleeperSeats } from "../../utils/useGenarateSeat";
 
 type FormType = {
   tripName: string;
@@ -60,7 +41,7 @@ const AddTrip = () => {
   } = useQuery({
     queryKey: ["formAddTrip"],
     queryFn: () => getFormData(),
-    staleTime: 5 * 60 * 1000, // sửa lại 5 phút nếu bạn muốn 5 phút (vì bạn đang nhân sai)
+    staleTime: 5 * 60 * 1000,
   });
 
   const {
@@ -70,7 +51,7 @@ const AddTrip = () => {
   } = useQuery({
     queryKey: ["locations"],
     queryFn: () => getAllLocation(),
-    staleTime: 5 * 60 * 1000, // 5 phút
+    staleTime: 5 * 60 * 1000,
   });
 
   const [form, setForm] = useState<FormType>({

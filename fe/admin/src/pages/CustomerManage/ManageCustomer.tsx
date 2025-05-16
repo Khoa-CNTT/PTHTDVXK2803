@@ -9,7 +9,7 @@ import styles from "../../styles/manageCustomer.module.scss";
 import { ArrangeType } from "../../types/type";
 import DefaultImage from "../../components/DefaultImage";
 import { dateTimeTransform } from "../../utils/transform";
-import { debounce } from "../../utils/debounce.util";
+import { debounce } from "../../utils/debounce";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -40,7 +40,7 @@ const ManageCustomer: React.FC = () => {
         arrangeType: arrangeType,
         emailSearch: searchEmailValue,
       }),
-    staleTime: 5 * 60 * 10,
+    staleTime: 5 * 60 * 1000,
     placeholderData: (previousData) => previousData,
   });
 
@@ -52,7 +52,6 @@ const ManageCustomer: React.FC = () => {
   };
 
   const debouncedSetSearchEmailValue = debounce((value: string) => {
-    console.log("value", value);
     setSearchEmailValue(value);
   }, 200);
 
@@ -62,7 +61,6 @@ const ManageCustomer: React.FC = () => {
 
   const handlePageClick = (selectedItem: { selected: number }) => {
     const newPage = selectedItem.selected + 1;
-    console.log("newPage", newPage);
     setCurrentPage(selectedItem.selected); // Cập nhật state ngay lập tức
     navigate(newPage > 1 ? `/customer-manage/page/${newPage}` : `/customer-manage`, {
       replace: true,
