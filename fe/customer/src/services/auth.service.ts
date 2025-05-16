@@ -1,7 +1,7 @@
 import { LoginPayLoad, RegisterPayLoad } from "../types";
 import { bookTicketAPI } from "./customizeAxios.service";
 
-export const login = async (data: LoginPayLoad) => {
+export const loginUser = async (data: LoginPayLoad) => {
   const response = await bookTicketAPI
     .post("/user/auth/customer/login", data)
     .then((res) => res.data);
@@ -18,7 +18,7 @@ export const veriFyEmail = async (data: object) => {
   return response;
 };
 
-export const logoutUser = async () => {
+export const logout = async () => {
   const response = await bookTicketAPI.post("/user/auth/logout").then((res) => res.data);
   return response;
 };

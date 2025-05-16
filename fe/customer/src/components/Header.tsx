@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FaRegUserCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
-// import { logout } from "../services/auth.service";
+import { logout } from "../services/auth.service";
 import logo3 from "../assets/images/logo3.jpg";
 import { useUserStore } from "../store/userStore";
 
@@ -34,17 +34,18 @@ const Header = () => {
     }
   };
 
-  // const handleLogout = async () => {
-  //   const response = await logout();
-  //   if (response.status === "OK") {
-  //     toast.success("Đăng xuất thành công");
-  //     localStorage.removeItem("accept");
-  //     localStorage.removeItem("expirationTime");
-  //     navigate("/");
-  //   } else {
-  //     toast.error("Đăng xuất thất bại");
-  //   }
-  // };
+  const handleLogout = async () => {
+    const response = await logout();
+    if (response.status === "OK") {
+      toast.success("Đăng xuất thành công");
+      setUser({email: "", fullName: ""})
+      localStorage.removeItem("accept");
+      localStorage.removeItem("expirationTime");
+      navigate("/");
+    } else {
+      toast.error("Đăng xuất thất bại");
+    }
+  };
 
   useEffect(() => {
     if (!collapsed) {
@@ -61,6 +62,14 @@ const Header = () => {
   const onClickRegister = () => {
     setBtnLogin(false)
     setBtnRegister(true)
+  }
+  
+  const handleUpdateInformation = () => {
+    navigate("/profile")
+  }
+
+  const handleUpdatePassword = () => {
+    navigate("/update-password")
   }
   
   return (
@@ -98,11 +107,20 @@ const Header = () => {
           {user && user?.email
           ? 
           <div className={styled.name}>
-            <FaRegUserCircle />
-            <span>
-            {user?.email}
+            <div className={styled.key}>
+              <FaRegUserCircle />
+              <span>
+              {user?.email}
             </span>
-          
+            </div>
+            <div className={styled.information}>
+          <ul>
+            <li onClick={handleUpdateInformation}>Cập nhật thông tin</li>
+            <li>Lịch sử đặt vé</li>
+            <li onClick={handleUpdatePassword}>Đặt lại mật khẩu</li>
+            <li onClick={handleLogout}>Đăng xuất</li>
+          </ul>
+        </div>
           </div>
           :
           <NavLink to="/login" className={styled["login-register__link"]}>
@@ -111,14 +129,9 @@ const Header = () => {
             <FontAwesomeIcon icon={faUser} className={styled["login-register__link-ic"]} />
           </NavLink>
           }
+          
         </div>
-        <div className={styled.information}>
-          <ul>
-            <li>Cập nhật thông tin</li>
-            <li>Lích sử đặt vé</li>
-            <li>Đăng xuất</li>
-          </ul>
-        </div>
+        
       </div>
       <div className={styled["bottom-header"]}>
         <div className={styled["bottom-header__menu"]}>

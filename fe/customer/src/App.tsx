@@ -13,6 +13,8 @@ import AboutUs from "./components/AboutUs";
 import Login from "./components/Login";
 import { ToastContainer } from "react-toastify";
 import VerifyOTP from "./components/VerifyOTP";
+import Profile from "./components/Profile";
+import UpdatePassword from "./components/UpdatePassword";
 
 function App() {
   useClientWidth();
@@ -73,6 +75,22 @@ function App() {
           element={
             <Layout>
               <AboutUs />
+            </Layout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Layout>
+              <Profile />
+            </Layout>
+          }
+        />
+        <Route
+          path="/update-password"
+          element={
+            <Layout>
+              <UpdatePassword />
             </Layout>
           }
         />

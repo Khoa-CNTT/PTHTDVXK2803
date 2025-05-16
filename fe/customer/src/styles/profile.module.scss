@@ -1,0 +1,109 @@
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    .account {
+  &__title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  &__subtitle {
+    color: gray;
+    margin-bottom: 20px;
+  }
+
+  &__card {
+    display: flex;
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+  }
+
+  &__avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    text-align: center;
+    .label {
+        padding: 7px 12px;
+        border: 1px solid gray;
+        border-radius: 20px;
+        margin-top: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        &:hover {
+            background-color: rgb(46, 180, 252);
+        }
+    }
+    img {
+      width: 150px;
+      height: 150px;
+      border-radius: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__chooseBtn {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid gray;
+    padding: 8px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  &__note {
+    font-size: 12px;
+    color: gray;
+    margin-top: 5px;
+  }
+
+  &__info {
+    flex: 2;
+    padding: 0 30px;
+
+    .info__item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    
+      
+      label {
+        width: 20%;
+        font-weight: 500;
+      }
+
+      input {
+        outline: none;
+        padding: 8px 10px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid gray;
+        width: 80%;
+      }
+      span,
+      select {
+        flex: 1;
+      }
+
+      select {
+        padding: 5px;
+      }
+    }
+  }
+
+  &__updateBtn {
+    margin-top: 20px;
+    background: rgb(46, 180, 252);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+}
+}

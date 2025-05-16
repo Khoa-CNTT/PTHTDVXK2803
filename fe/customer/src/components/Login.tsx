@@ -4,12 +4,22 @@ import { MdOutlineMail } from "react-icons/md";
 import { MdOutlinePassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import Register from './Register';
+import { LoginPayLoad } from '../types';
+import { useUserStore } from '../store/userStore';
+import { toast } from 'react-toastify';
+import { loginUser } from "../services/auth.service";
+import { useNavigate } from 'react-router';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate()
     const [login, setLogin] = useState(true);
     const [register, setRegister] = useState(false);
     const [forgotPassword, setForgotPassword] = useState(false);
-  
+    const [dataLogin, setDataLogin] = useState<LoginPayLoad>({
+      email: "",
+      password: "",
+    });
+    const { setUser } = useUserStore();
   const onClickLogin = () => {
     setLogin(true)
     setRegister(false)
@@ -31,6 +41,37 @@ const Login: React.FC = () => {
     setRegister(false)
   }
 
+  const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDataLogin((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+
+  const handleLogin = async () => {
+    console.log(1);
+    console.log("dataLogin: ", dataLogin);
+
+    
+     const result = await loginUser(dataLogin);
+    if (result.status === "OK" && result.data) {
+      setUser({
+        email: result?.data?.email,
+        fullName: result?.data?.fullName,
+        dateBirth: result?.data?.dateBirth,
+        phone: result?.data?.phone,
+        address: result?.data?.address,
+        avatar: result?.data?.urlImg,
+      });
+      toast.success("Đăng nhập thành công");
+      navigate("/")
+      return;
+    }else {
+      toast.error("Đăng nhập thất bại");
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -66,7 +107,7 @@ const Login: React.FC = () => {
           />
         </div>
         </div>
-        <button className={styles.buttonForgot}>Tiếp tục</button>
+        <button className={styles.buttonForgot} >Đăng nhập</button>
         <span className={styles.back} onClick={onClickBack}>Quay lại</span>
             </>
           :
@@ -78,17 +119,23 @@ const Login: React.FC = () => {
           <MdOutlineMail className={styles.iconEmail} />
           <input
             type="tel"
-            placeholder="Nhập số điện thoại"
+            placeholder="Nhập email"
             className={styles.email}
+            id="email"
+            name="email"
+            onChange={handleChangeValue}
           />
           <MdOutlinePassword className={styles.iconPassword} />
            <input
             type="password"
             placeholder="Nhập mật khẩu"
             className={styles.password}
+            id="password"
+            name="password"
+            onChange={handleChangeValue}
           />
         </div>
-        <button className={styles.button}>Tiếp tục</button>
+        <button className={styles.button} onClick={handleLogin}>Đăng nhập</button>
         <div className={styles.forgotPassword} onClick={onClickForgotPassword}>Quên mật khẩu</div>
         </div>
           :
