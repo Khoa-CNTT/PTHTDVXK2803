@@ -45,3 +45,17 @@ export interface TripInfo {
   createAt: string;
   updateAt: string;
 }
+
+export interface TripInfoBase {
+  id: number;
+  tripName: string;
+  departureLocation: string;
+  startTime: string;
+  arrivalLocation: string;
+  endTime: string;
+  licensePlate: string;
+  driverName: string;
+  price: string;
+  status: string;
+  totalSeatAvailable: number;
+}

@@ -3,6 +3,7 @@ import { TripFormData } from "../@types/trip";
 import { Seat } from "../models/seat";
 import { ArrangeType } from "../@types/type";
 import { TripInfo } from "../models/trip";
+import dayjs from "dayjs";
 
 export class TripService {
   private db;
@@ -205,6 +206,52 @@ export class TripService {
       }
     } catch (error) {
       console.log("err", error);
+    }
+  };
+
+  public getAllFiltered = async (
+    limit: number,
+    offset: number,
+    arrangeType: ArrangeType,
+    filters: {
+      licensePlate?: string;
+      departure?: string;
+      arrival?: string;
+      startTime?: string;
+    }
+  ) => {
+    try {
+      let startTimeParam: string | null = null;
+      if (filters.startTime) {
+        const parsed = dayjs(filters.startTime, "DD/MM/YYYY HH:mm", true);
+        if (parsed.isValid()) {
+          startTimeParam = parsed.format("YYYY-MM-DD HH:mm:ss");
+        }
+      }
+
+      const value = [
+        limit,
+        offset,
+        arrangeType,
+        filters.licensePlate || "",
+        filters.departure || "",
+        filters.arrival || "",
+        startTimeParam,
+      ];
+      console.log("value get all trip", value);
+
+      const [rows] = await this.db.execute(`CALL getAllFilteredTrip(?, ?, ?, ?, ?, ?, ?)`, value);
+
+      return {
+        // status: "OK",
+        // message: "Get filtered trip success",
+        // total: rows[0]?.length || 0,
+        // totalPage: Math.ceil((rows[0]?.length || 0) / limit),
+        data: rows[0],
+      };
+    } catch (error) {
+      console.error("getAllFiltered error:", error);
+      return null;
     }
   };
 

@@ -2,12 +2,15 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import routes from "./routes/routes.routes"; // Import routes từ file `routes.route.ts`
+import routes from "./routes/routes.routes";
 import { config } from "./config/config";
-import initSocket from "./socket";
+import { initChatSocket } from "./sockets/chatSocket";
 import { createServer } from "http";
 import session from "express-session";
 import passport from "passport";
+import { connectRedis } from "./config/redis";
+import TripService from "./services/trip.service";
+import { bookBusTicketsDB } from "./config/db";
 
 dotenv.config();
 
@@ -17,7 +20,13 @@ const server = createServer(app);
 // Middleware cấu hình CORS
 app.use(
   cors({
-    origin: ["http://localhost:5173", process.env.URL_LOCALHOST, process.env.URL_FRONTEND],
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      process.env.URL_LOCALHOST,
+      process.env.URL_FRONTEND_CLIENT,
+      process.env.URL_FRONTEND_ADMIN,
+    ],
     // origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -47,7 +56,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
 // Khởi động Websocket
-const io = initSocket(server);
+initChatSocket(server);
 
 // Test route
 app.get("/", (_, res) => {
@@ -58,7 +67,19 @@ app.get("/", (_, res) => {
 routes(app);
 
 // Start server
-const port = config.PORT || 3003;
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+async function startServer() {
+  try {
+    await connectRedis();
+    console.log("Redis connected successfully");
+
+    const port = config.PORT || 3004;
+    server.listen(port, () => {
+      console.log(`Server running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("Failed to connect Redis", error);
+    process.exit(1); // dừng server nếu Redis không kết nối được
+  }
+}
+
+startServer();
