@@ -15,6 +15,7 @@ import { ToastContainer } from "react-toastify";
 import VerifyOTP from "./components/VerifyOTP";
 import Profile from "./components/Profile";
 import UpdatePassword from "./components/UpdatePassword";
+import DetailPromotion from "./components/DetailPromotion";
 
 function App() {
   useClientWidth();
@@ -94,12 +95,20 @@ function App() {
             </Layout>
           }
         />
+        <Route
+          path="/detail-promotion"
+          element={
+            <Layout>
+              <DetailPromotion />
+            </Layout>
+          }
+        />
         <Route path="/verify-otp" element={<VerifyOTP />}/>
       </Routes>
       <ToastContainer
         className="custom-toast"
-        position="top-center"
-        autoClose={700}
+        position="top-right"
+        autoClose={2000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

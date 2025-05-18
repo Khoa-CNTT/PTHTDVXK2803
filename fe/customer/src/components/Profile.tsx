@@ -1,8 +1,96 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../styles/profile.module.scss";
+import { useUserStore } from "../store/userStore";
+import { User } from "../types/user";
+import { data, useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { updateDetailUser } from "../services/auth.service";
 
 const Profile = () => {
-    const [avatar , setAvatar] = useState("https://randomuser.me/api/portraits/men/1.jpg")
+  const [avatar , setAvatar] = useState("https://randomuser.me/api/portraits/men/1.jpg")
+  const { user, setUser } = useUserStore();
+  const [fileAvatar, setFileAvatar] = useState<File | null>(null);
+  const [dataUser, setDataUser] = useState<User>( {
+    fullName: "",
+        email: "",
+       phone: "",
+    dateBirth: "",
+    sex: "male",
+    address: ""
+  })
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if(user) {
+      setDataUser({
+        fullName: user?.fullName,
+        email: user?.email,
+       phone: user?.phone,
+        dateBirth: user?.dateBirth,
+        sex: user?.sex,
+        address: user?.address,
+      })
+    }else {
+      navigate("/login")
+    }
+  }, [])
+
+   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setDataUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+   const convertToBase64 = (file: File) => new Promise((resolve, reject) => {
+      const reader = new FileReader()
+  
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        if(reader.result) {
+          resolve(reader.result)
+        }
+      }
+      reader.onerror = reject;
+    })
+
+   const handleOnchangeAvater = async (e: React.ChangeEvent<HTMLInputElement>) => {
+     const file = e.target.files?.[0];
+  if (!file) return;
+  setFileAvatar(file); 
+  const base64 = await convertToBase64(file);
+  if (typeof base64 === "string") {
+    setAvatar(base64); 
+  }
+    }
+
+  const handleUpdateUser = async () => {
+    if(user !== dataUser) {
+        let formData = new FormData()
+        formData.append("data", JSON.stringify(dataUser))
+        if(fileAvatar){
+          formData.append("file", fileAvatar)
+
+        }else{
+          alert("chưa có file image")
+        }
+        
+        let res = await updateDetailUser(formData)
+        
+        if(res && res.status === 'OK') {
+          console.log("res?.user: ", res?.user);
+          
+          setAvatar(res?.user?.urlImg)
+          setDataUser(res?.user)
+          setUser(res?.user)    
+          toast.success("Bạn đã cập nhật thành công!")
+        }else {
+          toast.error("Cập nhật thất bại!")
+        }
+      }
+    
+  }
 
   return (
     <div className={styles.container}>
@@ -11,15 +99,16 @@ const Profile = () => {
       <p className={styles.account__subtitle}>
         Quản lý thông tin hồ sơ để bảo mật tài khoản
       </p>
-
-      <div className={styles.account__card}>
+      {
+        dataUser ? 
+           <div className={styles.account__card}>
         <div className={styles.account__avatar}>
           <img
             src={avatar}
             alt="Avatar"
           />
           <input id="avatar" hidden type="file" 
-              // onChange={(e) => handleOnchangeAvater(e)}
+              onChange={(e) => handleOnchangeAvater(e)}
           />
           <label htmlFor="avatar" className={styles.label}>Chọn ảnh</label>
           <p className={styles.account__note}>
@@ -29,16 +118,41 @@ const Profile = () => {
 
         <div className={styles.account__info}>
           <div className={styles.info__item}>
+            <label>Email:</label>
+            <input
+              className={styles["input-email"]}
+              type="text"
+              placeholder="Email"
+              value={dataUser?.email}
+              onChange={handleChangeValue}
+              disabled
+              />
+          </div>
+          <div className={styles.info__item}>
             <label>Họ và tên:</label>
-            <span>văn lân</span>
+            <input
+              className={styles["input-email"]}
+              type="text"
+              placeholder="Họ và tên"
+              name="fullName"
+               value={dataUser?.fullName}
+              onChange={handleChangeValue}
+              />
           </div>
           <div className={styles.info__item}>
             <label>Số điện thoại:</label>
-            <span>0889531836</span>
+            <input
+              className={styles["input-email"]}
+              type="text"
+              placeholder="Điện thoại"
+              name="phone"
+              value={dataUser?.phone}
+              onChange={handleChangeValue}
+              />
           </div>
           <div className={styles.info__item}>
             <label>Giới tính:</label>
-            <select>
+            <select name="sex" onChange={handleChangeValue}>
               <option value="">-- Chọn giới tính --</option>
               <option value="male">Nam</option>
               <option value="female">Nữ</option>
@@ -46,14 +160,13 @@ const Profile = () => {
             </select>
           </div>
           <div className={styles.info__item}>
-            <label>Email:</label>
-            <span>lanngo1592003@gmail.com</span>
-          </div>
-          <div className={styles.info__item}>
             <label>Ngày sinh:</label>
             <input
               className={styles["input-date"]}
-              type="text"
+              type="date"
+              name="dateBirth"
+              value={dataUser?.dateBirth}
+              onChange={handleChangeValue}
               />
           </div>
           <div className={styles.info__item}>
@@ -61,18 +174,18 @@ const Profile = () => {
             <input
               className={styles["input-address"]}
               type="text"
+              name="address"
+              value={dataUser?.address}
+              onChange={handleChangeValue}
               />
           </div>
-          <div className={styles.info__item}>
-            <label>Nghề nghiệp:</label>
-            <input
-              className={styles["input-job"]}
-              type="text"
-              />
-          </div>
-          <button className={styles.account__updateBtn}>Cập nhật</button>
+          <button className={styles.account__updateBtn} onClick={handleUpdateUser}>Cập nhật</button>
         </div>
       </div>
+        :
+        <></>
+      }
+     
     </div>
     </div>
   );

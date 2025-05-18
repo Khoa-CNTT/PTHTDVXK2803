@@ -167,6 +167,73 @@ export class CustomerService {
     });
   }
 
+  getDetailUserByEmail(email: String): Promise<object> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const [rows] = await this.db.execute("call fetchCustomerByEmail(?)", [email]);
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        }
+        resolve(rows[0][0]);
+      } catch (error) {
+        console.log("Err Service.getDetail", error);
+        reject(error);
+      }
+    });
+  }
+
+  updateUser(updateCustomer: ModelCustomer,publicId: string | null, fileCloudinary: CloudinaryAsset): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { secure_url, public_id } = fileCloudinary;
+        const [result] = await this.db.execute('select url_public_img as urlPublicImg from user where email = ?', [updateCustomer.email])
+        const publicUrlImg = result[0][0]
+        console.log('public-img', publicUrlImg)
+        
+        const sql = "call updateDetailUser( ?, ?, ?, ?, ?, ?, ?, ?)";
+        const values = [
+          updateCustomer.email,
+          updateCustomer.fullName,
+          updateCustomer.sex,
+          updateCustomer.phone,
+          updateCustomer.dateBirth,
+          updateCustomer.address,
+          secure_url, 
+          public_id
+        ];
+
+
+        if(publicId) {
+          deleteOldFile(publicId, "image");
+        }
+
+        const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
+        if (rows.affectedRows === 0) {
+          return resolve({ status: "ERR", message: "User not found" });
+        }
+
+        const [rowsDataUser] =( await this.db.execute("call fetchCustomerByEmail(?)", [updateCustomer.email]) as [ResultSetHeader]);
+        if (rowsDataUser.affectedRows <= 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        }
+
+        resolve({
+          status: "OK",
+          user: rowsDataUser[0][0]
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+ 
   update(id: number, updateCustomer: ModelCustomer): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {

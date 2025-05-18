@@ -13,18 +13,17 @@
   .banner-wrapper {
     width: 100vw;
     height: auto;
-    aspect-ratio: 3/1;
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
       z-index: 10;
-      top: 70px;
+      top: 135px;
     .img-banner {
       object-fit: cover;
       border-radius: 20px;
       width: 1120px;
-      height: 380px;
+      height: 300px;
       box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .2);
     }
     .content-wrapper {

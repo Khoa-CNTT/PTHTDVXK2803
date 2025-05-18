@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { logout } from "../services/auth.service";
 import logo3 from "../assets/images/logo3.jpg";
 import { useUserStore } from "../store/userStore";
+import { useLocation } from "react-router";
 
 const Header = () => {
  const { user, setUser } = useUserStore();
@@ -18,6 +19,8 @@ const Header = () => {
   const [labguageIcon, setLanguageIcon] = useState<boolean>(true);
   const [btnLogin, setBtnLogin] = useState<boolean>(true);
   const [btnRegister, setBtnRegister] = useState<boolean>(false);
+  const location = useLocation();
+
   
   const handleToggleSideBar = () => {
     setCollapsed(!collapsed);
@@ -73,7 +76,7 @@ const Header = () => {
   }
   
   return (
-    <div className={styled["container-header"]}>
+    <div className={`${styled["container-header"]} ${location.pathname === "/" ? styled["header-homepage"] : styled["header-children"]}`}>
       <div className={styled["top-header"]}>
         <div className={styled.actions}>
           <div className={styled["action__show-side-bar"]}>
@@ -110,7 +113,7 @@ const Header = () => {
             <div className={styled.key}>
               <FaRegUserCircle />
               <span>
-              {user?.email}
+              {user?.fullName ? user?.fullName : user?.email}
             </span>
             </div>
             <div className={styled.information}>

@@ -119,6 +119,7 @@ const uploadImagesToCloudinary = async (
 
 const uploadImageToCloudinary = async (req: RequestFile, res: Response, next: NextFunction) => {
   try {
+    
     if (!req.file) {
       return next();
     }
@@ -140,7 +141,7 @@ const uploadImageToCloudinary = async (req: RequestFile, res: Response, next: Ne
       allowedFormats,
       "image"
     );
-
+    
     req.uploadedImage = result;
 
     next();

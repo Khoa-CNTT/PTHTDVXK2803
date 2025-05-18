@@ -22,3 +22,13 @@ export const logout = async () => {
   const response = await bookTicketAPI.post("/user/auth/logout").then((res) => res.data);
   return response;
 };
+
+export const getUserByEmail = async (email: string) => {
+  const response = await bookTicketAPI.post("/customer/get-detail-user-email", email).then((res) => res.data);
+  return response;
+};
+
+export const updateDetailUser = async (data: FormData) => {
+  const response = await bookTicketAPI.post("/customer/update-detail-user", data).then((res) => res.data);
+  return response;
+};
