@@ -94,6 +94,16 @@ export class CustomerController {
     }
   };
 
+  getDetailUserByEmail = async (req: Request, res: Response) => {
+    const email = req.body;
+    try {
+      const result = await this.customerService.getDetailUserByEmail(email);
+      successResponse(res, 200, result);
+    } catch (error) {
+      errorResponse(res, "ERR Controller.getDetailUserByEmail", 404);
+    }
+  };
+
   update = async (req: Request, res: Response) => {
     try {
       const id = Number(req.params.id);
@@ -102,6 +112,24 @@ export class CustomerController {
       const updateData = req.body;
       const result = await this.customerService.update(id, updateData);
       successResponse(res, 200, result);
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "ERR Controller.update", 404);
+    }
+  };
+
+  updateUser = async (req: RequestFile, res: Response) => {
+    try {
+      const updateData = JSON.parse(req.body.data);
+      const file = req.uploadedImage as CloudinaryAsset;
+      const publicId = req.body.publicId;
+
+      const result = await this.customerService.updateUser(updateData,publicId, file);
+      if(result.status === "ERR"){
+        errorResponse(res, result.message, 404)
+      }else{
+        successResponse(res, 200, result);
+      }
     } catch (error) {
       console.log("Err Controller", error);
       errorResponse(res, "ERR Controller.update", 404);
