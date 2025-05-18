@@ -3,78 +3,71 @@
   display: flex;
   justify-content: center;
   align-items: center;
-
   margin-top: 1rem;
-
-  background-color: var(--light);
-
+  background-color: #fff;
   text-align: start;
   word-wrap: break-word;
-
+  flex-direction: column;
   .footer-top {
-    display: flex;
-    gap: 4rem;
+    max-width: 1150px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding: 1rem;
 
-    padding-bottom: 2rem;
+  .footer-col {
     margin: 0 auto;
-
-    @include mix.responsive(mobile) {
-      display: block;
-      max-width: 18.75rem;
+  }
+    h3 {
+      font-weight: 500;
     }
 
-    .footer-t-right {
-      display: flex;
-      justify-content: center;
-      width: 100%;
+    .contact {
+      color: #2eb4fc;
+      font-weight: 500;
+      font-size: 24px;
+    }
 
-      .footer-contact {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+    .trace {
+      margin-top: 10px;
+      width: 200px;
+      height: auto;
+    }
 
-        max-width: 34rem;
+    .social-icons {
+      gap: 10px;
 
-        .footer-contact-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
+      a {
+        font-size: 18px;
+        margin: 0 10px;
+      }
 
-        .footer-contact-phone {
-          margin: 0.5rem 0;
-          font-size: 2rem;
-        }
-        .info-social {
-          display: inline-block;
-          gap: 1rem;
-          .ic {
-            height: 1.6rem;
-            mix-blend-mode: multiply;
-          }
-          .ic-fb {
-            color: #005eff;
-          }
-          .ic-yt {
-            margin: 0 0.4rem;
-            color: #ea3939;
-          }
-          .ic-github {
-            color: #121212;
-          }
-        }
+      .ic-fb {
+        color: #0866ff;
+      }
+
+      .ic-yt {
+        color: rgb(255, 0, 21, 1);
       }
     }
-    .footer-t-left {
-      @include mix.responsive(mobile) {
-        margin-top: 1rem;
-      }
+  @include mix.responsive(mobile) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
 
-      .layout-footer-links {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-    }
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+  .copyright {
+    width: 100%;
+    background-color: #2eb4fc;
+    text-align: center;
+    padding: 15px 0;
+    font-weight: 500;
+    font-size: 17px;
   }
 }

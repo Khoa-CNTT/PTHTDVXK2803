@@ -5,4 +5,5 @@ export interface User {
   dateBirth?: string;
   avatar?: string;
   address?: string;
+  sex?:"male"|"female"|"other"
 }

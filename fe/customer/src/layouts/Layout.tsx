@@ -9,9 +9,9 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className={styles["wrapper-layout"]}>
-            <header className={styles.header}>
-              <Header />
-            </header>
+              <header className={styles.header}>
+                <Header />
+              </header>
         <main className={`${styles.main} ${styles.center}`}>
                 {children}
         </main>

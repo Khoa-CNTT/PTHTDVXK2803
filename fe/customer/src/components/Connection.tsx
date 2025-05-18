@@ -5,7 +5,7 @@ import styles from "../styles/connection.module.scss";
 const Connection = () => {
     const items = [
   {
-    icon: "/icons/car-clock.png",  // thay bằng đường dẫn icon đúng
+    icon: "	", 
     label: "Xe Hợp Đồng",
     highlight: false,
   },
@@ -28,22 +28,12 @@ const Connection = () => {
 
   return (
     <section className={styles.container}>
-      <h2 className={styles.title}>KẾT NỐI FUTA GROUP</h2>
+      <h2 className={styles.title}>KẾT NỐI VEXETIENICH</h2>
       <p className={styles.description}>
-        Kết nối đa dạng hệ sinh thái FUTA Group qua App FUTA: mua vé Xe Phương Trang, Xe Buýt, Xe Hợp Đồng, Giao Hàng,...
+        Kết nối với chúng tôi qua: mua vé Xe Khách, Xe Buýt, Xe Hợp Đồng, Giao Hàng,...
       </p>
       <div className={styles.itemList}>
-        {items.map(({ icon, label, highlight }, index) => (
-          <div
-            key={index}
-            className={`${styles.item} ${highlight ? styles.highlight : ""}`}
-          >
-            <div className={styles.iconWrap}>
-              <img src={icon} alt={label} />
-            </div>
-            <p className={styles.label}>{label}</p>
-          </div>
-        ))}
+        <img  src="https://cdn.futabus.vn/futa-busline-cms-dev/1_ketnoi_3c401512ac/1_ketnoi_3c401512ac.svg"/>
       </div>
     </section>
   );

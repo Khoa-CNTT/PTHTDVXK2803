@@ -1,6 +1,6 @@
 import SearchTrip from "../components/SearchTrip";
 import styles from "../styles/homePage.module.scss";
-import logo5 from "../assets/images/logo5.jpg";
+import logo1 from "../assets/images/logo1.svg";
 import PromotionSlider from "../components/PromotionSlider";
 import PopularRoutesSlider from "../components/PopularRoutesSlider";
 import Connection from "../components/Connection";
@@ -11,7 +11,7 @@ const HomePage = () => {
       <div className={styles["banner-wrapper"]}>
         <img
           className={styles["img-banner"]}
-          src={logo5}
+          src={logo1}
           alt="banner-wrapper"
         />
         

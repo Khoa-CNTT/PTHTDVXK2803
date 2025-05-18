@@ -21,7 +21,6 @@ const DateInput = ({ title }: { title: string }) => {
     setCurrentDate(formatterDate);
   }, []);
 
-  console.log("date", formatDate(currentDate, undefined, true));
 
   return (
     <div className={styled["date-input-container"]}>
