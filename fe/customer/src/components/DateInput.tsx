@@ -2,25 +2,32 @@ import { faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import styled from "../styles/dateInput.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { memo, useEffect, useState } from "react";
-import { formatDate } from "../utils/formatDate";
 
-const DateInput = ({ title }: { title: string }) => {
-  const [currentDate, setCurrentDate] = useState<string>("");
+interface DateInputProps {
+  title: string;
+  valueIn?: string;
+  onChange: (time: string) => void;
+}
+
+const DateInput: React.FC<DateInputProps> = ({ title, valueIn, onChange }) => {
+  const [dateValue, setDateValue] = useState<string>("");
 
   const handleChangeDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentDate(event.target.value);
-  };
-
-  const handleFocusDateDeparture = (event: React.FocusEvent<HTMLInputElement>) => {
-    event.target.showPicker?.();
+    const newTime = event.target.value;
+    setDateValue(newTime);
+    onChange(newTime);
   };
 
   useEffect(() => {
-    const today = new Date();
-    const formatterDate = today.toISOString().split("T")[0];
-    setCurrentDate(formatterDate);
-  }, []);
-
+    if (valueIn) {
+      setDateValue(valueIn);
+    } else {
+      const today = new Date();
+      const formatterDate = today.toISOString().split("T")[0];
+      setDateValue(formatterDate);
+      onChange(formatterDate);
+    }
+  }, [valueIn]);
 
   return (
     <div className={styled["date-input-container"]}>
@@ -34,8 +41,8 @@ const DateInput = ({ title }: { title: string }) => {
           name="date-departure"
           id="date"
           className={styled["date-departure"]}
-          value={currentDate}
-          onFocus={handleFocusDateDeparture}
+          value={dateValue}
+          onClick={(e) => e.currentTarget.showPicker?.()}
           onChange={handleChangeDate}
         />
       </div>

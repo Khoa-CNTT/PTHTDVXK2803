@@ -2,6 +2,7 @@ import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 export interface InputDropDownProps {
   searchTitle?: string;
+  name: string;
   list: string[];
   contentPlaceholder?: string;
   valueIn?: string;
@@ -12,6 +13,7 @@ export interface InputDropDownProps {
 
 export interface InputProps {
   type?: string;
+  name: string;
   defaultValue?: string;
   value?: string;
   placeholder?: string;

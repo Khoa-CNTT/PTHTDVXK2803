@@ -3,12 +3,15 @@
   width: 100vw;
   min-height: 100vh;
   position: relative;
-  
 }
 .main {
   overflow-x: hidden;
+
   flex: 1;
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
   background-color: #f0f0f0;
 }
 
@@ -18,8 +21,6 @@
   background-color: rgb(46, 180, 252);
   color: #000;
 }
-
-
 
 .footer {
   // background-color: rgb(46, 180, 252);

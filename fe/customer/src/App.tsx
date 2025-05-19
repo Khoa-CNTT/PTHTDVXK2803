@@ -18,20 +18,25 @@ import UpdatePassword from "./components/UpdatePassword";
 import DetailPromotion from "./components/DetailPromotion";
 import VerifyOtpForgotPassword from "./components/VerifyOtpForgotPassword";
 import UpdateForgotPassword from "./components/UpdateForgotPassword";
+import SearchTripPage from "./pages/SearchTripPage";
 
 function App() {
   useClientWidth();
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
+        <Route
+          path="/"
+          element={
             <Layout>
               <HomePage />
             </Layout>
           }
         />
 
-        <Route path="/login" element={
+        <Route
+          path="/login"
+          element={
             <Layout>
               <Login />
             </Layout>
@@ -105,11 +110,17 @@ function App() {
             </Layout>
           }
         />
-        <Route path="/verify-otp" element={<VerifyOTP />}/>
-        <Route path="/verify-email-forgot-password" element={<VerifyOtpForgotPassword />}/>
-        <Route path="/update-forgot-password" element={<UpdateForgotPassword />}/>
-
-        
+        <Route
+          path="/tim-kiem"
+          element={
+            <Layout>
+              <SearchTripPage />
+            </Layout>
+          }
+        />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/verify-email-forgot-password" element={<VerifyOtpForgotPassword />} />
+        <Route path="/update-forgot-password" element={<UpdateForgotPassword />} />
       </Routes>
       <ToastContainer
         className="custom-toast"
@@ -124,7 +135,6 @@ function App() {
         pauseOnHover
         theme="colored"
       />
-
     </Router>
   );
 }

@@ -1,0 +1,19 @@
+.sort-trip-container {
+  max-width: max-content;
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    padding: 1rem;
+    border-radius: 0.8rem;
+
+    box-shadow: 0.1rem 0.1rem rgba(96, 234, 249, 0.7), 0.1rem 0.1rem rgba(110, 192, 255, 0.7);
+
+    background-color: var(--white);
+
+    .radio-item {
+      font-size: 1.05rem;
+    }
+  }
+}

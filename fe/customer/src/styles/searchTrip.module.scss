@@ -5,16 +5,17 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-top:270px;
-  width: 1120px;
+
+  max-width: 51.05rem;
   height: auto;
-  padding: 1.2rem;
-  border: 1px solid #c3c3c3;
+  padding: 1rem;
+  border: 1px solid var(--primary);
   border-radius: 0.725rem;
+  margin-top: 16rem;
+
   background-color: #fff;
 
   @include mix.responsive(tablet) {
-    width: 37.5rem;
     flex-wrap: wrap;
   }
 
@@ -26,60 +27,45 @@
   }
 
   .search-trip-left {
+    position: relative;
+
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.2rem;
-    height: 100%;
-    padding: 20px 30px;
-    border: 1px solid #c3c3c3;
+
     border-radius: 0.725rem;
 
-    contain: content;
-
+    @include mix.responsive(desktop) {
+      border: 1px solid var(--primary);
+      flex-wrap: nowrap;
+    }
     @include mix.responsive(tablet) {
-      flex-wrap: wrap;
+      border: 1px solid var(--primary);
+      flex-wrap: nowrap;
     }
 
     @include mix.responsive(mobile) {
-      flex-wrap: wrap; // Cho phép các phần tử con xuống dòng
+      border: 1px solid var(--primary);
+      flex-wrap: wrap !important;
     }
 
-    .item {
-      flex: 1 1 1;
+    .ic-swap {
+      position: unset;
 
-      @include mix.responsive(mobile) {
-        max-width: 100%;
-      }
-    }
-
-    .item-full {
-      width: 12.5rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    // .item {
-    //   flex: 1 1 12.5rem; // Kích thước mặc định của các item
-
-    //   @include mix.responsive(tablet) {
-    //     flex: 1 1 45%; // Trên tablet, mỗi item chiếm khoảng 45% chiều rộng
-    //   }
-
-    //   @include mix.responsive(mobile) {
-    //     flex: 1 1 100%; // Trên mobile, mỗi item chiếm 100% chiều rộng
-    //     margin-bottom: 1rem; // Thêm khoảng cách giữa các item khi xuống dòng
-    //   }
-    // }
-
-    .ic-r-l {
-      width: 1rem;
-      height: 1rem;
       padding: 0.4rem;
       border-radius: 50%;
       background-color: #ccc;
       color: #484848;
+
+      font-size: 1.2rem;
       cursor: pointer;
+
+      @include mix.responsive(mobile) {
+        position: absolute;
+        top: calc((50% - 2.5rem));
+        left: 018% !important;
+      }
     }
   }
 

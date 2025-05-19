@@ -1,84 +1,195 @@
-import { useState } from "react";
+import { FormEvent, useEffect, useState, useRef } from "react";
 import InputDropDownList from "./InputDropDownList";
 import styles from "../styles/searchTrip.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
 import DateInput from "./DateInput";
+import { getLocations } from "../services/trip.service";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "./Loading";
+import { useNavigate } from "react-router";
+import { ParamsSearchTrip } from "../types/trip";
 
-const SearchTrip = () => {
-  const arr = [
-    "Đà Nẵng",
-    "Quãng Nam",
-    "Quãng Ngãi",
-    "Huế",
-    "Quãng Bình",
-    "Hà Nội",
-    "Hồ Chí Minh",
-    "Vũng Tàu",
-    "Hải Phòng",
-    "Cà Mau",
-  ];
+interface SearchTripType {
+  from: string;
+  to: string;
+  start_time: string;
+}
 
-  const [departureValue, setDepartureValue] = useState<string>("Đà Nẵng");
-  const [destinationValue, setDestinationValue] = useState<string>("Huế");
+interface SearchTripProps {
+  valueSearchIn?: ParamsSearchTrip;
+}
+
+const SearchTrip: React.FC<SearchTripProps> = ({ valueSearchIn }) => {
+  const navigate = useNavigate();
+  const isInternalUpdate = useRef(false);
+  const isInitialized = useRef(false);
+
+  const { data: locationData, isLoading: isLocationsLoading } = useQuery({
+    queryKey: ["locations"],
+    queryFn: () => getLocations(),
+    staleTime: 60 * 60 * 1000,
+  });
+
+  const [searchValue, setSearchValue] = useState<SearchTripType>({
+    from: "Đà Nẵng",
+    to: "Hồ Chí Minh",
+    start_time: new Date().toISOString().split("T")[0],
+  });
+
+  const updateSearchValue = (newValues: Partial<SearchTripType>) => {
+    isInternalUpdate.current = true;
+    setSearchValue((prev) => {
+      const updated = { ...prev, ...newValues };
+      return updated;
+    });
+  };
 
   const handleDepartureLocationSelected = (locationSelected: string) => {
-    setDepartureValue(locationSelected);
+    updateSearchValue({ from: locationSelected });
   };
 
   const handleDestinationLocationSelected = (locationSelected: string) => {
-    setDestinationValue(locationSelected);
+    updateSearchValue({ to: locationSelected });
   };
 
-  const handleDepartureChangeValue = (departureValue: string) => {
-    setDepartureValue(departureValue);
-  };
-
-  const handleDestinationChangeValue = (destinationValue: string) => {
-    setDestinationValue(destinationValue);
+  const handleChangeValueDate = (timeValue: string) => {
+    updateSearchValue({ start_time: timeValue });
   };
 
   const handleSwapLocation = () => {
-    const depTemp = departureValue;
-    const desTemp = destinationValue;
-    setDepartureValue(desTemp);
-    setDestinationValue(depTemp);
+    updateSearchValue({
+      from: searchValue.to,
+      to: searchValue.from,
+    });
   };
 
+  const handleSearchTrip = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    navigate(
+      `/tim-kiem?from=${encodeURIComponent(searchValue.from)}&to=${encodeURIComponent(
+        searchValue.to
+      )}&start_time=${searchValue.start_time}`
+    );
+  };
+
+  useEffect(() => {
+    if (!isInitialized.current) {
+      const initialValues: Partial<SearchTripType> = {};
+      let hasChanges = false;
+
+      if (valueSearchIn?.from) {
+        initialValues.from = valueSearchIn.from.name;
+        hasChanges = true;
+      }
+
+      if (valueSearchIn?.to) {
+        initialValues.to = valueSearchIn.to.name;
+        hasChanges = true;
+      }
+
+      if (valueSearchIn?.start_time) {
+        initialValues.start_time = valueSearchIn.start_time;
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
+        setSearchValue((prev) => ({ ...prev, ...initialValues }));
+      }
+
+      isInitialized.current = true;
+    }
+  }, [valueSearchIn?.from, valueSearchIn?.to, valueSearchIn?.start_time]);
+
+  useEffect(() => {
+    if (!isInitialized.current || isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
+
+    const updatedValues: Partial<SearchTripType> = {};
+    let hasChanges = false;
+
+    if (valueSearchIn?.from !== undefined && valueSearchIn?.from.name !== searchValue.from) {
+      updatedValues.from = valueSearchIn.from.name;
+      hasChanges = true;
+    }
+
+    if (valueSearchIn?.to !== undefined && valueSearchIn?.to.name !== searchValue.to) {
+      updatedValues.to = valueSearchIn.to.name;
+      hasChanges = true;
+    }
+
+    if (
+      valueSearchIn?.start_time !== undefined &&
+      valueSearchIn?.start_time !== searchValue.start_time
+    ) {
+      updatedValues.start_time = valueSearchIn.start_time;
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      setSearchValue((prev) => ({ ...prev, ...updatedValues }));
+    }
+  }, [
+    valueSearchIn?.from,
+    valueSearchIn?.to,
+    valueSearchIn?.start_time,
+    searchValue.from,
+    searchValue.to,
+    searchValue.start_time,
+  ]);
+
   return (
-    <form className={styles["search-trip"]}>
+    <form className={styles["search-trip"]} onSubmit={handleSearchTrip}>
       <div className={`${styles["search-trip-left"]}`}>
         <div className={styles.item}>
-          <InputDropDownList
-            list={arr}
-            location={"departure"}
-            contentPlaceholder={"Điểm đi"}
-            searchTitle={"Nơi xuất phát"}
-            valueIn={departureValue}
-            onSelected={handleDepartureLocationSelected}
-            onChangeValue={handleDepartureChangeValue}
-          />
+          {locationData && !isLocationsLoading ? (
+            <InputDropDownList
+              name="departure"
+              list={locationData?.map((l) => l.name)}
+              location={"departure"}
+              contentPlaceholder={"Điểm đi"}
+              searchTitle={"Nơi xuất phát"}
+              valueIn={searchValue.from}
+              onSelected={handleDepartureLocationSelected}
+              onChangeValue={handleDepartureLocationSelected}
+            />
+          ) : (
+            <Loading />
+          )}
         </div>
-        <div className={`${styles.item} ${styles["item-full"]}`}>
+        <div className={`${styles["item-swap"]}`}>
           <FontAwesomeIcon
-            className={styles["ic-r-l"]}
+            className={styles["ic-swap"]}
             icon={faRightLeft}
             onClick={handleSwapLocation}
           />
         </div>
         <div className={styles.item}>
-          <InputDropDownList
-            list={arr}
-            location="destination"
-            contentPlaceholder={"Điểm đến"}
-            searchTitle={"Nơi đến"}
-            valueIn={destinationValue}
-            onSelected={handleDestinationLocationSelected}
-            onChangeValue={handleDestinationChangeValue}
-          />
+          {locationData && !isLocationsLoading ? (
+            <InputDropDownList
+              name="arrival"
+              list={locationData?.map((l) => l.name)}
+              location="destination"
+              contentPlaceholder={"Điểm đến"}
+              searchTitle={"Nơi đến"}
+              valueIn={searchValue.to}
+              onSelected={handleDestinationLocationSelected}
+              onChangeValue={handleDestinationLocationSelected}
+            />
+          ) : (
+            <Loading />
+          )}
         </div>
         <div className={styles.item}>
-          <DateInput title="Ngày đi" />
+          <DateInput
+            title="Ngày đi"
+            valueIn={searchValue.start_time}
+            onChange={handleChangeValueDate}
+          />
         </div>
       </div>
       <div className={`${styles["search-trip-right"]}`}>

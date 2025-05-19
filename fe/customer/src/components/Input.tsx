@@ -3,7 +3,7 @@ import styled from "../styles/input.module.scss";
 import { InputProps } from "../types/props";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ type = "text", value, placeholder = "...", onChange }, ref) => {
+  ({ type = "text", name, value, placeholder = "...", onChange }, ref) => {
     const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = event.target.value;
       if (onChange) {
@@ -15,6 +15,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           className={styled["input-search"]}
           type={type}
+          name={name}
           ref={ref}
           value={value}
           onChange={onChangeInput}

@@ -5,11 +5,12 @@ import styled from "../styles/inputDropDownList.module.scss";
 import { InputDropDownProps } from "../types/props";
 import { removeDiacritics } from "../utils/removeDiacritics";
 import DropDownList from "./DropDownList";
-import Input from "./Input";
 import IconDeparture from "./IconDeparture";
+import Input from "./Input";
 
 const InputDropDownList: React.FC<InputDropDownProps> = ({
   list,
+  name,
   contentPlaceholder = "",
   searchTitle = "",
   valueIn = "Đà Nẵng",
@@ -25,6 +26,7 @@ const InputDropDownList: React.FC<InputDropDownProps> = ({
   const [isDropDownVisible, setIsDropDownVisible] = useState<boolean>(false);
 
   const handleOnChange = (value: string) => {
+    setIsDropDownVisible(false);
     if (onChangeValue) {
       onChangeValue(value);
     }
@@ -41,33 +43,15 @@ const InputDropDownList: React.FC<InputDropDownProps> = ({
   };
 
   const handleSelected = (value: string) => {
-    console.log("selected-Input", value);
     setValue(value);
-    if (value && onSelected) {
-      //  If component father function transmission
-      onSelected(value);
-      setIsDropDownVisible(false);
-    }
+    onSelected?.(value);
+    setIsDropDownVisible(false);
   };
 
   const handleClick = () => {
     inputRef.current?.select();
     setIsDropDownVisible(true);
   };
-
-  //
-
-  // const handleOnMouseOut = (event: React.MouseEvent<HTMLDivElement>) => {
-  //   if (isDropDownVisible) {
-  //     if (
-  //       !containerRef.current?.contains(event.relatedTarget as Node) &&
-  //       !dropDownListRef.current?.contains(event.relatedTarget as Node)
-  //     ) {
-  //       setIsDropDownVisible(false);
-  //       inputRef.current?.blur();
-  //     }
-  //   }
-  // };
 
   const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
     if (
@@ -88,7 +72,6 @@ const InputDropDownList: React.FC<InputDropDownProps> = ({
     <div
       ref={containerRef}
       className={styled["input-drop-list"]}
-      // onMouseOut={handleOnMouseOut}
       onBlur={handleBlur}
       onClick={handleClick}
     >
@@ -107,6 +90,7 @@ const InputDropDownList: React.FC<InputDropDownProps> = ({
           <label className={styled.title}>{searchTitle}</label>
           <Input
             ref={inputRef}
+            name={name}
             type="text"
             value={value}
             onChange={handleOnChange}
