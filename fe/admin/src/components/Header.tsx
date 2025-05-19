@@ -68,7 +68,7 @@ const Header = () => {
           <button className={styled["side-bar-mobile__closed-btn"]} onClick={handleToggleSideBar}>
             X
           </button>
-          <span className={styled["side-bar-mobile__logo"]}>YudLinhBus</span>
+          <span className={styled["side-bar-mobile__logo"]}>VeXeTienIch</span>
         </div>
 
         <nav className={styled["side-bar-mobile__menu"]}>
@@ -76,7 +76,7 @@ const Header = () => {
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/" className={styled["side-bar-mobile__menu-link"]}>
                 <FaHome className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Trang chủ</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Tổng quan</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
@@ -89,45 +89,45 @@ const Header = () => {
               <NavLink to="/admin-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <RiAdminFill className={styled.icon} />
                 <span className={styled["side-bar-mobile__section-title"]}>
-                  Quản lý quản trị viên
+                  Quản lý Nhân viên
                 </span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/driver-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <FaUserTie className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản lý tài xế</span>
-              </NavLink>
-            </li>
-            <li className={styled["side-bar-mobile__menu-item"]}>
-              <NavLink to="/co-driver-manage" className={styled["side-bar-mobile__menu-link"]}>
-                <RiUserStarFill className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản lý phụ xe</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Tài xế</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/bus-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <FaBus className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản lý xe khách</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Xe</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/trip-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <FaBus className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản lý chuyến đi</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Chuyến xe</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/promotion-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <FaTicketAlt className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản khuyến mãi</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản ly Khuyến mãi</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/ticket-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <FaTicketAlt className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>Quản lý vé</span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Vé xe</span>
               </NavLink>
+            </li>
+            <li className={styled["side-bar-mobile__menu-item"]}>
+            <NavLink to="/feedback-manage" className={styled["side-bar-mobile__menu-link"]}>
+              <RiUserStarFill className={styled.icon} />
+              <span className={styled["side-bar-mobile__section-title"]}>Quản lý Đánh giá</span>
+            </NavLink>
             </li>
             <li className={`${styled["side-bar-mobile__menu-item"]} ${styled["action-logout"]}`}>
               <FontAwesomeIcon
