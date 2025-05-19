@@ -13,6 +13,7 @@ import { generalAccessToken, generalRefreshToken } from "../services/auth.servic
 import { OtpService } from "./otp.service";
 import testEmail from "../utils/testEmail";
 import { formatDate } from "../utils/formatDate";
+import { UpdatePassword } from "../@types/user.type";
 
 const userService = new UserService(bookBusTicketsDB);
 const otpService = new OtpService();
@@ -88,6 +89,46 @@ export class CustomerService {
     });
   }
 
+  insertOtp(email: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log();
+        
+        const [rows] = await this.db.execute("call fetchCustomerByEmail(?)", [email]);
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        }
+
+        const otp = otpGenerator.generate(6, {
+          digits: true,
+          lowerCaseAlphabets: false,
+          upperCaseAlphabets: false,
+          specialChars: false,
+        });
+
+        const insertOtp = await otpService.insertOtpForgotPassword({otp,email });
+        if (insertOtp.data.status === "ERR") {
+          return resolve({
+            status: "ERR",
+            message: insertOtp.data.message,
+          });
+        }
+
+        await sendOtpEmail({ email, otp });
+
+        resolve({
+          status: "OK",
+          message: "Create OTP success",
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   verifyEmail(email: string, otp: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -142,6 +183,41 @@ export class CustomerService {
       }
     });
   }
+
+  verifyEmailForgotPassword(email: string, otp: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const checkOtp = await otpService.findOtp(email);
+
+        if (!checkOtp) {
+          return resolve({
+            status: "ERR",
+            message: "The OTP code for this email does not exist",
+          });
+        }
+        const isValid = await otpService.isValidOtp(otp, checkOtp.otp);
+
+        if (!isValid) {
+          return resolve({
+            status: "ERR",
+            message: "Error verifying email",
+          });
+        } else {
+            return resolve({
+              status: "OK",
+              message: "Verify email success",
+            });
+          }
+      } catch (error) {
+        console.log("error", error);
+        reject({
+          status: "ERR",
+          message: "Error verifying email",
+        });
+      }
+    });
+  }
+
 
   fetch(id: number): Promise<object> {
     return new Promise(async (resolve, reject) => {
@@ -323,6 +399,101 @@ export class CustomerService {
     });
   }
 
+ updatePassword(dataUpdate: UpdatePassword): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const {email, passwordOld, passwordNew} = dataUpdate
+        
+      const [rows] = await this.db.execute("call getCustomer(?)", [email]);
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        }
+        
+        const compareCurrentPassword = await bcrypt.compareSync(
+          passwordOld,
+          rows[0][0].password
+        );
+
+        if (!compareCurrentPassword) {
+          resolve({
+            status: 'ERR',
+            message: 'Verify password current is false',
+          });
+        }
+
+        const comparePassword = bcrypt.compareSync(passwordNew, rows[0][0].password);
+
+        const password= rows[0][0].password
+
+        if (comparePassword) {
+          resolve({
+            status: 'ERR',
+            message: 'Nothing changes',
+          });
+        } else {
+          const hash = bcrypt.hashSync(passwordNew, 10);
+
+          const sql = "call updatePassword( ?, ?, ?)";
+          const values = [
+            email,
+            password
+            ,
+            hash
+          ];
+
+          const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
+          if (rows.affectedRows === 0) {
+            return resolve({ status: "ERR", message: "Customer not found" });
+          }
+          resolve({
+            status: "OK",
+            message: "Update password success",
+          });
+      }
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  updateNewPassword(dataUpdate: UpdatePassword): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const {email, passwordNew} = dataUpdate
+        
+      const [rows] = await this.db.execute("call getCustomer(?)", [email]);
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+        }
+          const hash = bcrypt.hashSync(passwordNew, 10);
+
+          const sql = "call updateForgotPassword( ?, ?)";
+          const values = [
+            email,
+            hash
+          ];
+
+          const [rowsUpdate] = (await this.db.execute(sql, values)) as [ResultSetHeader];
+          if (rowsUpdate.affectedRows === 0) {
+            return resolve({ status: "ERR", message: "Customer not found" });
+          }
+          resolve({
+            status: "OK",
+            message: "Update password success",
+          });
+        
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
   add(newCustomer: ModelCustomer, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {

@@ -41,9 +41,103 @@ export class CustomerController {
     }
   };
 
+  insertOtp = async (req: Request, res: Response) => {
+    try {
+      const { email} = req.body;
+
+      const isCheckEmail = testEmail(email);
+
+      
+      if (!email) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
+      const response = await this.customerService.insertOtp(email);
+
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "Controller.register", 404);
+    }
+  };
+
+ updatePassword  = async (req: Request, res: Response) => {
+    try {
+      const { email, passwordOld, passwordNew } = req.body;
+
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !passwordOld || !passwordNew) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
+      const response = await this.customerService.updatePassword(req.body);
+
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "Controller.register", 404);
+    }
+  };
+
+  updateNewPassword  = async (req: Request, res: Response) => {
+    try {
+      const { email, passwordNew } = req.body;
+
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !passwordNew) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
+      const response = await this.customerService.updateNewPassword(req.body);
+
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "Controller.register", 404);
+    }
+  };
+
+
   verifyEmail = async (req: Request, res: Response) => {
     try {
       const { email, otp } = req.body;
+
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !otp) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
       const response = await this.customerService.verifyEmail(email, otp);
       if (
         "access_token" in response &&
@@ -79,6 +173,32 @@ export class CustomerController {
           errorResponse(res, "Unexpected error occurred", 400);
         }
       }
+    } catch (error) {
+      errorResponse(res, "ERR Controller.verifyEmail", 404);
+    }
+  };
+
+  verifyEmailForgotPassword = async (req: Request, res: Response) => {
+    try {
+      const { email, otp } = req.body;
+      const isCheckEmail = testEmail(email);
+
+      if (!email || !otp) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
+      const response = await this.customerService.verifyEmailForgotPassword(email, otp);
+      
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
+
     } catch (error) {
       errorResponse(res, "ERR Controller.verifyEmail", 404);
     }

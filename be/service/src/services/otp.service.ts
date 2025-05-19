@@ -10,6 +10,11 @@ type OtpData = {
   role: "customer" | "driver";
 };
 
+type OtpDataForgotPassword = {
+  otp: string;
+  email: string;
+};
+
 interface OtpRecord {
   email: string;
   fullName: string;
@@ -25,6 +30,30 @@ export class OtpService {
 
       const query = "call upsert_otp(?, ?, ?, ?, ?)";
       const value = [email, hash, passwordHash, fullName, role];
+      const [result, fields] = (await bookBusTicketsDB.execute(query, value)) as [
+        ResultSetHeader,
+        any
+      ];
+
+      if (result.affectedRows <= 0) {
+        return { data: { status: "ERR", message: "Create OTP failed" } };
+      } else {
+        return { data: result };
+      }
+    } catch (error) {
+      console.error("ERR Insert OTP", error);
+      throw error;
+    }
+  }
+
+
+   async insertOtpForgotPassword({ otp, email }: OtpDataForgotPassword): Promise<{ data: any }> {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(otp, salt);
+
+      const query = "call upsert_otp_forgot_password(?, ?)";
+      const value = [email, hash];
       const [result, fields] = (await bookBusTicketsDB.execute(query, value)) as [
         ResultSetHeader,
         any
