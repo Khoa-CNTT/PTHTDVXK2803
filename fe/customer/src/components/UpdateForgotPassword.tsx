@@ -1,15 +1,17 @@
 import { useState } from "react";
 import styles from "../styles/updatePassword.module.scss";
-import { UpdatePasswordPayLoad } from "../types";
-import { updatePasswordCustomer } from "../services/customer.service";
+import { UpdateForgotPasswordPayLoad, UpdatePasswordPayLoad } from "../types";
+import { updateNewPassword, updatePasswordCustomer } from "../services/customer.service";
 import { useUserStore } from "../store/userStore";
 import { toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router";
 
-const UpdatePassword = () => {
-    const {user, setUser } = useUserStore();
-    
-    const [dataUpdatePassword, setDataUpdatePassword] = useState<UpdatePasswordPayLoad>({
-        passwordOld: "",
+const UpdateForgotPassword = () => {
+    const navigation = useNavigate()
+    const location = useLocation();
+    const {email} = location.state
+
+    const [dataUpdatePassword, setDataUpdatePassword] = useState<UpdateForgotPasswordPayLoad>({
         passwordNew: "",
         confirmPassword: ""
     });
@@ -23,9 +25,9 @@ const UpdatePassword = () => {
       };
 
       const handleUpdatePassword = async () => {
-        const {passwordOld, passwordNew, confirmPassword} = dataUpdatePassword
+        const {passwordNew, confirmPassword} = dataUpdatePassword
 
-        if(!user?.email || !passwordOld || !passwordNew || !confirmPassword) {
+        if(!email  || !passwordNew || !confirmPassword) {
             toast.error("Bạn nhập thiếu dữ liệu");
             return
         }
@@ -35,17 +37,18 @@ const UpdatePassword = () => {
             return
         }
 
-        const email = user.email
-        const value = {email, passwordOld, passwordNew}
-        const res = await updatePasswordCustomer(value)
+        const value = {email, passwordNew}
+        const res = await updateNewPassword(value)
 
+        console.log("update: ", res);
+        
         if(res.status === "OK") {
             toast.success("Cập nhật mật khẩu thành công")
             setDataUpdatePassword({
-                passwordOld: "",
                 passwordNew: "",
                 confirmPassword: ""
             })
+            navigation("/login")
         }else {
             toast.error("Cập nhật mật khẩu thất bại")
         }
@@ -58,15 +61,6 @@ const UpdatePassword = () => {
                 Cập nhật mật khẩu
             </div>
             <div className={styles.form}>
-                <div className={styles.item}>
-                    <span>Mật khẩu cũ</span>
-                    <input
-                    className={styles["input-email"]}
-                    type="password"
-                     name="passwordOld"
-                    onChange={handleChangeValue}
-                />
-                </div>
                 <div className={styles.item}>
                     <span>Mật khẩu mới</span>
                     <input
@@ -92,4 +86,4 @@ const UpdatePassword = () => {
   );
 };
 
-export default UpdatePassword;
+export default UpdateForgotPassword;

@@ -26,9 +26,27 @@ const Register = () => {
   };
 
     const handleSubmit = async () => {
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(emailRegex.test(dataRegister?.email) === false) {
+      toast.error("Email không đúng định dạng")
+      return
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if(passwordRegex.test(dataRegister?.password) === false) {
+      toast.error("Mật khẩu ít nhất phải 1 kí tự thường, hoa, đặc biệt và tối thiếu 8 kí tự")
+      return
+    }
+
+    if(dataRegister?.password !== dataRegister?.confirmPassword) {
+      toast.error("Xác nhận mật khẩu không chính xác!")
+      return
+    }
     const result = await register(dataRegister);
     
     if (result?.status === "OK") {
+      toast.success("Xác thực email!")
       navigate("/verify-otp", {
       state: {
         email: dataRegister?.email

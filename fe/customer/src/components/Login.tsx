@@ -9,6 +9,7 @@ import { useUserStore } from '../store/userStore';
 import { toast } from 'react-toastify';
 import { loginUser } from "../services/auth.service";
 import { useNavigate } from 'react-router';
+import ForgotPassword from './ForgotPassword';
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
@@ -51,11 +52,15 @@ const Login: React.FC = () => {
 
 
   const handleLogin = async () => {
-    console.log(1);
-    console.log("dataLogin: ", dataLogin);
 
-    
-     const result = await loginUser(dataLogin);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(emailRegex.test(dataLogin?.email) === false) {
+      toast.error("Email không đúng định dạng")
+      return
+    }
+
+    const result = await loginUser(dataLogin);
+
     if (result.status === "OK" && result.data) {
       setUser({
         email: result?.data?.email,
@@ -96,20 +101,7 @@ const Login: React.FC = () => {
         
         {
           forgotPassword ? 
-            <>
-              <div className={styles.contentLogin}>
-                <div className={styles.inputGroup}>
-          <MdOutlineMail className={styles.iconEmail} />
-          <input
-            type="tel"
-            placeholder="Nhập email"
-            className={styles.email}
-          />
-        </div>
-        </div>
-        <button className={styles.buttonForgot} >Đăng nhập</button>
-        <span className={styles.back} onClick={onClickBack}>Quay lại</span>
-            </>
+           <ForgotPassword onButtonClick={onClickBack}/>
           :
           <>
             {

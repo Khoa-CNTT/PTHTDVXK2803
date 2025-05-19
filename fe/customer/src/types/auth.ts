@@ -14,3 +14,14 @@ export interface VerifyEmailPayLoad {
   email: string;
   otp: string;
 }
+
+export interface UpdatePasswordPayLoad {
+  passwordOld: string;
+  passwordNew: string;
+  confirmPassword: string;
+}
+
+export interface UpdateForgotPasswordPayLoad {
+  passwordNew: string;
+  confirmPassword: string;
+}

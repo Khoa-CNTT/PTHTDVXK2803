@@ -26,6 +26,8 @@ export const fetchCustomer = async (id: string) => {
     .then((res) => res.data);
 };
 
+
+
 export const updateImgCustomer = async (data: FormData) => {
   return await bookTicketAPI
     .put<ImageType>(`/customer/update-img`, data, {
@@ -49,3 +51,5 @@ export const addCustomer = async (data: FormData) => {
     })
     .then((res) => res.data);
 };
+
+

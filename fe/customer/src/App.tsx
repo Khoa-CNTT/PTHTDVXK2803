@@ -16,6 +16,8 @@ import VerifyOTP from "./components/VerifyOTP";
 import Profile from "./components/Profile";
 import UpdatePassword from "./components/UpdatePassword";
 import DetailPromotion from "./components/DetailPromotion";
+import VerifyOtpForgotPassword from "./components/VerifyOtpForgotPassword";
+import UpdateForgotPassword from "./components/UpdateForgotPassword";
 
 function App() {
   useClientWidth();
@@ -104,6 +106,10 @@ function App() {
           }
         />
         <Route path="/verify-otp" element={<VerifyOTP />}/>
+        <Route path="/verify-email-forgot-password" element={<VerifyOtpForgotPassword />}/>
+        <Route path="/update-forgot-password" element={<UpdateForgotPassword />}/>
+
+        
       </Routes>
       <ToastContainer
         className="custom-toast"
