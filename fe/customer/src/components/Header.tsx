@@ -60,11 +60,15 @@ const Header = () => {
   const onClickLogin = () => {
     setBtnLogin(true)
     setBtnRegister(false)
+        navigate("/login")
+
   }
 
   const onClickRegister = () => {
     setBtnLogin(false)
     setBtnRegister(true)
+        navigate("/register")
+        
   }
   
   const handleUpdateInformation = () => {
@@ -75,6 +79,10 @@ const Header = () => {
     navigate("/update-password")
   }
   
+  const handleHistoryBookTicket = () => {
+    navigate("/lich-su-dat-ve")
+
+  }
   return (
     <div className={`${styled["container-header"]} ${location.pathname === "/" ? styled["header-homepage"] : styled["header-children"]}`}>
       <div className={styled["top-header"]}>
@@ -119,18 +127,20 @@ const Header = () => {
             <div className={styled.information}>
           <ul>
             <li onClick={handleUpdateInformation}>Cập nhật thông tin</li>
-            <li>Lịch sử đặt vé</li>
+            <li onClick={handleHistoryBookTicket}>Lịch sử đặt vé</li>
             <li onClick={handleUpdatePassword}>Đặt lại mật khẩu</li>
             <li onClick={handleLogout}>Đăng xuất</li>
           </ul>
         </div>
           </div>
           :
-          <NavLink to="/login" className={styled["login-register__link"]}>
+          // <NavLink to="/login" className={styled["login-register__link"]}>
+          <div className={styled["login-register__link"]}>
             <span className={`${styled["login-text"]} ${btnLogin ? styled.active :  styled.hide}`} onClick={onClickLogin}>Đăng nhập</span>
             <span className={`${styled["register-text"]} ${btnRegister ? styled.active :  styled.hide}`} onClick={onClickRegister}>Đăng ký</span>
             <FontAwesomeIcon icon={faUser} className={styled["login-register__link-ic"]} />
-          </NavLink>
+          </div>
+          // </NavLink>
           }
           
         </div>

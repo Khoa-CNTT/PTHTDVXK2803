@@ -21,6 +21,7 @@ router.post("/update-detail-user/",uploadImage, uploadImageToCloudinary, custome
 router.post("/update-password/", customerController.updatePassword);
 router.post("/update-new-password/", customerController.updateNewPassword);
 router.post("/insert-otp-forgot-password/", customerController.insertOtp);
+router.post("/send-otp/", customerController.sendOtp);
 
 
 router.post(

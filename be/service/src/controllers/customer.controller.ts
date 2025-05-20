@@ -69,6 +69,34 @@ export class CustomerController {
     }
   };
 
+   sendOtp = async (req: Request, res: Response) => {
+    try {
+      const { email} = req.body;
+
+      const isCheckEmail = testEmail(email);
+
+      
+      if (!email) {
+        errorResponse(res, "The input is required", 200);
+      }
+
+      if (!isCheckEmail) {
+        errorResponse(res, "Email is not in correct format", 200);
+      }
+
+      const response = await this.customerService.sendOtp(email);
+
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 200);
+      } else {
+        successResponse(res, 200, response);
+      }
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "Controller.register", 404);
+    }
+  };
+
  updatePassword  = async (req: Request, res: Response) => {
     try {
       const { email, passwordOld, passwordNew } = req.body;

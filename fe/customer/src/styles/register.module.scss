@@ -1,4 +1,11 @@
  .contentRegister {
+  h2 {
+      margin-bottom: 20px;
+      margin: 0px auto;
+      font-weight: 500;
+      font-size: 20px;
+      text-align: center;
+    }
       .inputGroup {
       position: relative;
       margin-bottom: 20px;
@@ -29,6 +36,24 @@
         left: 10px;
         top: 220px;
         color: rgb(46, 180, 252);
+      }
+
+      .iconShowPassword {
+        position: absolute;
+        top: 160px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 17px;
+
+      }
+
+      .iconShowConfirmPassword {
+        position: absolute;
+            top: 220px;
+          right: 15px;
+        font-size: 17px;
+        cursor: pointer;
+
       }
       .email , .password, .name{
         margin-top: 20px;

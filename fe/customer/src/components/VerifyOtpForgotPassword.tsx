@@ -17,8 +17,8 @@ const VerifyOtpForgotPassword = () => {
 
   const handleOTPVerify = async (data : { email: string; otp: string }) => {
     const response = await verifyOtpForgotPassword(data);
+    
 
-    console.log("veri: ", response);
     if ((response.status === "OK")) {
       setOtpValue({});
       toast.success("Xác thực thành công");

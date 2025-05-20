@@ -31,6 +31,7 @@ const ForgotPassword : React.FC<ChildProps>= ({onButtonClick}) => {
   return (
     <div className={styles.container}>
               <div className={styles.contentLogin}>
+                <h2>Quên mật khẩu</h2>
                 <div className={styles.inputGroup}>
           <MdOutlineMail className={styles.iconEmail} />
           <input

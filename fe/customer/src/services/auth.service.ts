@@ -1,10 +1,11 @@
+import { toast } from "react-toastify";
 import { LoginPayLoad, RegisterPayLoad } from "../types";
 import { bookTicketAPI } from "./customizeAxios.service";
 
 export const loginUser = async (data: LoginPayLoad) => {
   const response = await bookTicketAPI
     .post("/user/auth/customer/login", data)
-    .then((res) => res.data);
+    .then((res) => res.data).catch(err => toast.error(err?.response?.message))
   return response;
 };
 

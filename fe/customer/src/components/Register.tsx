@@ -5,10 +5,12 @@ import { register } from "../services/customer.service";
 import { RegisterPayLoad } from "../types";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
+import { FaEyeSlash } from "react-icons/fa";
 
 const Register = () => {
     const navigate = useNavigate()
-
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [dataRegister, setDataRegister] = useState<RegisterPayLoad>({
     email: "",
     fullName: "",
@@ -16,6 +18,13 @@ const Register = () => {
     confirmPassword: "",
   });
   
+  const handleClickShowPassword= () => {
+    setShowPassword(!showPassword)
+  }
+
+  const handleClickShowConfirmPassword= () => {
+    setShowConfirmPassword(!showConfirmPassword)
+  }
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,6 +67,7 @@ const Register = () => {
 
   return (
     <div className={styles.contentRegister}>
+      <h2 >Đăng ký</h2>
           <div className={styles.inputGroup}>
           <MdOutlineMail className={styles.iconEmail} />
           <input
@@ -79,24 +89,31 @@ const Register = () => {
           />
           <MdOutlinePassword className={styles.iconPassword} />
            <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Nhập mật khẩu"
             name="password"
             className={styles.password}
             value={dataRegister?.password}
             onChange={handleChangeValue}
           />
+          <FaEyeSlash className={styles.iconShowPassword}
+            onClick={handleClickShowPassword}
+          />
           <MdOutlinePassword className={styles.iconConfirmPassword} />
            <input
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             placeholder="Xác nhận mật khẩu"
             name="confirmPassword"
             className={styles.password}
             value={dataRegister?.confirmPassword}
             onChange={handleChangeValue}
           />
+          <FaEyeSlash className={styles.iconShowConfirmPassword}
+            onClick={handleClickShowConfirmPassword}
+          />
+
         </div>
-        <button type="button" className={styles.button} onClick={handleSubmit}>Đăng ký</button>
+        <button type="button" className={styles.button} onClick={handleSubmit} >Đăng ký</button>
             </div>
   );
 };

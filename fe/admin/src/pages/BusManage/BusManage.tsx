@@ -116,7 +116,7 @@ const BusManage: React.FC = () => {
           ))}
         </div>
         <Link to={`${urlMain}/add`} className={styles["btn-add"]}>
-          Thêm xe khách
+          Thêm xe
         </Link>
       </div>
 

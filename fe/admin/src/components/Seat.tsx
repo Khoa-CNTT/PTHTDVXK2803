@@ -28,7 +28,7 @@ const Seat: React.FC<SeatProps> = React.memo(({ seatValue, useStatus, onSelected
       console.log(1);
       newStatus = "available";
     }
-    const updateSeat: SeatType = { ...seatValue, status: newStatus };
+    const updateSeat: SeatType = { ...seatValue, status: newStatus as "available" || "unavailable" || "booked" };
     onSelected(updateSeat);
   };
 

@@ -1,6 +1,10 @@
 .footer-container {
   display: flex;
   justify-content: center;
-
   padding: 1rem 0;
+  background-color: #0973b9;
+  color: #fff;
+  p {
+    font-weight: bold;
+  }
 }

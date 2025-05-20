@@ -1,9 +1,117 @@
 .login-container {
+   display: flex;
+  justify-content: space-between;
+  border-radius: 10px;
   overflow: hidden;
-
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+  width: 1000px;
+  margin: 50px auto;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #f0f0f0;
+    top: 50px;
+    background-color: white;
+    left: 250px;
+    
+  .left {
+    width: 50%;
+    padding: 40px;
+    background: #fff7f2;
+
+    .brand {
+      color: rgb(46, 180, 252);
+      font-weight: bold;
+      font-size: 32px;
+    }
+
+    .slogan {
+      color: black;
+      font-size: 18px;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .serviceTitle {
+      color: #007236;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .serviceDesc {
+      color: #007236;
+      font-weight: bold;
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+
+    .busImage {
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+  }
+
+  .form {
+    width: 50%;
+    margin: auto auto;
+    padding: 0 50px;
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      font-size: 20px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .email, .password {
+      display: flex;
+      flex-direction: column;
+      
+      label {
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      input {
+        position: relative;
+        margin-bottom: 15px;
+        width: 100%;
+        border: 1px solid rgb(46, 180, 252);
+        padding: 12px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 17px;
+        margin-top: 10px;
+
+        ::placeholder {
+  font-size: 14px; 
+}
+      }
+        
+      
+    }
+
+    .password {
+      position: relative;
+      .iconShowPassword {
+        position: absolute;
+          top: 25px;
+          right: 15px;
+          cursor: pointer;
+          font-size: 17px;
+        
+      }
+    }
+  }
+
+    .buttonSubmit {
+      padding: 12px;
+      background-color: rgb(46, 180, 252);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+    }
+
 }

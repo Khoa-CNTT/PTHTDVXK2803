@@ -6,6 +6,7 @@ import OTPInput from './OtpInput';
 import { veriFyEmail } from "../services/auth.service"
 import { toast } from 'react-toastify';
 import { useUserStore } from "../store/userStore";
+import { sendOtp } from '../services/customer.service';
 
 const VerifyOTP = () => {
   const location = useLocation();
@@ -29,6 +30,17 @@ const VerifyOTP = () => {
       return toast.error(response.message);
     }
 }
+
+  const handleSendOtp = async () => {
+    const res = await sendOtp(email)
+    
+    if(res && res.status === "OK") {
+      toast.success("Đã gửi lại mã, bạn hãy kiểm tra email!")
+    }else {
+      toast.error("Gửi mã thất bại!")
+    }
+  }
+
  return (
     <>
       <Header />
@@ -50,7 +62,7 @@ const VerifyOTP = () => {
           <OTPInput length={6} email={email} onsubmit={handleOTPVerify} />
           <div className={styles.footer}>
             <p>Không nhận được mã?</p>
-            <p className={styles.underline}>Nhấn vào đây để nhận.</p>
+            <p className={styles.underline} onClick={handleSendOtp}>Nhấn vào đây để nhận.</p>
           </div>
         </div>
       </div>

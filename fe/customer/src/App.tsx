@@ -19,6 +19,8 @@ import DetailPromotion from "./components/DetailPromotion";
 import VerifyOtpForgotPassword from "./components/VerifyOtpForgotPassword";
 import UpdateForgotPassword from "./components/UpdateForgotPassword";
 import SearchTripPage from "./pages/SearchTripPage";
+import HistoryBookTicket from "./components/HistoryBookTicket";
+
 
 function App() {
   useClientWidth();
@@ -42,6 +44,12 @@ function App() {
             </Layout>
           }
         />
+         <Route path="/register" element={
+            <Layout>
+              <Login />
+            </Layout>
+          }
+        />
 
         <Route
           path="/schedule"
@@ -59,7 +67,14 @@ function App() {
             </Layout>
           }
         />
-
+        <Route
+          path="/lich-su-dat-ve"
+          element={
+            <Layout>
+              <HistoryBookTicket />
+            </Layout>
+          }
+        />
         <Route
           path="/rental-car"
           element={

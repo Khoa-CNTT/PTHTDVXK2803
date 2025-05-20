@@ -160,6 +160,7 @@ const SearchTrip: React.FC<SearchTripProps> = ({ valueSearchIn }) => {
           ) : (
             <Loading />
           )}
+
         </div>
         <div className={`${styles["item-swap"]}`}>
           <FontAwesomeIcon
@@ -183,6 +184,7 @@ const SearchTrip: React.FC<SearchTripProps> = ({ valueSearchIn }) => {
           ) : (
             <Loading />
           )}
+
         </div>
         <div className={styles.item}>
           <DateInput
@@ -191,12 +193,45 @@ const SearchTrip: React.FC<SearchTripProps> = ({ valueSearchIn }) => {
             onChange={handleChangeValueDate}
           />
         </div>
-      </div>
-      <div className={`${styles["search-trip-right"]}`}>
-        <button className={styles["btn-search-trip"]} type="submit">
-          Tìm kiếm
-        </button>
-      </div>
+        <div className={`${styles["search-trip-right"]}`}>
+          <button className={styles["btn-search-trip"]} type="submit">
+            Tìm kiếm
+          </button>
+          </div>
+          
+          </div>
+          <div className={styles["search-trip-bottom"]}>
+            <div className={styles.title}>
+                <h2>Gợi ý tuyến đường</h2>
+                
+            </div>
+            <div>
+              <div className={styles.data}>
+                        <div className={styles.children}>
+                    <span className={styles.name}>Đà Nẵng - Hà Nội</span>
+                    <span className={styles.date}>11-2-2025</span>
+                  </div>
+                  <div className={styles.children}>
+                    <span className={styles.name}>Đà Nẵng - Sài Gòn</span>
+                    <span className={styles.date}>11-2-2025</span>
+                  </div>
+                  <div className={styles.children}>
+                    <span className={styles.name}>Đà Nẵng - Lâm Đồng</span>
+                    <span className={styles.date}>11-2-2025</span>
+                  </div>
+                  <div className={styles.children}>
+                    <span className={styles.name}>Đà Nẵng - Hà Nội</span>
+                    <span className={styles.date}>11-2-2025</span>
+                  </div>
+                  <div className={styles.children}>
+                    <span className={styles.name}>Đà Nẵng - Hà Nội</span>
+                    <span className={styles.date}>11-2-2025</span>
+                  </div>
+                </div>
+            </div>
+          </div>
+      
+      
     </form>
   );
 };

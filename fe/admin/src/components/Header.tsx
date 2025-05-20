@@ -8,6 +8,7 @@ import { faRightFromBracket, faUserCircle } from "@fortawesome/free-solid-svg-ic
 import { logout } from "../services/auth.service";
 import { toast } from "react-toastify";
 import logo from "../assets/images/logo3.jpg";
+import { useLocation } from "react-router";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Header = () => {
   const [showDropDown, setShowDropDown] = useState<boolean>(false);
   const sideBarRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const location = useLocation();
 
   const handleToggleSideBar = () => {
     setCollapsed(!collapsed);
@@ -60,7 +62,7 @@ const Header = () => {
   }, [collapsed]);
 
   return (
-    <div className={styled["container-header"]}>
+    <div className={`${styled["container-header"]} ${location.pathname === "/login" ? styled["note"]  : ""} `}>
       <div className={styled.actions}>
         <div className={styled["action__show-side-bar"]}>
           <FaBars

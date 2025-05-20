@@ -92,15 +92,45 @@ export class CustomerService {
   insertOtp(email: string): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log();
-        
         const [rows] = await this.db.execute("call fetchCustomerByEmail(?)", [email]);
         if (rows[0].length === 0) {
           resolve({
             status: "ERR",
             message: "Customer not found",
           });
+          return
         }
+
+        const otp = otpGenerator.generate(6, {
+          digits: true,
+          lowerCaseAlphabets: false,
+          upperCaseAlphabets: false,
+          specialChars: false,
+        });
+
+        const insertOtp = await otpService.insertOtpForgotPassword({otp,email });
+        if (insertOtp.data.status === "ERR") {
+          return resolve({
+            status: "ERR",
+            message: insertOtp.data.message,
+          });
+        }
+
+        await sendOtpEmail({ email, otp });
+
+        resolve({
+          status: "OK",
+          message: "Create OTP success",
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+   sendOtp(email: string): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
 
         const otp = otpGenerator.generate(6, {
           digits: true,

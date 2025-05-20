@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "../styles/login.module.scss";
 import { MdOutlineMail } from "react-icons/md";
 import { MdOutlinePassword } from "react-icons/md";
@@ -10,11 +10,26 @@ import { toast } from 'react-toastify';
 import { loginUser } from "../services/auth.service";
 import { useNavigate } from 'react-router';
 import ForgotPassword from './ForgotPassword';
+import { useLocation } from 'react-router';
+import { FaEyeSlash } from 'react-icons/fa';
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  useEffect(() => {
+    if(location?.pathname === "/login") {
+      setLogin(true)
+      setRegister(false)
+    }
+    if(location?.pathname === "/register") {
+      setLogin(false)
+      setRegister(true)
+    }
+  })
     const [login, setLogin] = useState(true);
     const [register, setRegister] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [forgotPassword, setForgotPassword] = useState(false);
     const [dataLogin, setDataLogin] = useState<LoginPayLoad>({
       email: "",
@@ -24,11 +39,13 @@ const Login: React.FC = () => {
   const onClickLogin = () => {
     setLogin(true)
     setRegister(false)
+    navigate("/login")
   }
 
   const onClickRegister = () => {
     setLogin(false)
     setRegister(true)
+    navigate("/register")
   }
 
   const onClickForgotPassword = () => {
@@ -60,7 +77,7 @@ const Login: React.FC = () => {
     }
 
     const result = await loginUser(dataLogin);
-
+    
     if (result.status === "OK" && result.data) {
       setUser({
         email: result?.data?.email,
@@ -76,6 +93,10 @@ const Login: React.FC = () => {
     }else {
       toast.error("Đăng nhập thất bại");
     }
+  }
+
+   const handleClickShowPassword= () => {
+    setShowPassword(!showPassword)
   }
 
   return (
@@ -97,7 +118,6 @@ const Login: React.FC = () => {
         </div>
         : <></>
         }
-        <h2>Quên mật khẩu</h2>
         
         {
           forgotPassword ? 
@@ -107,6 +127,7 @@ const Login: React.FC = () => {
             {
           login ?
             <div className={styles.contentLogin}>
+            <h2 >Đăng nhập</h2>
             <div className={styles.inputGroup}>
           <MdOutlineMail className={styles.iconEmail} />
           <input
@@ -119,12 +140,15 @@ const Login: React.FC = () => {
           />
           <MdOutlinePassword className={styles.iconPassword} />
            <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Nhập mật khẩu"
             className={styles.password}
             id="password"
             name="password"
             onChange={handleChangeValue}
+          />
+           <FaEyeSlash className={styles.iconShowPassword}
+            onClick={handleClickShowPassword}
           />
         </div>
         <button className={styles.button} onClick={handleLogin}>Đăng nhập</button>

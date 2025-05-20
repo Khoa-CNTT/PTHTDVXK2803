@@ -44,7 +44,13 @@
       }
     }
   }
-
+h2 {
+      margin-bottom: 20px;
+      margin: 15px auto;
+      font-weight: 500;
+      font-size: 20px;
+      text-align: center;
+    }
   .right {
     width: 50%;
     padding: 40px;
@@ -53,12 +59,7 @@
     flex-direction: column;
     justify-content: center;
 
-    h2 {
-      margin-bottom: 20px;
-      margin: 15px auto;
-      font-weight: 500;
-      font-size: 20px;
-    }
+    
 
     .tabs {
       display: flex;
@@ -102,6 +103,13 @@
         left: 10px;
         top: 95px;
         color: rgb(46, 180, 252);
+      }
+
+      .iconShowPassword {
+        position: absolute;
+            top: 95px;
+        right: 15px;
+        font-size: 17px;
       }
       .email , .password {
         margin-top: 20px;

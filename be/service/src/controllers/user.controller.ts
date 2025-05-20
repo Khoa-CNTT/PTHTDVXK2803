@@ -110,12 +110,8 @@ export class UserController {
           path: "/",
         });
         successResponse(res, 200, { status, data, expirationTime: expirationTime });
-      } else {
-        if ("message" in response) {
+      } else if(response.status === "ERR") {
           errorResponse(res, response.message, 400);
-        } else {
-          errorResponse(res, "Unexpected error occurred", 400);
-        }
       }
     } catch (err) {
       console.log(err);
