@@ -1,154 +1,90 @@
 @use "./mixin" as mix;
 
 .side-bar {
-  flex: 1;
+  display: none !important;
+  width: 15.625rem;
+  background-color: #ffffff;
+  height: 100vh;
+  padding: 1.25rem 1rem;
+  box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease;
 
-  max-width: 24rem;
-  min-height: 100vh;
-
-  background-color: #fff;
-
-  padding: 1rem;
-  border-right: 1px solid #ddd;
-
-  transition: max-width 0.4s linear;
-
-  @include mix.responsive(mobile) {
-    display: none;
-  }
-
-  .side-bar__top-section {
-    position: sticky;
-  }
-
-  &.dark {
-    background-color: #181818;
-    color: white;
-    border-right: 1px solid #333;
-  }
-
-  &__top-section {
-    overflow-x: hidden;
-
-    display: flex;
-    align-items: center;
-    margin-bottom: 2rem;
-  }
-
-  &__toggle-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    margin-right: 1rem;
-    color: inherit;
-  }
-
-  &__logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-
-  &__menu {
-    flex: 1;
-
-    .list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-
-      .side-bar__menu-item {
-        overflow-x: hidden;
-
-        display: flex;
-
-        padding: 0.5rem;
-
-        .side-bar__menu-link {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-
-          color: inherit;
-          text-decoration: none;
-          font-size: 1rem;
-          line-height: 1.2rem;
-
-          white-space: nowrap;
-          text-overflow: ellipsis;
-
-          .icon {
-            font-size: 1rem;
-          }
-
-          // Ẩn chữ khi collapsed
-          .side-bar__section-title {
-            display: block;
-          }
-        }
-      }
-    }
-  }
-
-  &__section-title {
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin: 1rem 0 0.5rem 0;
-  }
-
-  &__bottom-section {
-    margin-top: auto;
+  @include mix.responsive(desktop) {
+    display: block !important;
   }
 }
 
 .collapsed {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  @extend .side-bar;
+  width: 5rem;
 
-  max-width: 4rem;
-  min-height: 100vh;
-
-  background-color: #fff;
-
-  padding: 1rem;
-  border-right: 1px solid #ddd;
-
-  transition: max-width 0.4s linear;
-
-  @include mix.responsive(mobile) {
+  .side-bar__section-title {
     display: none;
   }
 }
 
-.ic-wrapper {
-  position: relative;
+.side-bar__menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 
-  .ic-default,
-  .ic-hover {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-    cursor: pointer;
+.side-bar__menu-item {
+  margin-bottom: 0.625rem;
+}
 
-    transition: opacity 0.2s ease;
-  }
+.side-bar__menu-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 
-  .ic-hover {
-    opacity: 0;
-  }
+  padding: 0.625rem;
+  border-radius: 0.375rem;
+
+  color: var(--dark);
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
 
   &:hover {
-    .ic-default {
-      opacity: 0;
-    }
+    background-color: var(--white);
+    color: var(--primary);
+  }
 
-    .ic-hover {
-      opacity: 1;
-      color: var(--primary);
-    }
+  &.active {
+    background-color: var(--white);
+    color: var(--primary);
+    font-weight: 600;
+  }
+}
+
+.side-bar__section-title {
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.ic-wrapper {
+  margin-top: auto;
+}
+
+.side-bar__logout {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem;
+  border-radius: 0.375rem;
+  color: var(--danger);
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #fff1f0;
   }
 }

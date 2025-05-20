@@ -1,9 +1,10 @@
 import { Outlet } from "react-router";
 import styles from "../styles/manageLayout.module.scss";
+import Sidebar from "../components/Sidebar";
 const ManageLayout = () => {
   return (
     <div className={styles["manage-layout"]}>
-      {/* <h2>Hệ thống Quản lý xe</h2> */}
+      <Sidebar />
       <Outlet />
     </div>
   );

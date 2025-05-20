@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
 
-  padding: 0.5rem;
+  padding: 0.5rem 2rem;
 
   .actions {
     width: 100%;
@@ -13,16 +13,72 @@
   }
 
   .action__show-side-bar {
-    @include mix.responsive(desktop) {
-      display: none;
+    display: flex;
+    gap: 1rem;
+  }
+  .logo,
+  .ic,
+  .ic-admin {
+    object-fit: cover;
+    width: auto;
+    height: 2rem;
+    color: var(--white);
+  }
+
+  .user-actions {
+    &__list,
+    .triangle {
+      position: absolute;
     }
 
-    @include mix.responsive(tablet) {
-      display: none;
+    &__list {
+      z-index: 1;
+      top: 3rem;
+      right: 1rem;
+
+      border: 1px solid var(--bright-blue);
+      border-radius: 0.7rem;
+
+      background-color: var(--white);
+
+      .item {
+        padding: 0.5rem 1rem;
+        border-bottom: 1px solid var(--warning);
+
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        .text {
+          color: var(--dark);
+          transition: all 0.3s;
+        }
+
+        &:last-child {
+          border: none;
+        }
+
+        &:hover > .text {
+          color: var(--bright-blue);
+        }
+      }
     }
 
-    @include mix.responsive(mobile) {
-      display: block;
+    .triangle {
+      top: 2rem;
+      right: 1.7rem;
+      width: 0;
+      height: 0;
+      z-index: 1;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0.5rem;
+        right: 0.7rem;
+        border-left: 0.6rem solid transparent;
+        border-right: 0.6rem solid transparent;
+        border-bottom: 0.6rem solid var(--white);
+      }
     }
   }
 
@@ -57,7 +113,6 @@
     visibility: visible;
     transition: transform 0.3s ease-in-out, visibility 0.3s;
 
-    // giữ lại những thuộc tính có sẵn
     z-index: 100;
     position: fixed;
     top: 0;
@@ -83,9 +138,6 @@
       gap: 1rem;
 
       margin-bottom: 2rem;
-
-      .side-bar__closed-btn {
-      }
     }
 
     &__toggle-btn {
@@ -132,7 +184,6 @@
               font-size: 1rem;
             }
 
-            // Ẩn chữ khi collapsed
             .side-bar-mobile__section-title {
               display: block;
             }

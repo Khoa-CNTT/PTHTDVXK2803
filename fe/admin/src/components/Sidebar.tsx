@@ -1,114 +1,74 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { FaBars, FaBus, FaHome, FaTicketAlt, FaUsers, FaUserTie } from "react-icons/fa";
-import { RiAdminFill, RiUserStarFill } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import styled from "../styles/sidebar.module.scss";
-import { useLocation, useNavigate } from "react-router";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPersonRunning, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { logout } from "../services/auth.service";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+// import { logout } from "../services/auth.service";
+import { Icon, IconType } from "./Icon";
 
-const Sidebar = () => {
-  const navigate = useNavigate();
+interface SideBarProps {
+  statusSideBar?: boolean;
+}
+
+const Sidebar: React.FC<SideBarProps> = ({ statusSideBar }) => {
+  // const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(statusSideBar);
 
-  const handleToggleSidebar = () => {
-    setCollapsed(!collapsed);
-  };
+  useEffect(() => {
+    setCollapsed(statusSideBar);
+  }, [statusSideBar]);
 
   if (location.pathname === "/login") return null;
 
-  const handleLogout = async () => {
-    const response = await logout();
-    if (response.status === "OK") {
-      toast.success("Đăng xuất thành công");
-      localStorage.removeItem("accept");
-      localStorage.removeItem("expirationTime");
-      navigate("/login");
-    } else {
-      toast.error("Đăng xuất thất bại");
-    }
-  };
+  // const handleLogout = async () => {
+  //   const response = await logout();
+  //   if (response.status === "OK") {
+  //     toast.success("Đăng xuất thành công");
+  //     localStorage.removeItem("accept");
+  //     localStorage.removeItem("expirationTime");
+  //     navigate("/login");
+  //   } else {
+  //     toast.error("Đăng xuất thất bại");
+  //   }
+  // };
 
   return (
     <div className={`${collapsed ? styled["collapsed"] : styled["side-bar"]}`}>
-      <div className={styled["side-bar__top-section"]}>
-        <button className={styled["side-bar__toggle-btn"]} onClick={handleToggleSidebar}>
-          <FaBars />
-        </button>
-        <span className={styled["side-bar__logo"]}>VeXeTienIch</span>
-      </div>
-
       <nav className={styled["side-bar__menu"]}>
         <ul className={styled.list}>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/" className={styled["side-bar__menu-link"]}>
-              <FaHome className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Tổng quan</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/customer-manage" className={styled["side-bar__menu-link"]}>
-              <FaUsers className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Khách hàng</span>
-            </NavLink>
-          </li>
-                    <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/admin-manage" className={styled["side-bar__menu-link"]}>
-              <RiAdminFill className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Nhân viên</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/driver-manage" className={styled["side-bar__menu-link"]}>
-              <FaUserTie className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Tài xế</span>
-            </NavLink>
-          </li>
-                  <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/bus-manage" className={styled["side-bar__menu-link"]}>
-              <FaBus className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Xe</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/trip-manage" className={styled["side-bar__menu-link"]}>
-              <FaBus className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Chuyến xe</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/promotion-manage" className={styled["side-bar__menu-link"]}>
-              <FaTicketAlt className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Khuyến mãi</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/ticket-manage" className={styled["side-bar__menu-link"]}>
-              <FaTicketAlt className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Vé xe</span>
-            </NavLink>
-          </li>
-          <li className={styled["side-bar__menu-item"]}>
-            <NavLink to="/feedback-manage" className={styled["side-bar__menu-link"]}>
-              <RiUserStarFill className={styled.icon} />
-              <span className={styled["side-bar__section-title"]}>Quản lý Đánh giá</span>
-            </NavLink>
-          </li>
-          <li className={`${styled["side-bar__menu-item"]} ${styled["ic-wrapper"]}`}>
-            <FontAwesomeIcon
-              icon={faRightFromBracket}
-              className={styled["ic-default"]}
-              onClick={handleLogout}
-            />
-            <FontAwesomeIcon
-              icon={faPersonRunning}
-              className={styled["ic-hover"]}
-              onClick={handleLogout}
-            />
-          </li>
+          {[
+            { to: "/", label: "Tổng quan", icon: "home" },
+            { to: "/customer-manage", label: "Quản lý Khách hàng", icon: "users" },
+            { to: "/admin-manage", label: "Quản lý Nhân viên", icon: "staff" },
+            { to: "/driver-manage", label: "Quản lý Tài xế", icon: "driver" },
+            { to: "/bus-manage", label: "Quản lý Xe", icon: "bus" },
+            { to: "/trip-manage", label: "Quản lý Chuyến xe", icon: "suitcase" },
+            { to: "/promotion-manage", label: "Quản lý Khuyến mãi", icon: "percent" },
+            { to: "/ticket-manage", label: "Quản lý Vé xe", icon: "ticket" },
+            { to: "/feedback-manage", label: "Quản lý Đánh giá", icon: "thumbsUp" },
+          ].map(({ to, label, icon }) => (
+            <li key={to} className={styled["side-bar__menu-item"]}>
+              <NavLink
+                to={to}
+                className={({ isActive }) =>
+                  `${styled["side-bar__menu-link"]} ${isActive ? styled["active"] : ""}`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon type={icon as IconType} isActive={isActive} />
+                    <span className={styled["side-bar__section-title"]}>{label}</span>
+                  </>
+                )}
+              </NavLink>
+            </li>
+          ))}
+          {/* <li className={`${styled["side-bar__menu-item"]} ${styled["ic-wrapper"]}`}>
+            <div onClick={handleLogout} className={styled["side-bar__logout"]}>
+              <Icon type="logout" />
+              <Icon type="running" />
+            </div>
+          </li> */}
         </ul>
       </nav>
     </div>

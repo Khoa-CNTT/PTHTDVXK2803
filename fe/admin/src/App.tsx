@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import PrivateRoute from "./components/PrivateRoute";
 import useClientWidth from "./hooks/useClientWidth.util";
 import Layout from "./layouts/Layout";
 import ManageLayout from "./layouts/ManageLayout";
@@ -39,6 +38,7 @@ import ManagePromotion from "./pages/PromotionManage/ManagePromotion";
 import AddPromotion from "./pages/PromotionManage/AddPromotion";
 import DetailPromotion from "./pages/PromotionManage/DetailPromotion";
 import UpdatePromotion from "./pages/PromotionManage/UpdatePromotion";
+import HomePage from "./pages/HomePage";
 
 function App() {
   useClientWidth();
@@ -62,70 +62,70 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             {/* Route bảo vệ */}
-            <Route element={<PrivateRoute />}>
-              <Route index element={<div>Home</div>} />
+            <Route element={<ManageLayout />}>
+              <Route index element={<HomePage />} />
+            </Route>
 
-              {/* Car Manage */}
-              <Route path="/bus-manage" element={<ManageLayout />}>
-                <Route index element={<BusManage />} />
-                <Route path="detail/:licensePlate" element={<DetailCar />} />
-                <Route path="add" element={<AddCar />} />
-                <Route path="update/:licensePlate" element={<UpdateCar />} />
-              </Route>
+            {/* Car Manage */}
+            <Route path="/bus-manage" element={<ManageLayout />}>
+              <Route index element={<BusManage />} />
+              <Route path="detail/:licensePlate" element={<DetailCar />} />
+              <Route path="add" element={<AddCar />} />
+              <Route path="update/:licensePlate" element={<UpdateCar />} />
+            </Route>
 
-              {/* Customer Manage */}
-              <Route path="/customer-manage" element={<ManageLayout />}>
-                <Route index element={<ManageCustomer />} />
-                <Route path="page/:page" element={<ManageCustomer />} />
-                <Route path="detail/:id" element={<DetailCustomer />} />
-                <Route path="add" element={<AddCustomer />} />
-                <Route path="update/:id" element={<UpdateCustomer />} />
-              </Route>
+            {/* Customer Manage */}
+            <Route path="/customer-manage" element={<ManageLayout />}>
+              <Route index element={<ManageCustomer />} />
+              <Route path="page/:page" element={<ManageCustomer />} />
+              <Route path="detail/:id" element={<DetailCustomer />} />
+              <Route path="add" element={<AddCustomer />} />
+              <Route path="update/:id" element={<UpdateCustomer />} />
+            </Route>
 
-              {/* Co-driver Manage */}
-              <Route path="/co-driver-manage" element={<ManageLayout />}>
-                <Route index element={<ManageCoDriver />} />
-                <Route path="page/:page" element={<ManageCoDriver />} />
-                <Route path="detail/:id" element={<DetailCoDriver />} />
-                <Route path="add" element={<AddCoDriver />} />
-                <Route path="update/:id" element={<UpdateCoDriver />} />
-              </Route>
+            {/* Co-driver Manage */}
+            <Route path="/co-driver-manage" element={<ManageLayout />}>
+              <Route index element={<ManageCoDriver />} />
+              <Route path="page/:page" element={<ManageCoDriver />} />
+              <Route path="detail/:id" element={<DetailCoDriver />} />
+              <Route path="add" element={<AddCoDriver />} />
+              <Route path="update/:id" element={<UpdateCoDriver />} />
+            </Route>
 
-              {/* Driver Manage */}
-              <Route path="/driver-manage" element={<ManageLayout />}>
-                <Route index element={<ManageDriver />} />
-                <Route path="page/:page" element={<ManageDriver />} />
-                <Route path="detail/:id" element={<DetailDriver />} />
-                <Route path="add" element={<AddDriver />} />
-                <Route path="update/:id" element={<UpdateDriver />} />
-              </Route>
+            {/* Driver Manage */}
+            <Route path="/driver-manage" element={<ManageLayout />}>
+              <Route index element={<ManageDriver />} />
+              <Route path="page/:page" element={<ManageDriver />} />
+              <Route path="detail/:id" element={<DetailDriver />} />
+              <Route path="add" element={<AddDriver />} />
+              <Route path="update/:id" element={<UpdateDriver />} />
+            </Route>
 
-              {/* Admin Manage */}
-              <Route path="/admin-manage" element={<ManageLayout />}>
-                <Route index element={<ManageAdmin />} />
-                <Route path="page/:page" element={<ManageAdmin />} />
-                <Route path="detail/:id" element={<DetailAdmin />} />
-                <Route path="add" element={<AddAdmin />} />
-                <Route path="update/:id" element={<UpdateAdmin />} />
-              </Route>
+            {/* Admin Manage */}
+            <Route path="/admin-manage" element={<ManageLayout />}>
+              <Route index element={<ManageAdmin />} />
+              <Route path="page/:page" element={<ManageAdmin />} />
+              <Route path="detail/:id" element={<DetailAdmin />} />
+              <Route path="add" element={<AddAdmin />} />
+              <Route path="update/:id" element={<UpdateAdmin />} />
+            </Route>
 
-              {/* Trip Manage */}
-              <Route path="/trip-manage" element={<ManageLayout />}>
-                <Route index element={<TripManage />} />
-                <Route path="page/:page" element={<TripManage />} />
-                <Route path="add" element={<AddTrip />} />
-                <Route path="detail/:id" element={<DetailTrip />} />
-                <Route path="update/:id" element={<UpdateTrip />} />
-              </Route>
+            {/* Trip Manage */}
+            <Route path="/trip-manage" element={<ManageLayout />}>
+              <Route index element={<TripManage />} />
+              <Route path="page/:page" element={<TripManage />} />
+              <Route path="add" element={<AddTrip />} />
+              <Route path="detail/:id" element={<DetailTrip />} />
+              <Route path="update/:id" element={<UpdateTrip />} />
+            </Route>
 
-              {/* Promotion */}
-              <Route path="/promotion-manage" element={<ManageLayout />}>
-                <Route index element={<ManagePromotion />} />
-                <Route path="page/:page" element={<ManagePromotion />} />
-                <Route path="add" element={<AddPromotion />} />
-                <Route path="detail/:id" element={<DetailPromotion />} />
-                <Route path="update/:id" element={<UpdatePromotion />} />
-              </Route>
+            {/* Promotion */}
+            <Route path="/promotion-manage" element={<ManageLayout />}>
+              <Route index element={<ManagePromotion />} />
+              <Route path="page/:page" element={<ManagePromotion />} />
+              <Route path="add" element={<AddPromotion />} />
+              <Route path="detail/:id" element={<DetailPromotion />} />
+              <Route path="update/:id" element={<UpdatePromotion />} />
             </Route>
           </Routes>
         </Layout>

@@ -4,14 +4,17 @@ import { FaBars, FaBus, FaHome, FaTicketAlt, FaUsers, FaUserTie } from "react-ic
 import { NavLink, useNavigate } from "react-router-dom";
 import { RiAdminFill, RiUserStarFill } from "react-icons/ri";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faRightFromBracket, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../services/auth.service";
 import { toast } from "react-toastify";
+import logo from "../assets/images/logo3.jpg";
 
 const Header = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [showDropDown, setShowDropDown] = useState<boolean>(false);
   const sideBarRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleToggleSideBar = () => {
     setCollapsed(!collapsed);
@@ -21,6 +24,12 @@ const Header = () => {
     e.stopPropagation();
     if (!collapsed && sideBarRef.current && !sideBarRef.current.contains(e.target as Node)) {
       setCollapsed(true);
+    }
+  };
+
+  const handleClickOutSideDropList = (e: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      setShowDropDown(false);
     }
   };
 
@@ -37,6 +46,13 @@ const Header = () => {
   };
 
   useEffect(() => {
+    if (showDropDown) {
+      document.addEventListener("mousedown", handleClickOutSideDropList);
+      return () => document.removeEventListener("mousedown", handleClickOutSideDropList);
+    }
+  }, [showDropDown]);
+
+  useEffect(() => {
     if (!collapsed) {
       document.addEventListener("mousedown", handleClickOutSide);
       return () => document.removeEventListener("mousedown", handleClickOutSide);
@@ -46,14 +62,45 @@ const Header = () => {
   return (
     <div className={styled["container-header"]}>
       <div className={styled.actions}>
-        <div className="">YudLinBus</div>
         <div className={styled["action__show-side-bar"]}>
           <FaBars
+            className={styled.ic}
             onMouseDown={(e) => {
               e.stopPropagation();
               handleToggleSideBar();
             }}
           />
+          <img className={styled.logo} src={logo} alt="logo" loading="lazy" />
+        </div>
+        <div
+          className={styled["info-admin"]}
+          onMouseEnter={() => setShowDropDown(true)}
+          onClick={() => setShowDropDown((prev) => !prev)}
+        >
+          <FontAwesomeIcon className={styled["ic-admin"]} icon={faUserCircle} />
+          {showDropDown ? (
+            <div
+              ref={wrapperRef}
+              className={`${styled["wrapper-drop-down-list"]} ${styled["user-actions"]}`}
+            >
+              <ul className={styled["user-actions__list"]}>
+                <li className={styled["item"]}>
+                  <NavLink className={styled.text} to={`/profile`}>
+                    Cập nhật thông tin
+                  </NavLink>
+                </li>
+                <li className={styled["item"]}>
+                  <NavLink className={styled.text} to={`/settings`}>
+                    Cài đặt
+                  </NavLink>
+                </li>
+                <li className={styled["item"]} onClick={handleLogout}>
+                  <span className={styled.text}>Đăng xuất</span>
+                </li>
+              </ul>
+              <span className={styled.triangle}></span>
+            </div>
+          ) : null}
         </div>
       </div>
       {/*  */}
@@ -88,9 +135,7 @@ const Header = () => {
             <li className={styled["side-bar-mobile__menu-item"]}>
               <NavLink to="/admin-manage" className={styled["side-bar-mobile__menu-link"]}>
                 <RiAdminFill className={styled.icon} />
-                <span className={styled["side-bar-mobile__section-title"]}>
-                  Quản lý Nhân viên
-                </span>
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Nhân viên</span>
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
@@ -124,10 +169,10 @@ const Header = () => {
               </NavLink>
             </li>
             <li className={styled["side-bar-mobile__menu-item"]}>
-            <NavLink to="/feedback-manage" className={styled["side-bar-mobile__menu-link"]}>
-              <RiUserStarFill className={styled.icon} />
-              <span className={styled["side-bar-mobile__section-title"]}>Quản lý Đánh giá</span>
-            </NavLink>
+              <NavLink to="/feedback-manage" className={styled["side-bar-mobile__menu-link"]}>
+                <RiUserStarFill className={styled.icon} />
+                <span className={styled["side-bar-mobile__section-title"]}>Quản lý Đánh giá</span>
+              </NavLink>
             </li>
             <li className={`${styled["side-bar-mobile__menu-item"]} ${styled["action-logout"]}`}>
               <FontAwesomeIcon
