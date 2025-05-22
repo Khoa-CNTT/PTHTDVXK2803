@@ -15,6 +15,16 @@ export class TicketController {
       errorResponse(res, "err add trip", 500);
     }
   };
+
+   getDetailTicket = async (req: Request, res: Response) => {
+    const {phone, idTicket} = req.body;
+    try {
+      const result = await this.ticketService.getDetailTicket({phone, idTicket});
+      successResponse(res, 200, result);
+    } catch (error) {
+      errorResponse(res, "ERR Controller.getDetailTicket", 404);
+    }
+  };
 }
 
 export default new TicketController();

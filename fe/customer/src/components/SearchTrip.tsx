@@ -16,6 +16,7 @@ interface SearchTripType {
   start_time: string;
 }
 
+
 interface SearchTripProps {
   valueSearchIn?: ParamsSearchTrip;
 }
@@ -29,6 +30,7 @@ const SearchTrip: React.FC<SearchTripProps> = ({ valueSearchIn }) => {
     queryKey: ["locations"],
     queryFn: () => getLocations(),
     staleTime: 60 * 60 * 1000,
+    
   });
 
   const [searchValue, setSearchValue] = useState<SearchTripType>({

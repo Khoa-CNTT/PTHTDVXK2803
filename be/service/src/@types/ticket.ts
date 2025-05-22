@@ -8,3 +8,9 @@ interface Ticket {
   totalPrice: number; // decimal(10, 2)
   create_at: string; // timestamp
 }
+
+export interface searchTicket {
+  phone: string;
+  idTicket: string;
+}
+

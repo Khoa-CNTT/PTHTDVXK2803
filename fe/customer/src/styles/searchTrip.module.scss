@@ -5,18 +5,17 @@
   justify-content: center;
   align-items: center;
   gap: 1rem;
-
-  max-width: 51.05rem;
+  margin-top:270px;
+  width: 1120px;
   height: auto;
-  padding: 1rem;
-  border: 1px solid var(--primary);
+  padding: 1.2rem;
+  border: 1px solid #c3c3c3;
   border-radius: 0.725rem;
-  margin-top: 16rem;
-
   background-color: #fff;
 
   
   @include mix.responsive(tablet) {
+    width: 37.5rem;
     flex-wrap: wrap;
   }
 
@@ -31,7 +30,81 @@
     display: flex;
     flex-direction: column;
 
-    .search-trip-bottom {
+   
+  }
+  .search-trip-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.2rem;
+    height: 100%;
+    padding: 15px 30px;
+    border: 1px solid #c3c3c3;
+    border-radius: 0.725rem;
+
+    contain: content;
+
+    @include mix.responsive(tablet) {
+      flex-wrap: wrap;
+    }
+
+    @include mix.responsive(mobile) {
+      flex-wrap: wrap; // Cho phép các phần tử con xuống dòng
+    }
+
+    .item {
+      flex: 1 1 1;
+
+      @include mix.responsive(mobile) {
+        max-width: 100%;
+      }
+    }
+
+    .item-full {
+      width: 12.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    // .item {
+    //   flex: 1 1 12.5rem; // Kích thước mặc định của các item
+
+    //   @include mix.responsive(tablet) {
+    //     flex: 1 1 45%; // Trên tablet, mỗi item chiếm khoảng 45% chiều rộng
+    //   }
+
+    //   @include mix.responsive(mobile) {
+    //     flex: 1 1 100%; // Trên mobile, mỗi item chiếm 100% chiều rộng
+    //     margin-bottom: 1rem; // Thêm khoảng cách giữa các item khi xuống dòng
+    //   }
+    // }
+
+    .ic-r-l {
+      width: 1rem;
+      height: 1rem;
+      padding: 0.4rem;
+      border-radius: 50%;
+      background-color: #ccc;
+      color: #484848;
+      cursor: pointer;
+    }
+  }
+
+  .search-trip-right {
+    .btn-search-trip {
+      width: 9.25rem;
+      height: 2.75rem;
+      padding: 0 0.75rem;
+      border: none;
+      border-radius: 1.2rem /1.2rem;
+      background-color: #57f6ff;
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+  }
+}
+ .search-trip-bottom {
       display: flex;
       flex-direction: column;
       margin: 0 auto;
@@ -66,63 +139,3 @@
         }
       }
     }
-  }
-  .search-trip-left {
-    position: relative;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 0.2rem;
-    height: 100%;
-    padding: 15px 30px;
-    border: 1px solid #c3c3c3;
-    border-radius: 0.725rem;
-
-    @include mix.responsive(desktop) {
-      border: 1px solid var(--primary);
-      flex-wrap: nowrap;
-    }
-    @include mix.responsive(tablet) {
-      border: 1px solid var(--primary);
-      flex-wrap: nowrap;
-    }
-
-    @include mix.responsive(mobile) {
-      border: 1px solid var(--primary);
-      flex-wrap: wrap !important;
-    }
-
-    .ic-swap {
-      position: unset;
-
-      padding: 0.4rem;
-      border-radius: 50%;
-      background-color: #ccc;
-      color: #484848;
-
-      font-size: 1.2rem;
-      cursor: pointer;
-
-      @include mix.responsive(mobile) {
-        position: absolute;
-        top: calc((50% - 2.5rem));
-        left: 018% !important;
-      }
-    }
-  }
-
-  .search-trip-right {
-    .btn-search-trip {
-      width: 9.25rem;
-      height: 2.75rem;
-      padding: 0 0.75rem;
-      border: none;
-      border-radius: 1.2rem /1.2rem;
-      background-color: #57f6ff;
-      font-size: 1.05rem;
-      font-weight: 600;
-    }
-  }
-}

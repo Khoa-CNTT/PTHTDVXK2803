@@ -1,5 +1,6 @@
 import { ResultSetHeader } from "mysql2";
 import { FormDataTicket } from "../models/ticket";
+import { searchTicket } from "../@types/ticket";
 
 export class TicketService {
   private db;
@@ -8,6 +9,7 @@ export class TicketService {
     this.db = db;
   }
 
+  
   add = async (newTicket: FormDataTicket) => {
     const conn = await this.db.getConnection();
     try {
@@ -56,6 +58,33 @@ export class TicketService {
       conn.release();
     }
   };
+
+  getDetailTicket(data: searchTicket): Promise<object> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const {phone , idTicket} = data
+
+        const sql = "call updatePassword( ?, ?)";
+          const values = [
+            phone,
+            idTicket
+          ];
+
+        const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Ticket not found",
+          });
+        }
+        resolve(rows[0][0]);
+      } catch (error) {
+        console.log("Err Service.getDetail", error);
+        reject(error);
+      }
+    });
+  }
+
 }
 
 export default TicketService;

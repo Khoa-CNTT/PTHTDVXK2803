@@ -441,6 +441,8 @@ export class CustomerService {
             message: "Customer not found",
           });
         }
+
+        console.log("[rows]: ", [rows]);
         
         const compareCurrentPassword = await bcrypt.compareSync(
           passwordOld,

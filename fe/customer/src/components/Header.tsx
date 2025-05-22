@@ -7,7 +7,7 @@ import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FaRegUserCircle } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { logout } from "../services/auth.service";
-import logo3 from "../assets/images/logo3.jpg";
+import logo3 from "../assets/images/logo4.jpg";
 import { useUserStore } from "../store/userStore";
 import { useLocation } from "react-router";
 

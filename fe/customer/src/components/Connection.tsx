@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../styles/connection.module.scss";
-
+import logo from "../assets/images/ketnoi_new2.svg"
 
 const Connection = () => {
     const items = [
@@ -33,7 +33,7 @@ const Connection = () => {
         Kết nối với chúng tôi qua: mua vé Xe Khách, Xe Buýt, Xe Hợp Đồng, Giao Hàng,...
       </p>
       <div className={styles.itemList}>
-        <img  src="https://cdn.futabus.vn/futa-busline-cms-dev/1_ketnoi_3c401512ac/1_ketnoi_3c401512ac.svg"/>
+        <img  src={logo}/>
       </div>
     </section>
   );

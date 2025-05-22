@@ -1,10 +1,10 @@
 .container {
   text-align: center;
-  max-width: 900px;
   margin: 0 auto;
   margin-bottom: 40px;
   padding: 2rem 1rem;
-  
+  width: 100%;
+
   .title {
     font-weight: 700;
     color: #006838; // xanh đậm FUTA
@@ -15,7 +15,6 @@
   .description {
     color: #333;
     font-size: 1rem;
-    margin-bottom: 2.5rem;
     line-height: 1.5;
   }
 
@@ -49,4 +48,9 @@
       }
     }
   }
+}
+
+
+img {
+  width: 100%;
 }

@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import promotion1 from "../assets/images/promotion1.jpg";
 import promotion2 from "../assets/images/promotion2.jpg";
 import promotion3 from "../assets/images/promotion3.jpg";
-import promotion4 from "../assets/images/promotion4.jpg";
+import promotion4 from "../assets/images/summer.jpg";
 import { useNavigate } from 'react-router';
 
 const PromotionSlider = () => {

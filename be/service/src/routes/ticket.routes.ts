@@ -5,5 +5,6 @@ import express from "express";
 const router = express.Router();
 
 router.post("/add", ticketController.add);
+router.post("/get-detail-ticket/", ticketController.getDetailTicket);
 
 export default router;

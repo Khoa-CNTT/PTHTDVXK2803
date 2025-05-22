@@ -25,11 +25,8 @@ const HomePage = () => {
       <div>
           <PopularRoutesSlider />
       </div>
-      <div>
+      <div className={styles.connection}>
           <Connection />
-      </div>
-      <div className={styles["search-trip-mobile"]}>
-        <SearchTrip />
       </div>
     </div>
   );
