@@ -10,3 +10,23 @@ export interface TripFormData {
   endTime: string; // datetime
   price: number; // decimal(10, 2)
 }
+
+interface SearchLocationType {
+  from: number;
+  to: number;
+}
+
+export interface SearchTripType extends SearchLocationType {
+  start_time: string;
+  sort?: "default" | "time-asc" | "time-desc" | "price-asc" | "price-desc" | "rating-desc";
+  limit: number;
+  offset: number;
+}
+
+export interface FormBookedTripType extends SearchLocationType {
+  start_day: string;
+  start_hours: string;
+  end_day: string;
+  end_hours: string;
+  license_plate: string;
+}

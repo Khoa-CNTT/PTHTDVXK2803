@@ -36,6 +36,28 @@ export const verifyAccessToken = async (
   }
 };
 
+export const verifyAccessTokenOfClient = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN as string);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+};
+
 // Xác minh Refresh Token & cấp lại Access Token
 export const verifyRefreshToken = (
   token: string
@@ -61,4 +83,12 @@ export const verifyRefreshToken = (
       });
     });
   });
+};
+
+export const decode = (token: string) => {
+  try {
+    return jwt.decode(token);
+  } catch (error) {
+    throw error;
+  }
 };

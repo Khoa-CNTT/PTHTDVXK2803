@@ -9,6 +9,9 @@ import coDriverRoute from "./coDriver.route";
 import adminRoute from "./admin.routes";
 import tripRoute from "./trip.routes";
 import promotionRoute from "./promotion.route";
+import ticketRoute from "./ticket.routes";
+import payOSRoute from "./payos.routes";
+import webhookPayOsRoute from "./webhook.routes";
 
 const routes = (app: express.Application): void => {
   // Cấu hình routes
@@ -21,6 +24,9 @@ const routes = (app: express.Application): void => {
   app.use("/api/admin", adminRoute);
   app.use("/api/trip", tripRoute);
   app.use("/api/promotion", promotionRoute);
+  app.use("/api/ticket", ticketRoute);
+  app.use("/api/payos", payOSRoute);
+  app.use("/api/webhook", webhookPayOsRoute);
 
   // Route cho các yêu cầu không tìm thấy
   app.use((req: Request, res: Response): void => {

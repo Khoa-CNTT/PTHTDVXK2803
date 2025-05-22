@@ -11,6 +11,7 @@ import passport from "passport";
 import { connectRedis } from "./config/redis";
 import TripService from "./services/trip.service";
 import { bookBusTicketsDB } from "./config/db";
+import { initSocket } from "./sockets/socket";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use(cookieParser());
 
 // Khởi động Websocket
 initChatSocket(server);
+initSocket(server);
 
 // Test route
 app.get("/", (_, res) => {

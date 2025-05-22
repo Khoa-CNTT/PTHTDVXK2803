@@ -12,6 +12,7 @@ interface LoginType {
 }
 
 interface UserType {
+  id: number;
   email: string;
   fullName: string;
   phone: string;
@@ -66,9 +67,20 @@ export class UserService {
   async getCustomerByEmail(email: string): Promise<any> {
     try {
       const [rows] = await this.db.execute(
-        `select email, full_name as fullName, phone, date_birth as dateBirth, url_img as urlImg,
+        `select id, email, full_name as fullName, phone, date_birth as dateBirth, url_img as urlImg,
          url_public_img as urlPublicImg, password, role from user where email = ? and role = 'customer'`,
         [email]
+      );
+      return rows[0];
+    } catch (err) {
+      console.error("Query error:", err);
+    }
+  }
+  async getUser(id: number): Promise<any> {
+    try {
+      const [rows] = await this.db.execute(
+        `select id, email, full_name as fullName, phone, role from user where id = ?`,
+        [id]
       );
       return rows[0];
     } catch (err) {
@@ -192,6 +204,7 @@ export class UserService {
             });
           } else {
             const detailCustomer: UserType = {
+              id: checkPerson?.id,
               email: checkPerson?.email,
               fullName: checkPerson?.fullName,
               phone: checkPerson?.phone,
@@ -199,6 +212,8 @@ export class UserService {
               urlImg: checkPerson?.urlImg,
               urlPublicImg: checkPerson?.urlPublicImg,
             };
+
+            console.log("customer", detailCustomer);
 
             const access_token = generalAccessToken({
               id: checkPerson?.email,

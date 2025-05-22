@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import { TripInfoBase } from "../models/trip";
 import TripService from "../services/trip.service";
 import { bookBusTicketsDB } from "../config/db";
+import { getEndOfMonthOfString } from "../utils/getLastDateOfMonth";
 dotenv.config();
 
 const openai = new OpenAI({
@@ -38,22 +39,29 @@ Câu hỏi: "${userMessage}"
         JSON.stringify({
           type: "chat",
           message:
-            "Chào bạn, tôi chỉ có thể giúp tìm kiếm chuyến xe với điểm đi , điểm đến , biển số xe , và thời gian khởi hành thôi nha bạn. Xin lỗi bạn vì sự bất tiện này",
+            "Chào bạn, tôi chỉ có thể giúp tìm kiếm chuyến xe với điểm đi, điểm đến, biển số xe, và thời gian khởi hành thôi nha bạn. Xin lỗi bạn vì sự bất tiện này",
         })
       );
       return;
     }
 
-    // Gọi GPT để trích xuất điểm đi, điểm đến, biển số xe, thời gian đi
     const extractionPrompt = `
-Bạn là trợ lý hỗ trợ đặt vé xe. Hãy trích xuất điểm đi (from), điểm đến (to), biển số xe (licensePlate), và thời gian (time) trong đoạn văn sau. Trả về đúng định dạng JSON gồm 3 trường: from, to, time.
+Bạn là trợ lý hỗ trợ đặt vé xe. Hãy trích xuất từ đoạn văn sau các thông tin:
 
-- Trường time phải ở định dạng **"yyyy-MM-dd HH:mm:ss"** (24h, chuẩn MySQL DATETIME).
-- Nếu người dùng không nói rõ giờ, mặc định là "00:00:00".
-- Nếu không nói rõ năm, giả định là năm hiện tại.
-- Nếu không xác định được thông tin, trả về chuỗi rỗng cho trường đó.
-- Trả về đúng định dạng JSON, không thêm mô tả hoặc ký tự đặc biệt.
+- điểm đi (from),
+- điểm đến (to),
+- biển số xe (licensePlate),
+- thời gian khởi hành (time),
+- ý định sắp xếp theo giá (priceSort),
+- ý định sắp xếp theo thời gian (timeSort).
 
+Yêu cầu:
+- Trường time phải ở định dạng "yyyy-MM-dd HH:mm:ss" (24h, chuẩn MySQL DATETIME).
+- Nếu người dùng không nói rõ giờ, mặc định "00:00:00".
+- Nếu không nói rõ năm, giả định năm hiện tại.
+- Trường priceSort và timeSort có thể là "ASC" (tăng dần), "DESC" (giảm dần), hoặc "" (không sắp xếp).
+- Nếu không xác định được thông tin nào, trả về chuỗi rỗng cho trường đó.
+- Trả về đúng định dạng JSON, không thêm mô tả hay ký tự đặc biệt.
 
 Văn bản: "${userMessage}"
 `;
@@ -66,15 +74,21 @@ Văn bản: "${userMessage}"
     const extractionContent = extractionResponse.choices[0].message?.content || "";
     console.log("Extraction result:", extractionContent);
 
-    let extracted = { from: "", to: "", time: "", licensePlate: "" };
+    let extracted = {
+      from: "",
+      to: "",
+      time: "",
+      licensePlate: "",
+      priceSort: "",
+      timeSort: "",
+      endTime: "",
+    };
 
     try {
-      // Loại bỏ ```json và ``` nếu có, rồi parse JSON
       const cleaned = extractionContent
         .replace(/```json/g, "")
         .replace(/```/g, "")
         .trim();
-
       extracted = JSON.parse(cleaned);
     } catch (e) {
       console.warn("Không parse được JSON từ GPT, dùng mặc định.");
@@ -82,7 +96,6 @@ Văn bản: "${userMessage}"
 
     console.log("Extracted data:", extracted);
 
-    // Nếu thiếu dữ liệu, có thể trả lỗi hoặc xử lý mặc định
     if (!extracted.from || !extracted.to || !extracted.time) {
       ws.send(
         JSON.stringify({
@@ -93,14 +106,47 @@ Văn bản: "${userMessage}"
       return;
     }
 
-    const tripsResult = await tripService.getAllFiltered(10, 0, "ASC", {
+    // --- Xử lý thời gian ---
+    let startTime = extracted.time;
+    let endTime = extracted.time;
+
+    if (extracted.time) {
+      const parsed = new Date(extracted.time);
+      const today = new Date();
+
+      const isOnlyMonthSpecified =
+        parsed.getDate() === 1 &&
+        parsed.getHours() === 0 &&
+        parsed.getMinutes() === 0 &&
+        parsed.getSeconds() === 0;
+
+      const isSameMonthAndYear =
+        parsed.getMonth() === today.getMonth() && parsed.getFullYear() === today.getFullYear();
+
+      if (isOnlyMonthSpecified && isSameMonthAndYear) {
+        startTime = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
+          2,
+          "0"
+        )}-${String(today.getDate()).padStart(2, "0")} 00:00:00`;
+        endTime = getEndOfMonthOfString(today);
+      }
+    }
+
+    const priceSort =
+      extracted.priceSort === "ASC" || extracted.priceSort === "DESC" ? extracted.priceSort : null;
+    const timeSort =
+      extracted.timeSort === "ASC" || extracted.timeSort === "DESC" ? extracted.timeSort : null;
+
+    const tripsResult = await tripService.getAllFiltered(10, 0, priceSort, timeSort, {
       licensePlate: extracted.licensePlate || "",
       departure: extracted.from,
       arrival: extracted.to,
-      startTime: extracted.time,
+      startTime,
+      endTime,
     });
+
     const dataTrips = tripsResult.data;
-    console.log("dataTrip", dataTrips);
+    console.log("dataTrips", dataTrips);
 
     if (!dataTrips || dataTrips.length <= 0) {
       ws.send(JSON.stringify({ type: "error", message: "Không tìm thấy chuyến đi phù hợp." }));

@@ -1,9 +1,11 @@
 import { ResultSetHeader, RowDataPacket } from "mysql2";
-import { TripFormData } from "../@types/trip";
+import { FormBookedTripType, SearchTripType, TripFormData } from "../@types/trip";
 import { Seat } from "../models/seat";
 import { ArrangeType } from "../@types/type";
 import { TripInfo } from "../models/trip";
 import dayjs from "dayjs";
+
+type SortOrder = "ASC" | "DESC" | null;
 
 export class TripService {
   private db;
@@ -32,7 +34,7 @@ export class TripService {
         return null;
       }
     } catch (error) {
-      console.log("err", error);
+      throw error;
     }
   };
   getAllDriver = async () => {
@@ -46,7 +48,7 @@ export class TripService {
         return null;
       }
     } catch (error) {
-      console.log("err", error);
+      throw error;
     }
   };
   getAllCoDriver = async () => {
@@ -60,7 +62,7 @@ export class TripService {
         return null;
       }
     } catch (error) {
-      console.log("err", error);
+      throw error;
     }
   };
 
@@ -93,8 +95,6 @@ export class TripService {
         startTime,
         endTime,
       } = newTrip;
-      console.log("departureTime", startTime);
-      console.log("arrivalTime", endTime);
       const valuesTrip = [
         carId,
         driverId,
@@ -106,14 +106,12 @@ export class TripService {
         "sẵn sàng",
         price,
       ];
-      console.log("newTrip", newTrip);
       const [resultTrip] = (await conn.execute(
         "call addTrip(?, ?, ?, ?, ?, ?, ?, ?, ?)",
         valuesTrip
       )) as [ResultSetHeader];
 
       const newTripId = resultTrip[0][0].tripId;
-      console.log("tripId", newTripId);
 
       if (resultTrip.affectedRows <= 0) {
         await conn.rollback();
@@ -168,7 +166,6 @@ export class TripService {
       };
     } catch (error) {
       await conn.rollback();
-      console.log("err", error);
       return {
         status: "ERR",
         message: "Unexpected server error",
@@ -179,7 +176,7 @@ export class TripService {
     }
   };
 
-  getAll = async (
+  public getAll = async (
     limit: number,
     offset: number,
     arrangeType: ArrangeType,
@@ -204,20 +201,20 @@ export class TripService {
       } else {
         return null;
       }
-    } catch (error) {
-      console.log("err", error);
-    }
+    } catch (error) {}
   };
 
   public getAllFiltered = async (
     limit: number,
     offset: number,
-    arrangeType: ArrangeType,
+    priceSort: SortOrder,
+    timeSort: SortOrder,
     filters: {
       licensePlate?: string;
       departure?: string;
       arrival?: string;
       startTime?: string;
+      endTime?: string;
     }
   ) => {
     try {
@@ -229,24 +226,47 @@ export class TripService {
         }
       }
 
+      let endTimeParam: string | null = null;
+      if (filters.endTime) {
+        const parsedEnd = dayjs(filters.endTime, "DD/MM/YYYY HH:mm", true);
+        if (parsedEnd.isValid()) {
+          endTimeParam = parsedEnd.format("YYYY-MM-DD HH:mm:ss");
+        }
+      } else if (startTimeParam) {
+        // Mặc định endTime = startTime
+        endTimeParam = startTimeParam;
+      }
+
+      const priceSortParam =
+        priceSort && (priceSort.toUpperCase() === "ASC" || priceSort.toUpperCase() === "DESC")
+          ? priceSort.toUpperCase()
+          : "ASC";
+
+      const timeSortParam =
+        timeSort && (timeSort.toUpperCase() === "ASC" || timeSort.toUpperCase() === "DESC")
+          ? timeSort.toUpperCase()
+          : "ASC";
+
       const value = [
         limit,
         offset,
-        arrangeType,
-        filters.licensePlate || "",
-        filters.departure || "",
-        filters.arrival || "",
+        priceSortParam,
+        timeSortParam,
+        filters.licensePlate || null,
+        filters.departure || null,
+        filters.arrival || null,
         startTimeParam,
+        endTimeParam,
       ];
-      console.log("value get all trip", value);
 
-      const [rows] = await this.db.execute(`CALL getAllFilteredTrip(?, ?, ?, ?, ?, ?, ?)`, value);
+      console.log("Parameters for getAllFilteredTrip:", value);
+
+      const [rows] = await this.db.execute(
+        `CALL getFilteredTrips(?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        value
+      );
 
       return {
-        // status: "OK",
-        // message: "Get filtered trip success",
-        // total: rows[0]?.length || 0,
-        // totalPage: Math.ceil((rows[0]?.length || 0) / limit),
         data: rows[0],
       };
     } catch (error) {
@@ -271,6 +291,44 @@ export class TripService {
       }
     } catch (error) {
       throw error;
+    }
+  };
+
+  search = async (searchValue: SearchTripType) => {
+    try {
+      console.log("search-value", searchValue);
+      const { from, to, start_time, sort, limit, offset } = searchValue;
+      const value = [from, to, start_time, sort, limit, offset];
+      const [rows] = await this.db.execute(
+        "call search_trips_by_filtered(?, ?, ?, ?, ?, ?)",
+        value
+      );
+      const totalTrips = rows[1][0].totalCount;
+      return {
+        status: "OK",
+        total: totalTrips,
+        totalPage: Math.ceil(totalTrips / limit),
+        data: rows[0],
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getDetailTripBooked = async (formValue: FormBookedTripType) => {
+    const { from, to, start_day, start_hours, end_day, end_hours, license_plate } = formValue;
+    const value = [from, to, start_day, start_hours, end_day, end_hours, license_plate];
+    const [rows] = await this.db.execute("call getTripByConditions(?, ?, ?, ?, ?, ?, ?)", value);
+    const detailTrip = rows[0][0];
+    if (!detailTrip) {
+      return {
+        status: "ERR",
+        message: "Not found trip",
+      };
+    } else {
+      return {
+        detailTrip,
+      };
     }
   };
 }

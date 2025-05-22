@@ -10,5 +10,7 @@ router.get("/form-data", verifyAccessToken, authorizeRoles("admin"), tripControl
 router.post("/add", verifyAccessToken, authorizeRoles("admin"), tripController.add);
 router.get("/get-all", tripController.getAll);
 router.get("/get-detail/:id", tripController.fetch);
+router.get("/search", tripController.search);
+router.get("/detail-booked", tripController.getDetailTripBooked);
 
 export default router;

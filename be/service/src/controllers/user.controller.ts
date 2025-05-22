@@ -73,17 +73,11 @@ export class UserController {
       const isCheckEmail = testEmail(email);
 
       if (!email || !password) {
-        res.status(200).json({
-          status: "ERR",
-          message: "The input is required",
-        });
+        errorResponse(res, "The input is required", 404);
       }
 
       if (!isCheckEmail) {
-        res.status(200).json({
-          status: "ERR",
-          message: "Email is not in correct format",
-        });
+        errorResponse(res, "Email is not in correct format", 404);
       }
 
       const response = await this.userService.loginByCustomer(req.body);
@@ -94,13 +88,6 @@ export class UserController {
         "expirationTime" in response
       ) {
         const { access_token, data, refresh_token, status, expirationTime } = response;
-        res.cookie("access_token", access_token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          maxAge: 60 * 60 * 1000,
-          path: "/",
-        });
 
         res.cookie("refresh_token", refresh_token, {
           httpOnly: true,
@@ -109,16 +96,16 @@ export class UserController {
           maxAge: 7 * 24 * 60 * 60 * 1000,
           path: "/",
         });
-        successResponse(res, 200, { status, data, expirationTime: expirationTime });
-      } else if(response.status === "ERR") {
+        successResponse(res, 200, { status, access_token, data, expirationTime: expirationTime });
+      } else {
+        if ("message" in response) {
           errorResponse(res, response.message, 400);
+        } else {
+          errorResponse(res, "Unexpected error occurred", 400);
+        }
       }
     } catch (err) {
-      console.log(err);
-      res.status(404).json({
-        message: "Controller.login err",
-        error: err,
-      });
+      errorResponse(res, "Controller.login err", 404);
     }
   };
 
@@ -251,14 +238,6 @@ export class UserController {
       if ("access_token" in response && "expirationTime" in response) {
         const { access_token, expirationTime } = response;
 
-        res.cookie("access_token", access_token, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          maxAge: 60 * 60 * 1000,
-          path: "/",
-        });
-
         res.cookie("access_token_expiration", expirationTime.toString(), {
           httpOnly: false,
           secure: true,
@@ -267,12 +246,11 @@ export class UserController {
           path: "/",
         });
 
-        res.status(200).json({ message: "Access token refreshed" });
+        successResponse(res, 200, { access_token: access_token });
       } else {
         errorResponse(res, response.message, 400);
       }
     } catch (error) {
-      console.log("err refresh token", error);
       errorResponse(res, "ERR Controller.refreshToken", 404);
     }
   };
