@@ -9,7 +9,7 @@
   position: absolute;
     top: 50px;
     background-color: white;
-    left: 250px;
+    left: 340px;
     
   .left {
     width: 50%;
@@ -56,9 +56,9 @@
     padding: 0 50px;
     h2 {
       text-align: center;
-      font-weight: 600;
-      font-size: 20px;
-      margin-bottom: 10px;
+      font-weight: 700;
+      font-size: 22px;
+      margin-bottom: 20px;
       text-transform: uppercase;
     }
     .email, .password {
@@ -104,7 +104,7 @@
 
     .buttonSubmit {
       padding: 12px;
-      background-color: rgb(46, 180, 252);
+      background-color: #0973b9;
       color: #fff;
       border: none;
       border-radius: 999px;
