@@ -25,6 +25,19 @@ export class TicketController {
       errorResponse(res, "ERR Controller.getDetailTicket", 404);
     }
   };
+
+  getDetailTicketByEmail = async (req: Request, res: Response) => {
+    const {email} = req.body;
+    console.log("emaik: ", email);
+    
+    try {
+      const result = await this.ticketService.getDetailTicketByEmail(email);
+      successResponse(res, 200, result);
+    } catch (error) {
+      errorResponse(res, "ERR Controller.getDetailTicket", 404);
+    }
+  };
+
 }
 
 export default new TicketController();

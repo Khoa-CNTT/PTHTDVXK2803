@@ -77,13 +77,42 @@ export class TicketService {
             message: "Ticket not found",
           });
         }
-        resolve(rows[0][0]);
+         resolve({
+          status: "OK",
+          data: rows[0][0]
+        });
       } catch (error) {
         console.log("Err Service.getDetail", error);
         reject(error);
       }
     });
   }
+
+  getDetailTicketByEmail(email: string): Promise<object> {
+    return new Promise(async (resolve, reject) => {
+      try {
+
+        const sql = "call getDetailTicketByEmail(?)";
+
+        const [rows] = (await this.db.execute(sql, email)) as [ResultSetHeader];
+
+        if (rows[0].length === 0) {
+          resolve({
+            status: "ERR",
+            message: "Ticket not found",
+          });
+        }
+         resolve({
+          status: "OK",
+          data: rows[0]
+        });
+      } catch (error) {
+        console.log("Err Service.getDetail", error);
+        reject(error);
+      }
+    });
+  }
+
 
 }
 
