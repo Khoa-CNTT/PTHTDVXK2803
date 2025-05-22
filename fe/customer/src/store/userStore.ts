@@ -18,7 +18,7 @@ export const useUserStore = create<UserStore>()(
       logout: () => set({ user: null, isLoggedIn: false }),
     }),
     {
-      name: "user-storage", // Tên key lưu trong localStorage
+      name: "user-storage",
       partialize: (state) => ({ user: state.user, isLoggedIn: state.isLoggedIn }),
     }
   )

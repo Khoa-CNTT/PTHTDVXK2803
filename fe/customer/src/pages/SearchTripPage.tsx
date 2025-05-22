@@ -3,7 +3,7 @@ import SearchTrip from "../components/SearchTrip";
 import { useEffect, useState } from "react";
 import SortTrip from "../components/SortTrip";
 import { useQuery } from "@tanstack/react-query";
-import { ParamsSearchTrip, TripInfoBase } from "../types/trip";
+import { ParamsSearchTrips, TripInfoBase } from "../types/trip";
 import { getLocations, searchTrips } from "../services/trip.service";
 import Loading from "../components/Loading";
 import styles from "../styles/searchTripPage.module.scss";
@@ -18,37 +18,19 @@ const ITEMS_PER_PAGE = 10;
 const SearchTripPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchParamsValue, setSearchParamsValue] = useState<ParamsSearchTrip>({
+  const [isSearchTrip, setIsSearchTrip] = useState<boolean>(false);
+  const [searchParamsValue, setSearchParamsValue] = useState<ParamsSearchTrips>({
     from: { id: 0, name: "" },
     to: { id: 0, name: "" },
     start_time: "",
     sort: "",
   });
 
-  useEffect(() => {
-    const today = new Date();
-    const defaultDate = today.toISOString().split("T")[0];
-
-    setSearchParamsValue((prev) => {
-      const fromName = searchParams.get("from") || "Đà Nẵng";
-      const fromLocation = locationData?.find((l) => l.name === fromName);
-      const toName = searchParams.get("to") || "Hồ Chí Minh";
-      const toLocation = locationData?.find((l) => l.name === toName);
-
-      return {
-        ...prev,
-        from: { id: fromLocation?.id || 0, name: fromName },
-        to: { id: toLocation?.id || 0, name: toName },
-        start_time: searchParams.get("start_time") || defaultDate,
-        sort: searchParams.get("sort") || "default",
-      };
-    });
-  }, [searchParams]);
-
   const { data: locationData } = useQuery({
     queryKey: ["locations"],
     queryFn: () => getLocations(),
     staleTime: 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const {
@@ -56,7 +38,7 @@ const SearchTripPage = () => {
     isLoading: isTripLoading,
     isError: isTripError,
   } = useQuery({
-    queryKey: ["trips", searchParamsValue],
+    queryKey: ["search-trips", searchParamsValue],
     queryFn: () =>
       searchTrips({
         from: searchParamsValue.from.id,
@@ -67,7 +49,34 @@ const SearchTripPage = () => {
         offset: 0,
       }),
     staleTime: 60 * 60 * 1000,
+    enabled: isSearchTrip,
+    refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (!locationData) {
+      return;
+    } else {
+      const today = new Date();
+      const defaultDate = today.toISOString().split("T")[0];
+
+      setSearchParamsValue((prev) => {
+        const fromName = searchParams.get("from") || "Đà Nẵng";
+        const fromLocation = locationData?.find((l) => l.name === fromName);
+        const toName = searchParams.get("to") || "Hồ Chí Minh";
+        const toLocation = locationData?.find((l) => l.name === toName);
+
+        return {
+          ...prev,
+          from: { id: fromLocation?.id || 0, name: fromName },
+          to: { id: toLocation?.id || 0, name: toName },
+          start_time: searchParams.get("start_time") || defaultDate,
+          sort: searchParams.get("sort") || "default",
+        };
+      });
+      setIsSearchTrip(true);
+    }
+  }, [locationData, searchParams]);
 
   const handleChangeSortValue = (sortValue: string) => {
     setSearchParamsValue((prev) => ({ ...prev, sort: sortValue }));
@@ -83,8 +92,16 @@ const SearchTripPage = () => {
   };
 
   const hanleDetailTrip = (trip: TripInfoBase) => {
+    const { licensePlate, departure, arrival, startTime, endTime } = trip;
+    const startDate = formatDate(startTime, "YYYY-MM-DD-HH:mm", false);
+    const endDate = formatDate(endTime, "YYYY-MM-DD-HH:mm", false);
+    const getStartDay = startDate.split(" ")[0];
+    const getStartHour = startDate.split(" ")[1];
+    const getEndDay = endDate.split(" ")[0];
+    const getEndHour = endDate.split(" ")[1];
+    console.log("time", getStartHour);
     navigate(
-      `/dat-ve?license_plate=${trip.licensePlate}&from=${trip.departure}&to=${trip.arrival}&start_time=${trip.startTime}&end_time=${trip.endTime}`
+      `/dat-ve?license_plate=${licensePlate}&from=${departure}&to=${arrival}&start_day=${getStartDay}&start_hours=${getStartHour}&end_day=${getEndDay}&end_hours=${getEndHour}`
     );
   };
 
@@ -137,7 +154,7 @@ const SearchTripPage = () => {
                           <div className={styles["info-trip__detail-ic-from-to"]}>
                             <IconDeparture />
                             <div className={styles.dash}>
-                              <span>.........</span>
+                              <span className={styles["no-select"]}>.........</span>
                             </div>
                             <FontAwesomeIcon
                               className={`${styles.ic} ${styles["ic-departure"]}`}

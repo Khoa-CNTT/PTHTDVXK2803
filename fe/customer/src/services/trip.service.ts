@@ -1,4 +1,4 @@
-import { LocationType, SearchTripResponse } from "../types/trip";
+import { LocationType, SearchTripResponse, TripBookedInfo } from "../types/trip";
 import { bookTicketAPI } from "./customizeAxios.service";
 
 export const searchTrip = async (data: object) => {
@@ -32,6 +32,32 @@ export const searchTrips = async ({
     .get<SearchTripResponse>(
       `/trip/search?from=${from}&to=${to}&start_time=${start_time}
       &sort=${sort}&limit=${limit}&offset=${offset}`
+    )
+    .then((res) => res.data);
+  return response;
+};
+
+export const detailTripBooked = async ({
+  from,
+  to,
+  start_day,
+  start_hours,
+  end_day,
+  end_hours,
+  license_plate,
+}: {
+  from: number;
+  to: number;
+  start_day: string;
+  start_hours: string;
+  end_day: string;
+  end_hours: string;
+  license_plate: string;
+}) => {
+  const response = await bookTicketAPI
+    .get<TripBookedInfo>(
+      `/trip/detail-booked?from=${from}&to=${to}&start_day=${start_day}&start_hours=${start_hours}
+      &end_day=${end_day}&end_hours=${end_hours}&license_plate=${license_plate}`
     )
     .then((res) => res.data);
   return response;

@@ -2,6 +2,10 @@ export interface PayOSType {
   orderCode: number;
   amount: number;
   description?: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone?: string;
+  buyerAddress?: string;
   items: Item[];
   returnUrl: string;
   cancelUrl: string;

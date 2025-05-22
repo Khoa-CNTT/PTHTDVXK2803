@@ -1,9 +1,13 @@
-export interface User {
-  fullName: string;
+export interface User extends UserInfo {
   email: string;
-  phone?: string;
+  fullName: string;
   dateBirth?: string;
   avatar?: string;
+  phone?: string;
   address?: string;
-  sex?:"male"|"female"|"other"
+  sex?: "male" | "female" | "other";
+}
+
+export interface UserInfo {
+  id?: number;
 }

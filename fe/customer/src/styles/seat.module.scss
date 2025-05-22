@@ -1,74 +1,35 @@
 @use "./mixin" as mix;
 
-.first-row {
-  width: 11.06rem;
-  height: 2.25rem;
-  text-align: center;
-
-  @include mix.responsive(tablet) {
-    width: 9rem;
-    height: 2rem;
-  }
-
-  @include mix.responsive(mobile) {
-    width: 7rem;
-    height: 1.8rem;
-  }
-}
-
-.upper-floor {
-  margin: 0 0.6rem;
-  display: flex;
-  justify-content: space-between;
-
-  @include mix.responsive(mobile) {
-    margin: 0 0.4rem;
-  }
-}
-
-.downstairs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 0.8rem;
-
-  @include mix.responsive(tablet) {
-    gap: 0.8rem;
-  }
-
-  @include mix.responsive(mobile) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-  }
-}
-
-.seat-container {
+.seat {
   position: relative;
-}
+  cursor: pointer;
 
-.seat-image {
-  width: 1.8rem;
-  height: 1.8rem;
+  &__img {
+    height: 2.4rem;
+    width: 2.4rem;
 
-  @include mix.responsive(tablet) {
-    width: 1.5rem;
-    height: 1.5rem;
+    @include mix.responsive(mobile) {
+      height: 3rem;
+      width: 3rem;
+    }
   }
 
-  @include mix.responsive(mobile) {
-    width: 1.2rem;
-    height: 1.2rem;
-  }
-}
+  &__position {
+    position: absolute;
+    top: 0.4rem;
+    left: 20%;
 
-.seat-number {
-  font-size: 0.8rem;
-  position: absolute;
-  top: 0.2rem;
-  left: 20%;
+    font-size: 0.8rem;
 
-  @include mix.responsive(mobile) {
-    font-size: 0.6rem;
-    top: 0.1rem;
+    user-select: none;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+
+    @include mix.responsive(mobile) {
+      font-size: 0.8rem;
+      top: 0.6rem;
+      left: 25%;
+    }
   }
 }
