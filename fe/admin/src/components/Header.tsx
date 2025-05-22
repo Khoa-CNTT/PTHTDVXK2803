@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightFromBracket, faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../services/auth.service";
 import { toast } from "react-toastify";
-import logo from "../assets/images/logo3.jpg";
+import logo from "../assets/images/logo.png";
 import { useLocation } from "react-router";
 
 const Header = () => {
