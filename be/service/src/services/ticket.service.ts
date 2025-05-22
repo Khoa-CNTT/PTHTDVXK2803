@@ -64,7 +64,7 @@ export class TicketService {
       try {
         const {phone , idTicket} = data
 
-        const sql = "call updatePassword( ?, ?)";
+        const sql = "call getDetailTicket(?, ?)";
           const values = [
             phone,
             idTicket

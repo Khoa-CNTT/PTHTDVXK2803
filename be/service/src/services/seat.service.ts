@@ -47,7 +47,7 @@ class SeatService {
       console.log("get-position", getPosition);
 
       for (let position of getPosition) {
-        const [rows] = this.db.execute("call update_seat(?, ?, ?, ?)", [
+        const [rows] = this.db.execute("call UpdateSeat(?, ?, ?, ?)", [
           tripId,
           customerId,
           position,

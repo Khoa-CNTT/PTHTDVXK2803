@@ -7,13 +7,12 @@
   align-items: center;
   gap: 3rem;
   min-height: 100vh;
-  // position: relative;
   overflow-x: hidden;
   .connection {
     width: 1200px;
   }
   .banner-wrapper {
-    width: 100vw;
+    width: 100%;
     height: auto;
     display: flex;
     justify-content: center;
@@ -27,11 +26,6 @@
       width: 1120px;
       height: 300px;
       box-shadow: 0 3px 6px rgba(0, 0, 0, .16), 0 3px 6px rgba(0, 0, 0, .2);
-    }
-    .content-wrapper {
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
     }
 
     @include mix.responsive(tablet) {

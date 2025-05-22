@@ -6,8 +6,8 @@ import express from "express";
 const router = express.Router();
 const tripController = new TripController();
 
-router.get("/form-data", verifyAccessToken, authorizeRoles("admin"), tripController.getFormData);
-router.post("/add", verifyAccessToken, authorizeRoles("admin"), tripController.add);
+router.get("/form-data", tripController.getFormData);
+router.post("/add",  tripController.add);
 router.get("/get-all", tripController.getAll);
 router.get("/get-detail/:id", tripController.fetch);
 router.get("/search", tripController.search);

@@ -39,7 +39,7 @@ const Sidebar: React.FC<SideBarProps> = ({ statusSideBar }) => {
           {[
             { to: "/", label: "Tổng quan", icon: "home" },
             { to: "/customer-manage", label: "Quản lý Khách hàng", icon: "users" },
-            { to: "/admin-manage", label: "Quản lý Nhân viên", icon: "staff" },
+            { to: "/co-driver-manage", label: "Quản lý Nhân viên", icon: "staff" },
             { to: "/driver-manage", label: "Quản lý Tài xế", icon: "driver" },
             { to: "/bus-manage", label: "Quản lý Xe", icon: "bus" },
             { to: "/trip-manage", label: "Quản lý Chuyến xe", icon: "suitcase" },

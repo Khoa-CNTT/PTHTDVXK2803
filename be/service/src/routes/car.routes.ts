@@ -33,29 +33,32 @@ carRouter.put(
 // carRouter.post("/add-img", verifyAccessToken, authorizeRoles("admin"), carController.addImageCar);
 carRouter.put(
   "/image/update",
-  verifyAccessToken,
-  authorizeRoles("admin"),
+  // verifyAccessToken,
+  // authorizeRoles("admin"),
   uploadImage,
   uploadImageToCloudinary,
   carController.updateImgCar
 );
 carRouter.delete(
   "/image/delete",
-  verifyAccessToken,
-  authorizeRoles("admin"),
+  // verifyAccessToken,
+  // authorizeRoles("admin"),
   carController.deleteImgCar
 );
 carRouter.delete(
   "/delete/:id",
-  verifyAccessToken,
-  authorizeRoles("admin"),
+  // verifyAccessToken,
+  // authorizeRoles("admin"),
   carController.deleteCar
 );
-carRouter.get("/get-all", verifyAccessToken, authorizeRoles("admin"), carController.getAllCar);
+carRouter.get("/get-all", 
+  // verifyAccessToken, 
+  // authorizeRoles("admin"), 
+  carController.getAllCar);
 carRouter.get(
   "/detail/:licensePlate",
-  verifyAccessToken,
-  authorizeRoles("admin", "customer"),
+  // verifyAccessToken,
+  // authorizeRoles("admin", "customer"),
   carController.getCarByLicensePlate
 );
 

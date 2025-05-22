@@ -20,9 +20,28 @@ import VerifyOtpForgotPassword from "./components/VerifyOtpForgotPassword";
 import UpdateForgotPassword from "./components/UpdateForgotPassword";
 import SearchTripPage from "./pages/SearchTripPage";
 import HistoryBookTicket from "./components/HistoryBookTicket";
-
+import { useEffect } from "react";
+import { bookTicketAPI } from "./services/customizeAxios.service";
+import { setAccessToken } from "./utils/auth";
+import BookedPage from "./pages/BookedPage";
 
 function App() {
+  useEffect(() => {
+    const refreshAccessToken = async () => {
+      try {
+        const res = await bookTicketAPI.get("/user/auth/refresh-token");
+        const newToken = res.data.access_token;
+        if (newToken) {
+          setAccessToken(newToken);
+        }
+      } catch {
+        console.log("Không thể refresh token, cần login lại.");
+      }
+    };
+
+    refreshAccessToken();
+  }, []);
+
   useClientWidth();
   return (
     <Router>
@@ -44,7 +63,9 @@ function App() {
             </Layout>
           }
         />
-         <Route path="/register" element={
+        <Route
+          path="/register"
+          element={
             <Layout>
               <Login />
             </Layout>
@@ -130,6 +151,14 @@ function App() {
           element={
             <Layout>
               <SearchTripPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dat-ve"
+          element={
+            <Layout>
+              <BookedPage />
             </Layout>
           }
         />

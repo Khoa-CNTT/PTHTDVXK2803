@@ -1,9 +1,9 @@
+import logo1 from "../assets/images/logo1.svg";
+import Connection from "../components/Connection";
+import PopularRoutesSlider from "../components/PopularRoutesSlider";
+import PromotionSlider from "../components/PromotionSlider";
 import SearchTrip from "../components/SearchTrip";
 import styles from "../styles/homePage.module.scss";
-import logo1 from "../assets/images/logo1.svg";
-import PromotionSlider from "../components/PromotionSlider";
-import PopularRoutesSlider from "../components/PopularRoutesSlider";
-import Connection from "../components/Connection";
 
 const HomePage = () => {
   return (

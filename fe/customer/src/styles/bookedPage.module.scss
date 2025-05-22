@@ -1,0 +1,210 @@
+@use "./mixin" as mix;
+
+.booked-container {
+  display: flex;
+  gap: 2rem;
+
+  margin-top: 2rem;
+
+  .booked-left {
+    flex: 1 1 0%;
+    max-width: 48rem;
+
+    .booked-seats {
+      display: flex;
+      gap: 2rem;
+
+      padding: 1rem;
+      background-color: var(--white);
+      border-radius: 0.4rem;
+
+      &__info {
+      }
+
+      &__description {
+        &-status {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          &__color {
+            height: 1rem;
+            width: 1rem;
+            border-radius: 0.4rem;
+          }
+
+          .available {
+            background-color: var(--primary);
+          }
+
+          .selecting {
+            background-color: #f58a38;
+          }
+
+          .unavailable {
+            background-color: var(--gray);
+          }
+
+          &__content {
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+
+    .booked-user {
+      display: flex;
+      gap: 2rem;
+
+      padding: 1rem;
+      background-color: var(--white);
+      margin: 1rem 0;
+
+      &__info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+
+        &-title {
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 1.2rem;
+          color: var(--danger);
+
+          margin-bottom: 0.5rem;
+        }
+
+        .recipient-info {
+          position: relative;
+
+          .label {
+            position: absolute;
+
+            top: -0.8rem;
+            left: 0.5rem;
+
+            padding: 0 0.25rem;
+
+            background-color: var(--white);
+
+            font-size: 0.9rem;
+          }
+
+          .input {
+            height: 80%;
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray);
+            border-radius: 0.4rem;
+
+            box-shadow: 0 0 0 1000px white inset !important; /* hoặc background của form */
+            -webkit-text-fill-color: #000 !important; /* màu chữ */
+            transition: background-color 5000s ease-in-out 0s;
+
+            transition: border 0.3s ease-in-out, background-color 5000s ease-in-out 0s;
+
+            &:focus,
+            &:hover {
+              border-color: var(--primary);
+            }
+          }
+        }
+      }
+
+      &__note {
+        flex: 1;
+        width: clamp(40%, 10rem, 70%);
+
+        &-title {
+          text-align: center;
+          text-transform: uppercase;
+          font-size: 1.2rem;
+          color: var(--danger);
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .booked-payment {
+      display: flex;
+      justify-content: space-between;
+
+      padding: 1rem;
+      border-radius: 0.4rem;
+      background-color: var(--white);
+
+      .total-price {
+        font-size: 1.4rem;
+      }
+
+      .btn-payment {
+        padding: 0.75rem 1rem;
+        background-color: var(--white);
+        border: 1px solid var(--primary);
+        border-radius: 10rem;
+
+        transition: all 0.3s;
+
+        &:hover,
+        &:focus {
+          background-color: var(--primary);
+          color: var(--white);
+        }
+      }
+    }
+  }
+  .booked-right {
+    width: 20rem;
+
+    @include mix.responsive(mobile) {
+      display: none;
+    }
+
+    .booked-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      padding: 1rem;
+      background-color: var(--white);
+      border-radius: 0.4rem;
+      margin-bottom: 1rem;
+
+      &__route,
+      &__time,
+      &__item {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+
+    .booked-detail-price {
+      @extend .booked-info;
+
+      &__title {
+        display: flex;
+        justify-content: space-between;
+
+        &-ic {
+          color: var(--primary);
+        }
+
+        &:nth-child(1) {
+          justify-content: start;
+          align-items: center;
+          gap: 0.5rem;
+        }
+        .price {
+          color: var(--belize-hole);
+        }
+      }
+
+      .dash {
+        height: 0.1rem;
+        width: 100%;
+        background-color: var(--gray);
+      }
+    }
+  }
+}

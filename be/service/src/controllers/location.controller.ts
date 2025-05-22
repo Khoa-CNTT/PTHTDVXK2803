@@ -28,6 +28,7 @@ export class LocationController {
 
   getAll = async (req: Request, res: Response) => {
     try {
+      
       const response = await this.locationService.getAll();
       if (response.status === "ERR") {
         errorResponse(res, response.message, 404);

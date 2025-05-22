@@ -106,6 +106,7 @@ export class TripService {
         "sẵn sàng",
         price,
       ];
+      console.log('values', valuesTrip)
       const [resultTrip] = (await conn.execute(
         "call addTrip(?, ?, ?, ?, ?, ?, ?, ?, ?)",
         valuesTrip

@@ -20,7 +20,11 @@ export class TripController {
     try {
       const { form, seats } = req.body;
       const result = await this.tripService.add(form, seats);
-      successResponse(res, 200, result);
+      if(result.status === "ERR"){
+        errorResponse(res, "Thêm chuyến thất bại", 404)
+      }else{
+        successResponse(res, 200, result);
+      }
     } catch (error) {
       errorResponse(res, "err add trip", 500);
     }

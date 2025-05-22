@@ -16,6 +16,7 @@ const AddCoDriver = () => {
   const [statePassword, setStatePassword] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [form, setForm] = useState({
+    currentLocationId:0,
     fullName: "",
     phone: "",
     address: "",
@@ -51,12 +52,13 @@ const AddCoDriver = () => {
   };
 
   const handleSelectedLocation = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    const getId = locationsData && locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
     setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
   const handleAddCoDriver = async () => {
     const formData = new FormData();
+    console.log('data', form)
     formData.append("data", JSON.stringify(form));
     if (image) {
       formData.append("file", image);
@@ -141,7 +143,7 @@ const AddCoDriver = () => {
 
           <li className={styles["form-group-item"]}>
             <p className={styles.title}>Thành phố đang làm vệc</p>
-            {!isLocationLoading ? (
+            {!isLocationLoading && locationsData ? (
               <InputDropDownListCD
                 idHTML="location"
                 titleModal={"Địa điểm"}

@@ -2,12 +2,13 @@
 
 .search-trip {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-top:270px;
   width: 1120px;
-  height: auto;
+  height: 100%;
   padding: 1.2rem;
   border: 1px solid #c3c3c3;
   border-radius: 0.725rem;
@@ -34,7 +35,6 @@
   }
   .search-trip-left {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 0.2rem;
@@ -42,8 +42,6 @@
     padding: 15px 30px;
     border: 1px solid #c3c3c3;
     border-radius: 0.725rem;
-
-    contain: content;
 
     @include mix.responsive(tablet) {
       flex-wrap: wrap;

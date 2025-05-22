@@ -156,8 +156,6 @@ export class CoDriverService {
   add(newCoDriver: CoDriver, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
-        console.log("newCoDriver", newCoDriver);
-        console.log("fileCloudinary", fileCloudinary.secure_url, fileCloudinary.public_id);
         if (!testEmail(newCoDriver.email)) {
           deleteOldFile(fileCloudinary.public_id, "image");
           return reject({
@@ -179,6 +177,8 @@ export class CoDriverService {
           newCoDriver.dateBirth,
           newCoDriver.address,
         ];
+        console.log("va: ", values);
+        
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {
           deleteOldFile(fileCloudinary.public_id, "image");

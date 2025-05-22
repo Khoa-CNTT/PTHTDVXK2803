@@ -15,7 +15,6 @@
   }
 
   .input-location {
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,7 +47,7 @@
   }
 
   .drop-down-list {
-    z-index: 10;
+    z-index: 100 !important;
     position: absolute;
     top: calc((100% - 1rem));
     left: 0;

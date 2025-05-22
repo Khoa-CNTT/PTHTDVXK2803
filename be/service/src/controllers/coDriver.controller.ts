@@ -44,6 +44,7 @@ export class CoDriverController {
       const id = Number(req.body.id);
       const file = req.uploadedImage as CloudinaryAsset;
       const publicId = req.body.publicId;
+      
       if (!id) errorResponse(res, "id is required", 404);
 
       const data = await this.coDriverService.updateImage(id, publicId, file);
@@ -80,6 +81,7 @@ export class CoDriverController {
 
   create = async (req: RequestFile, res: Response) => {
     try {
+
       const file = req.uploadedImage as CloudinaryAsset;
       const dataNewCoDriver = JSON.parse(req.body.data);
       const data = await this.coDriverService.add(dataNewCoDriver, file);

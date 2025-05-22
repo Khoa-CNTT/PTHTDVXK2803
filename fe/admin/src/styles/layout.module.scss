@@ -1,6 +1,6 @@
 @use "./mixin" as mix;
 .wrapper-layout {
-  overflow-x: hidden;
+  overflow-x: scroll;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
