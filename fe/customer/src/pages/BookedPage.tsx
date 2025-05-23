@@ -10,16 +10,14 @@ import PaymentType from "../components/PaymentType";
 import { SeatType } from "../components/Seat";
 import SeatMapNormal from "../components/SeatMapNormal";
 import SeatMapSleeper from "../components/SeatMapSleeper";
-import { createTicket } from "../services/ticket.service";
+import { createTicket, deleteTicket } from "../services/ticket.service";
 import { detailTripBooked, getLocations } from "../services/trip.service";
 import { useUserStore } from "../store/userStore";
 import styles from "../styles/bookedPage.module.scss";
 import { ParamsSearchDetailTrip } from "../types/trip";
 import { User } from "../types/user";
-import { getAccessToken } from "../utils/auth";
-import { formatCurrency } from "../utils/formatCurrency";
 import { formatDate } from "../utils/formatDate";
-import { parseCurrency } from "../utils/parseCurrency";
+import { formatCurrency } from "../utils/formatCurrency";
 
 const defaultQuery: ParamsSearchDetailTrip = {
   from: { id: 0, name: "" },
@@ -32,7 +30,6 @@ const defaultQuery: ParamsSearchDetailTrip = {
 };
 
 export interface FormDataTicket {
-  access_token: string;
   ticketId: number;
   tripId: number;
   user: User;
@@ -48,7 +45,7 @@ const BookedPage = () => {
   const [isOpenPaymenTypeModal, setIsOpenPaymenTypeModal] = useState<boolean>(false);
   const [formDataTicket, setFormDataTicket] = useState<FormDataTicket>();
 
-  const { data: locationData = [] } = useQuery({
+  const { data: locationData } = useQuery({
     queryKey: ["locations"],
     queryFn: () => getLocations(),
     staleTime: 60 * 60 * 1000,
@@ -72,13 +69,9 @@ const BookedPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const totalPriceTrip = formatCurrency(
-    (formDataTicket?.seats?.length ?? 0) * Number(tripData?.price)
-  );
-
   // Khi locationData và search params sẵn sàng thì map vào query
   useEffect(() => {
-    if (!locationData.length) return;
+    if (locationData && !locationData.length) return;
 
     const fromName = searchTripParams.get("from") || "";
     const toName = searchTripParams.get("to") || "";
@@ -88,8 +81,8 @@ const BookedPage = () => {
     const end_hours = searchTripParams.get("end_hours") || "";
     const license_plate = searchTripParams.get("license_plate") || "";
 
-    const fromLocation = locationData.find((l) => l.name === fromName);
-    const toLocation = locationData.find((l) => l.name === toName);
+    const fromLocation = locationData && locationData.find((l) => l.name === fromName);
+    const toLocation = locationData && locationData.find((l) => l.name === toName);
 
     setQuerySearchTrip({
       from: { id: fromLocation?.id || 0, name: fromName },
@@ -110,7 +103,6 @@ const BookedPage = () => {
         prev
           ? {
               ...prev,
-              access_token: getAccessToken() ?? "",
               user: {
                 ...prev.user,
                 id: user?.id,
@@ -119,14 +111,14 @@ const BookedPage = () => {
             }
           : {
               ticketId: 0,
-              access_token: "",
               tripId: tripData.id,
               seats: [],
               price: 0,
               user: {
-                email: user.email,
-                fullName: user.fullName,
-                phone: user.phone,
+                id: user.id,
+                email: "",
+                fullName: "",
+                phone: "",
               },
             }
       );
@@ -134,13 +126,13 @@ const BookedPage = () => {
   }, [user, tripData]);
 
   useEffect(() => {
-    const priceTrip = parseCurrency(totalPriceTrip);
-    if (priceTrip) {
-      setFormDataTicket((prev) => (prev ? { ...prev, price: priceTrip } : prev));
-    } else {
-      return;
+    if (formDataTicket && tripData) {
+      setFormDataTicket((prev) => ({
+        ...prev!,
+        price: formDataTicket.seats.length * Number(tripData.price),
+      }));
     }
-  }, [totalPriceTrip]);
+  }, [formDataTicket?.seats, tripData]);
 
   const handleSelectedSeats = (seatsSelected: SeatType[]) => {
     setFormDataTicket((prev) => (prev ? { ...prev, seats: seatsSelected } : prev));
@@ -167,9 +159,14 @@ const BookedPage = () => {
     if ((formDataTicket?.seats?.length ?? 0) <= 0) {
       toast.warning("Bạn chưa chọn bất kỳ ghế nào");
       return;
+    } else if (
+      formDataTicket?.user.email === "" ||
+      formDataTicket?.user.fullName === "" ||
+      formDataTicket?.user.phone === ""
+    ) {
+      toast.warning("Bạn chưa nhập thông tin người sẽ nhận vé");
     } else {
-      console.log("formData", formDataTicket);
-      if (formDataTicket && formDataTicket?.user.id) {
+      if (formDataTicket) {
         const responseTicket = await createTicket(formDataTicket);
         if (responseTicket.ticket) {
           setFormDataTicket((prev) => (prev ? { ...prev, ticketId: responseTicket.ticket } : prev));
@@ -181,6 +178,17 @@ const BookedPage = () => {
       } else {
         toast.warning("Bạn chưa có đầy đủ thông tin");
         return;
+      }
+    }
+  };
+
+  const handleCloseModalPayment = async () => {
+    if (formDataTicket?.ticketId) {
+      const response = await deleteTicket(formDataTicket?.ticketId);
+      if (response.status === "OK") {
+        setIsOpenPaymenTypeModal(false);
+      } else {
+        toast.warning("Lỗi TK(500)");
       }
     }
   };
@@ -235,6 +243,7 @@ const BookedPage = () => {
                     type="text"
                     name="fullName"
                     className={styles["input"]}
+                    value={formDataTicket?.user.fullName ?? ""}
                     onChange={handleChangeValueUser}
                   />
                 </div>
@@ -246,6 +255,7 @@ const BookedPage = () => {
                     type="text"
                     name="phone"
                     className={styles["input"]}
+                    value={formDataTicket?.user.phone ?? ""}
                     pattern="0+[0-9]{10}"
                     onChange={handleChangeValueUser}
                   />
@@ -258,6 +268,7 @@ const BookedPage = () => {
                     type="email"
                     name="email"
                     className={styles["input"]}
+                    value={formDataTicket?.user.email ?? ""}
                     pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
                     onChange={handleChangeValueUser}
                   />
@@ -267,15 +278,15 @@ const BookedPage = () => {
                 <p className={styles["booked-user__note-title"]}>Lưu ý</p>
                 <div className={styles["booked-user__note-info"]}>
                   <p>
-                    Trong trường hợp quý khách không nhập các thông tin ở đây, chúng tôi sẽ gửi
-                    thông tin thanh toán qua email bạn đăng ký{" "}
+                    Vui lòng nhập cá trường bên trái, thông tin này chúng tôi sẽ gửi đến email của
+                    bạn{" "}
                   </p>
                 </div>
               </div>
             </div>
             {/*  */}
             <div className={styles["booked-payment"]}>
-              <p className={styles["total-price"]}>{totalPriceTrip}</p>
+              <p className={styles["total-price"]}>{formatCurrency(formDataTicket?.price || 0)}</p>
               <button type="button" className={styles["btn-payment"]} onClick={handlePayment}>
                 Thanh toán
               </button>
@@ -302,7 +313,7 @@ const BookedPage = () => {
               </div>
               <div className={styles["booked-info__item"]}>
                 <p>Tổng tiền lượt đi</p>
-                <p>{totalPriceTrip}</p>
+                <p>{formatCurrency(formDataTicket?.price || 0)}</p>
               </div>
             </div>
 
@@ -316,7 +327,7 @@ const BookedPage = () => {
               </div>
               <div className={styles["booked-detail-price__title"]}>
                 <p>Giá vé lượt đi</p>
-                <p className={styles.price}>{totalPriceTrip}</p>
+                <p className={styles.price}>{formatCurrency(formDataTicket?.price || 0)}</p>
               </div>
               <div className={styles["booked-detail-price__title"]}>
                 <p>Phí thanh toán</p>
@@ -325,7 +336,7 @@ const BookedPage = () => {
               <span className={styles.dash}></span>
               <div className={styles["booked-detail-price__title"]}>
                 <p>Tổng tiền</p>
-                <p className={styles.price}>{totalPriceTrip}</p>
+                <p className={styles.price}>{formatCurrency(formDataTicket?.price || 0)}</p>
               </div>
             </div>
           </div>
@@ -334,11 +345,16 @@ const BookedPage = () => {
         <Loading />
       )}
       <CustomModal
-        onCancel={() => setIsOpenPaymenTypeModal(false)}
+        onCancel={handleCloseModalPayment}
         open={isOpenPaymenTypeModal}
         title={"Chọn phương thức thanh toán"}
       >
-        {formDataTicket ? <PaymentType valueIn={formDataTicket} /> : null}
+        {formDataTicket ? (
+          <PaymentType
+            valueIn={formDataTicket}
+            onCloseModalPaymentType={() => setIsOpenPaymenTypeModal(false)}
+          />
+        ) : null}
       </CustomModal>
     </>
   );

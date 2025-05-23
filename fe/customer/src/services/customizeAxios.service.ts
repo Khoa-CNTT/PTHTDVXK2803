@@ -1,5 +1,4 @@
 import axios from "axios";
-
 import { toast } from "react-toastify";
 
 type FailedRequest = {
@@ -67,21 +66,6 @@ bookTicketAPI.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
-  }
-);
-
-export const paymentAPI = axios.create({
-  baseURL: `https://${import.meta.env.VITE_API_URL}.ngrok-free.app/api`,
-  withCredentials: true,
-  headers: { "ngrok-skip-browser-warning": "true" },
-});
-
-paymentAPI.interceptors.response.use(
-  (response) => {
-    return response.data || [];
-  },
-  (error) => {
     return Promise.reject(error);
   }
 );

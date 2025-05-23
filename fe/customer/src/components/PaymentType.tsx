@@ -6,24 +6,26 @@ import { Radio, RadioChangeEvent } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBuildingColumns, faWallet } from "@fortawesome/free-solid-svg-icons";
 import { NavLink } from "react-router-dom";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { FormDataTicket } from "../pages/BookedPage";
-import { createPayOsURL } from "../services/payment.service";
+import { cancelPaymentPayOS, createPayOsURL } from "../services/payment.service";
 import { PayOSPaymentResponseData } from "../types/payos";
 
 type PaymentType = "wallet" | "bank";
 
 interface PaymentTypeProps {
   valueIn: FormDataTicket;
+  onCloseModalPaymentType: (status: false) => void;
 }
 
-const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
+const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn, onCloseModalPaymentType }) => {
   const [paymentType, setPaymentType] = useState<PaymentType>("wallet");
   const [isOpenQRPayment, setIsOpenQRPayment] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [dataPayment, setDataPayment] = useState<PayOSPaymentResponseData>();
   const { ticketId, user, seats, price } = valueIn;
+  const navigate = useNavigate();
   const location = useLocation();
 
   const handleChangePaymentType = (e: RadioChangeEvent) => {
@@ -31,6 +33,17 @@ const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
     e.preventDefault();
     const value = e.target.value;
     setPaymentType(value);
+  };
+  const handleCancelPayment = async () => {
+    const response = await cancelPaymentPayOS({
+      id: Number(dataPayment?.orderCode),
+      reason: "Hủy thanh toán",
+    });
+    if (response.status === "OK") {
+      setIsOpenQRPayment(false);
+      onCloseModalPaymentType(false);
+      navigate(`${location.pathname + location.search}`);
+    }
   };
 
   const handleContinuePayment = async () => {
@@ -48,7 +61,7 @@ const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
           buyerName: user.fullName,
           buyerPhone: user.phone,
           items: [{ name: `Thanh toán vé ${ticketId}`, quantity: 1, price: price }],
-          description: `TT Ghe ${seats.map((s) => s.position).join(", ")}`,
+          description: `TT Ghe ${seats.map((s) => s.position).join(" ")}`,
           amount: price,
           returnUrl: "/",
           cancelUrl: "/",
@@ -57,6 +70,11 @@ const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
         setIsOpenQRPayment(true);
       }
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    setIsOpenQRPayment(false);
+    onCloseModalPaymentType(false);
   };
 
   return (
@@ -86,7 +104,7 @@ const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
         />
         <div className={styles["condition-link-and-content"]}>
           <NavLink
-            to={`${location.pathname}`}
+            to={`${location.pathname + location.search}`}
             className={styles["condition-link-and-content__link"]}
           >
             Chấp nhận điều khoản
@@ -104,11 +122,11 @@ const PaymentType: React.FC<PaymentTypeProps> = ({ valueIn }) => {
         Thanh toán
       </button>
       <CustomModal
-        onCancel={() => setIsOpenQRPayment(false)}
+        onCancel={handleCancelPayment}
         open={isOpenQRPayment}
         title={"Thanh toán chuyển khoản qua ngân hàng"}
       >
-        {dataPayment && <QRPayment valueIn={dataPayment} />}
+        {dataPayment && <QRPayment valueIn={dataPayment} onPaymentSuccess={handlePaymentSuccess} />}
       </CustomModal>
     </div>
   );

@@ -1,16 +1,63 @@
+import { useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/qRPayment.module.scss";
 import { PayOSPaymentResponseData } from "../types/payos";
 import { formatCurrency } from "../utils/formatCurrency";
 import { faQrcode } from "@fortawesome/free-solid-svg-icons";
 import { QRCode } from "antd";
+import { useUserStore } from "../store/userStore";
+import { io, Socket } from "socket.io-client";
+import { toast } from "react-toastify";
 
 interface QRPaymentProps {
   valueIn: PayOSPaymentResponseData;
+  onPaymentSuccess: (status: false) => void;
 }
 
-const QRPayment: React.FC<QRPaymentProps> = ({ valueIn }) => {
-  console.log("values", valueIn);
+const QRPayment: React.FC<QRPaymentProps> = ({ valueIn, onPaymentSuccess }) => {
+  const userId = useUserStore((state) => state.user?.id);
+  const socket = useRef<Socket | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    socket.current = io(`https://${import.meta.env.VITE_API_URL}.ngrok-free.app`, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    socket.current.on("connect", () => {
+      console.log("Socket connected with id", socket.current?.id);
+      socket.current?.emit("register_user", userId);
+    });
+
+    socket.current.on("user_registered", (data) => {
+      console.log("User registered successfully", data);
+    });
+
+    socket.current.on("custom_error", (error) => {
+      console.error("Socket error", error);
+    });
+
+    socket.current.on("payment-status", (data) => {
+      console.log("Payment status received", data);
+      if (data.status === "success") {
+        toast.success("Thanh toán thành công");
+        onPaymentSuccess(false);
+      }
+    });
+
+    socket.current.on("disconnect", (reason) => {
+      console.log("Socket disconnected", reason);
+    });
+
+    return () => {
+      if (socket.current) {
+        socket.current.disconnect();
+        socket.current = null;
+      }
+    };
+  }, [userId]);
 
   return (
     <div className={styles["qr-payment-wrapper"]}>

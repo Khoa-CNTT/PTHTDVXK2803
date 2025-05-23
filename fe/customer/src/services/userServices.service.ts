@@ -1,8 +1,8 @@
-import { bookTicketsAPI } from "./customizeAxios.service";
+import { bookTicketAPI } from "./customizeAxios.service";
 
 export const fetchUser = async (token: string) => {
   try {
-    const response = await bookTicketsAPI.post(
+    const response = await bookTicketAPI.post(
       `/user/get-detail/${token}`,
       {}, // Truyền body là {} để không gửi dữ liệu không mong muốn
       {
@@ -19,7 +19,7 @@ export const fetchUser = async (token: string) => {
 
 export const addCustomer = async (data: FormData) => {
   try {
-    const response = await bookTicketsAPI.post(
+    const response = await bookTicketAPI.post(
       `/customer/add`,
       data
       // {
@@ -37,7 +37,7 @@ export const addCustomer = async (data: FormData) => {
 
 export const updateCustomer = async (id: number, data: FormData) => {
   try {
-    const response = await bookTicketsAPI.put(
+    const response = await bookTicketAPI.put(
       `/customer/update/${id}`,
       data
       // {

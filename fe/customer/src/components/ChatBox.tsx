@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import styles from "../styles/chatBox.module.scss";
 import { TripInfoBase } from "../types/trip";
@@ -22,59 +22,59 @@ const ChatBox = () => {
   const [input, setInput] = useState("");
   const socketRef = useRef<WebSocket | null>(null);
 
-  useEffect(() => {
-    const socket = new WebSocket(`wss://${import.meta.env.VITE_API_URL}.ngrok-free.app/ws/chat`);
-    socketRef.current = socket;
+  // useEffect(() => {
+  //   const socket = new WebSocket(`wss://${import.meta.env.VITE_API_URL}.ngrok-free.app/ws/chat`);
+  //   socketRef.current = socket;
 
-    socket.onopen = () => {
-      console.log("WebSocket connected");
-    };
+  //   socket.onopen = () => {
+  //     console.log("WebSocket connected");
+  //   };
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+  //   socket.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
 
-      if (data.type === "chat" || data.type === "system") {
-        if (data.trips && Array.isArray(data.trips)) {
-          const tripMessages = data.trips.map((trip: TripInfoBase) => {
-            const start = new Date(trip.startTime).toLocaleString();
-            const end = new Date(trip.endTime).toLocaleString();
+  //     if (data.type === "chat" || data.type === "system") {
+  //       if (data.trips && Array.isArray(data.trips)) {
+  //         const tripMessages = data.trips.map((trip: TripInfoBase) => {
+  //           const start = new Date(trip.startTime).toLocaleString();
+  //           const end = new Date(trip.endTime).toLocaleString();
 
-            const text =
-              `Tên chuyến: ${trip.tripName}\n` +
-              `Biển số xe: ${trip.licensePlate}\n` +
-              `Tài xế: ${trip.driverName}\n` +
-              `Thời gian bắt đầu: ${start}\n` +
-              `Thời gian kết thúc: ${end}\n` +
-              `Giá tiền: ${trip.price} VND\n` +
-              `Số chỗ còn lại: ${trip.totalSeatAvailable}`;
+  //           const text =
+  //             `Tên chuyến: ${trip.tripName}\n` +
+  //             `Biển số xe: ${trip.licensePlate}\n` +
+  //             `Tài xế: ${trip.driverName}\n` +
+  //             `Thời gian bắt đầu: ${start}\n` +
+  //             `Thời gian kết thúc: ${end}\n` +
+  //             `Giá tiền: ${trip.price} VND\n` +
+  //             `Số chỗ còn lại: ${trip.totalSeatAvailable}`;
 
-            return {
-              from: "bot",
-              text,
-              id: trip.id,
-              infoTrip: trip,
-            };
-          });
+  //           return {
+  //             from: "bot",
+  //             text,
+  //             id: trip.id,
+  //             infoTrip: trip,
+  //           };
+  //         });
 
-          setMessages((prev) => [...prev, ...tripMessages]);
-        } else {
-          setMessages((prev) => [...prev, { from: "bot", text: data.message }]);
-        }
-      }
-    };
+  //         setMessages((prev) => [...prev, ...tripMessages]);
+  //       } else {
+  //         setMessages((prev) => [...prev, { from: "bot", text: data.message }]);
+  //       }
+  //     }
+  //   };
 
-    socket.onclose = () => {
-      console.log("WebSocket disconnected");
-    };
+  //   socket.onclose = () => {
+  //     console.log("WebSocket disconnected");
+  //   };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error", error);
-    };
+  //   socket.onerror = (error) => {
+  //     console.error("WebSocket error", error);
+  //   };
 
-    return () => {
-      socket.close();
-    };
-  }, []);
+  //   return () => {
+  //     socket.close();
+  //   };
+  // }, []);
 
   const handleOpenChat = () => {
     if (!user) {

@@ -2,10 +2,6 @@ import { useEffect } from "react";
 import { debounce } from "./debounce";
 
 const useClientWidth = () => {
-  const updateClientWidth = () => {
-    const clientWidth = document.documentElement.clientWidth;
-    document.documentElement.style.setProperty("--client-width", `${clientWidth}px`);
-  };
   useEffect(() => {
     const debounceCliWidth = debounce(updateClientWidth, 200);
     updateClientWidth();
@@ -16,5 +12,10 @@ const useClientWidth = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+};
+
+const updateClientWidth = () => {
+  const clientWidth = document.documentElement.clientWidth;
+  document.documentElement.style.setProperty("--client-width", `${clientWidth}px`);
 };
 export default useClientWidth;

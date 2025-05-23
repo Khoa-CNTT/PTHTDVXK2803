@@ -3,33 +3,61 @@ import { LoginPayLoad, RegisterPayLoad } from "../types";
 import { bookTicketAPI } from "./customizeAxios.service";
 
 export const loginUser = async (data: LoginPayLoad) => {
-  const response = await bookTicketAPI
-    .post("/user/auth/customer/login", data)
-    .then((res) => res.data).catch(err => toast.error(err?.response?.message))
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/user/auth/customer/login", data);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Đăng nhập thất bại");
+    return null;
+  }
 };
 
 export const register = async (data: RegisterPayLoad) => {
-  const response = await bookTicketAPI.post("/customer/register", data).then((res) => res.data);
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/customer/register", data);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Đăng ký thất bại");
+    return null;
+  }
 };
 
 export const veriFyEmail = async (data: object) => {
-  const response = await bookTicketAPI.post("/customer/verify-email", data).then((res) => res.data);
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/customer/verify-email", data);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Xác thực email thất bại");
+    return null;
+  }
 };
 
 export const logout = async () => {
-  const response = await bookTicketAPI.post("/user/auth/logout").then((res) => res.data);
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/user/auth/logout");
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Đăng xuất thất bại");
+    return null;
+  }
 };
 
 export const getUserByEmail = async (email: string) => {
-  const response = await bookTicketAPI.post("/customer/get-detail-user-email", email).then((res) => res.data);
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/customer/get-detail-user-email", email);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Lấy thông tin người dùng thất bại");
+    return null;
+  }
 };
 
 export const updateDetailUser = async (data: FormData) => {
-  const response = await bookTicketAPI.post("/customer/update-detail-user", data).then((res) => res.data);
-  return response;
+  try {
+    const response = await bookTicketAPI.post("/customer/update-detail-user", data);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Cập nhật thông tin thất bại");
+    return null;
+  }
 };

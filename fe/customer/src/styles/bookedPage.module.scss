@@ -89,6 +89,13 @@
             background-color: var(--white);
 
             font-size: 0.9rem;
+
+            &::before {
+              content: "*";
+              font-size: 1.2rem;
+              margin-right: 0.2rem;
+              color: var(--danger);
+            }
           }
 
           .input {

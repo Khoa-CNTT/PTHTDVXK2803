@@ -1,75 +1,43 @@
 import React, { useEffect, useState } from "react";
 import styles from "../styles/login.module.scss";
-import { MdOutlineMail } from "react-icons/md";
-import { MdOutlinePassword } from "react-icons/md";
+import { MdOutlineMail, MdOutlinePassword } from "react-icons/md";
+import { FaEyeSlash } from "react-icons/fa";
 import Register from "./Register";
+import ForgotPassword from "./ForgotPassword";
 import { LoginPayLoad } from "../types";
 import { useUserStore } from "../store/userStore";
 import { toast } from "react-toastify";
 import { loginUser } from "../services/auth.service";
-import { useNavigate } from "react-router";
-import ForgotPassword from "./ForgotPassword";
-import { useLocation } from "react-router";
-import { FaEyeSlash } from "react-icons/fa";
-import { setAccessToken } from "../utils/auth";
+import { useNavigate, useLocation } from "react-router";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setUser } = useUserStore();
 
-  useEffect(() => {
-    if (location?.pathname === "/login") {
-      setLogin(true);
-      setRegister(false);
-    }
-    if (location?.pathname === "/register") {
-      setLogin(false);
-      setRegister(true);
-    }
-  }, [location]);
-  const [login, setLogin] = useState(true);
-  const [register, setRegister] = useState(false);
+  const [tabState, setTabState] = useState<"login" | "register" | "forgot">("login");
   const [showPassword, setShowPassword] = useState(false);
-  const [forgotPassword, setForgotPassword] = useState(false);
   const [dataLogin, setDataLogin] = useState<LoginPayLoad>({
     email: "",
     password: "",
   });
-  const { user, setUser } = useUserStore();
-  const onClickLogin = () => {
-    setLogin(true);
-    setRegister(false);
-    navigate("/login");
-  };
 
-  const onClickRegister = () => {
-    setLogin(false);
-    setRegister(true);
-    navigate("/register");
-  };
-
-  const onClickForgotPassword = () => {
-    setForgotPassword(true);
-    setLogin(false);
-    setRegister(false);
-  };
-  const onClickBack = () => {
-    setForgotPassword(false);
-    setLogin(true);
-    setRegister(false);
-  };
+  useEffect(() => {
+    if (location.pathname === "/login") {
+      setTabState("login");
+    } else if (location.pathname === "/register") {
+      setTabState("register");
+    }
+  }, [location]);
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setDataLogin((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setDataLogin((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleLogin = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(dataLogin?.email) === false) {
+    if (!emailRegex.test(dataLogin.email)) {
       toast.error("Email không đúng định dạng");
       return;
     }
@@ -77,28 +45,25 @@ const Login: React.FC = () => {
     const result = await loginUser(dataLogin);
 
     if (result.status === "OK" && result.data) {
-      setAccessToken(result.access_token);
+      localStorage.setItem("accept", result.status);
+      localStorage.setItem("expirationTime", result.expirationTime);
       setUser({
-        id: result?.data?.id,
-        email: result?.data?.email,
-        fullName: result?.data?.fullName,
-        dateBirth: result?.data?.dateBirth,
-        phone: result?.data?.phone,
-        address: result?.data?.address,
-        avatar: result?.data?.urlImg,
+        id: result.data.id,
+        email: result.data.email,
+        fullName: result.data.fullName,
+        dateBirth: result.data.dateBirth,
+        phone: result.data.phone,
+        address: result.data.address,
+        avatar: result.data.urlImg,
       });
-      console.log("user", user);
       toast.success("Đăng nhập thành công");
       navigate("/");
-      return;
     } else {
       toast.error("Đăng nhập thất bại");
     }
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleShowPassword = () => setShowPassword((prev) => !prev);
 
   return (
     <div className={styles.container}>
@@ -114,61 +79,64 @@ const Login: React.FC = () => {
       </div>
 
       <div className={styles.right}>
-        {!forgotPassword ? (
+        {tabState !== "forgot" && (
           <div className={styles.tabs}>
-            <div className={`${styles.tab}  ${styles.active}`} onClick={onClickLogin}>
+            <div
+              className={`${styles.tab} ${tabState === "login" ? styles.active : ""}`}
+              onClick={() => {
+                setTabState("login");
+                navigate("/login");
+              }}
+            >
               ĐĂNG NHẬP
             </div>
-            <div className={`${styles.tab} ${styles.active}`} onClick={onClickRegister}>
+            <div
+              className={`${styles.tab} ${tabState === "register" ? styles.active : ""}`}
+              onClick={() => {
+                setTabState("register");
+                navigate("/register");
+              }}
+            >
               ĐĂNG KÝ
             </div>
           </div>
-        ) : (
-          <></>
         )}
 
-        {forgotPassword ? (
-          <ForgotPassword onButtonClick={onClickBack} />
+        {tabState === "forgot" ? (
+          <ForgotPassword onButtonClick={() => setTabState("login")} />
+        ) : tabState === "login" ? (
+          <div className={styles.contentLogin}>
+            <h2>Đăng nhập</h2>
+            <div className={styles.inputGroup}>
+              <MdOutlineMail className={styles.iconEmail} />
+              <input
+                type="tel"
+                placeholder="Nhập email"
+                className={styles.email}
+                id="email"
+                name="email"
+                onChange={handleChangeValue}
+              />
+              <MdOutlinePassword className={styles.iconPassword} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Nhập mật khẩu"
+                className={styles.password}
+                id="password"
+                name="password"
+                onChange={handleChangeValue}
+              />
+              <FaEyeSlash className={styles.iconShowPassword} onClick={handleShowPassword} />
+            </div>
+            <button className={styles.button} onClick={handleLogin}>
+              Đăng nhập
+            </button>
+            <div className={styles.forgotPassword} onClick={() => setTabState("forgot")}>
+              Quên mật khẩu
+            </div>
+          </div>
         ) : (
-          <>
-            {login ? (
-              <div className={styles.contentLogin}>
-                <h2>Đăng nhập</h2>
-                <div className={styles.inputGroup}>
-                  <MdOutlineMail className={styles.iconEmail} />
-                  <input
-                    type="tel"
-                    placeholder="Nhập email"
-                    className={styles.email}
-                    id="email"
-                    name="email"
-                    onChange={handleChangeValue}
-                  />
-                  <MdOutlinePassword className={styles.iconPassword} />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Nhập mật khẩu"
-                    className={styles.password}
-                    id="password"
-                    name="password"
-                    onChange={handleChangeValue}
-                  />
-                  <FaEyeSlash
-                    className={styles.iconShowPassword}
-                    onClick={handleClickShowPassword}
-                  />
-                </div>
-                <button className={styles.button} onClick={handleLogin}>
-                  Đăng nhập
-                </button>
-                <div className={styles.forgotPassword} onClick={onClickForgotPassword}>
-                  Quên mật khẩu
-                </div>
-              </div>
-            ) : (
-              <Register />
-            )}
-          </>
+          <Register />
         )}
       </div>
     </div>

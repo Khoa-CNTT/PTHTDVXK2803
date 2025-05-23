@@ -21,25 +21,23 @@ import UpdateForgotPassword from "./components/UpdateForgotPassword";
 import SearchTripPage from "./pages/SearchTripPage";
 import HistoryBookTicket from "./components/HistoryBookTicket";
 import { useEffect } from "react";
-import { bookTicketAPI } from "./services/customizeAxios.service";
-import { setAccessToken } from "./utils/auth";
 import BookedPage from "./pages/BookedPage";
+import { handleTokenExpiration } from "./utils/handleTokenExpiration ";
+import useOffline from "./hooks/useOfflie";
 
 function App() {
-  useEffect(() => {
-    const refreshAccessToken = async () => {
-      try {
-        const res = await bookTicketAPI.get("/user/auth/refresh-token");
-        const newToken = res.data.access_token;
-        if (newToken) {
-          setAccessToken(newToken);
-        }
-      } catch {
-        console.log("Không thể refresh token, cần login lại.");
-      }
-    };
+  useOffline();
 
-    refreshAccessToken();
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const status = localStorage.getItem("status");
+      if (status === "OK") {
+        handleTokenExpiration();
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   useClientWidth();
