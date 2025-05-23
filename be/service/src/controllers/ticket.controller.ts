@@ -16,10 +16,10 @@ export class TicketController {
     }
   };
 
-   getDetailTicket = async (req: Request, res: Response) => {
-    const {phone, idTicket} = req.body;
+  getDetailTicket = async (req: Request, res: Response) => {
+    const { phone, idTicket } = req.body;
     try {
-      const result = await this.ticketService.getDetailTicket({phone, idTicket});
+      const result = await this.ticketService.getDetailTicket({ phone, idTicket });
       successResponse(res, 200, result);
     } catch (error) {
       errorResponse(res, "ERR Controller.getDetailTicket", 404);
@@ -27,9 +27,9 @@ export class TicketController {
   };
 
   getDetailTicketByEmail = async (req: Request, res: Response) => {
-    const {email} = req.body;
+    const { email } = req.body;
     console.log("emaik: ", email);
-    
+
     try {
       const result = await this.ticketService.getDetailTicketByEmail(email);
       successResponse(res, 200, result);
@@ -38,6 +38,20 @@ export class TicketController {
     }
   };
 
+  deleteById = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      if (!id) errorResponse(res, "Id not invalid", 404);
+      const response = await this.ticketService.deleteById(Number(id));
+      if (response.status === "ERR") {
+        errorResponse(res, response.message);
+      } else {
+        successResponse(res, 200, response);
+      }
+    } catch (error) {
+      errorResponse(res, "ERR Controller.getDetailTicket", 404);
+    }
+  };
 }
 
 export default new TicketController();

@@ -20,7 +20,7 @@ export class WebhookService {
       const ticketInfo = await this.getTicketIdByOrderCode(orderCode);
       const { tripId, customerId, email, fullName, phone, seats, paymentType, price } = ticketInfo;
       console.log("seats", seats);
-      const updateSeats = await this.seatService.update(seats, tripId, customerId, "booked");
+      const updateSeats = await this.seatService.updateSeats(seats, tripId, customerId, "booked");
       const userId = await this.userService.getUser(customerId);
       console.log("userId", userId);
       sendToUser(userId, "payment_success", {

@@ -89,6 +89,14 @@ export class UserController {
       ) {
         const { access_token, data, refresh_token, status, expirationTime } = response;
 
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
         res.cookie("refresh_token", refresh_token, {
           httpOnly: true,
           secure: true,
@@ -96,7 +104,7 @@ export class UserController {
           maxAge: 7 * 24 * 60 * 60 * 1000,
           path: "/",
         });
-        successResponse(res, 200, { status, access_token, data, expirationTime: expirationTime });
+        successResponse(res, 200, { status, data, expirationTime: expirationTime });
       } else {
         if ("message" in response) {
           errorResponse(res, response.message, 400);
@@ -238,6 +246,14 @@ export class UserController {
       if ("access_token" in response && "expirationTime" in response) {
         const { access_token, expirationTime } = response;
 
+        res.cookie("access_token", access_token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+          maxAge: 60 * 60 * 1000,
+          path: "/",
+        });
+
         res.cookie("access_token_expiration", expirationTime.toString(), {
           httpOnly: false,
           secure: true,
@@ -246,7 +262,7 @@ export class UserController {
           path: "/",
         });
 
-        successResponse(res, 200, { access_token: access_token });
+        successResponse(res, 200, "");
       } else {
         errorResponse(res, response.message, 400);
       }

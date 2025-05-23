@@ -9,11 +9,7 @@ const locationController = new LocationController();
 const route = express.Router();
 
 route.get("/get-all", locationController.getAll);
-route.post("/add", 
-    // verifyAccessToken, authorizeRoles("admin"), 
-    locationController.add);
-route.delete("/delete/:id", 
-    // verifyAccessToken, authorizeRoles("admin"), 
-    locationController.delete)
+route.post("/add", verifyAccessToken, authorizeRoles("admin"), locationController.add);
+route.delete("/delete/:id", verifyAccessToken, authorizeRoles("admin"), locationController.delete);
 
 export default route;

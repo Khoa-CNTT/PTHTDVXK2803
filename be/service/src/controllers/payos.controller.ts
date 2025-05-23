@@ -41,7 +41,11 @@ class PayOSController {
       }
 
       const response = await payosService.cancelPaymentLink(id, reason);
-      successResponse(res, 200, response);
+      if (response.status === "ERR") {
+        errorResponse(res, response.message, 404);
+      } else {
+        successResponse(res, 200, response);
+      }
     } catch (error) {
       errorResponse(res, "Lỗi hệ thống", 500);
     }

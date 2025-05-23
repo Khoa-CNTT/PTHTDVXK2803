@@ -13,6 +13,7 @@ export const handleWebhook = async (req: Request, res: Response): Promise<void> 
     if (desc !== "success" || success !== true) {
       console.warn("Webhook không hợp lệ:", req.body);
       res.status(200).json({ message: "Webhook ignored" });
+      return;
     }
 
     const response = await webhookService.processWebhookEvent(data.orderCode);

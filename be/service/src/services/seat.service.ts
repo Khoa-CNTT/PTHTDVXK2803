@@ -35,39 +35,44 @@ class SeatService {
     }
   };
 
-  update = async (
+  updateSeats = async (
     positions: string,
     tripId: number,
     customerId: number,
     status: "available" | "pending" | "booked"
   ) => {
+    const connection = await this.db.getConnection();
     try {
-      console.log("positions", positions);
-      const getPosition = positions.split(",");
-      console.log("get-position", getPosition);
+      await connection.beginTransaction();
 
-      for (let position of getPosition) {
-        const [rows] = this.db.execute("call UpdateSeat(?, ?, ?, ?)", [
+      const getPosition = positions.split("-");
+      for (const position of getPosition) {
+        const [rows] = (await connection.execute("CALL update_seat(?, ?, ?, ?)", [
           tripId,
           customerId,
           position,
           status,
-        ]) as [ResultSetHeader];
+        ])) as [ResultSetHeader];
 
-        if (rows.affectedRows > 0) {
-          return {
-            status: "OK",
-            message: "Update seat success",
-          };
-        } else {
+        if (rows.affectedRows <= 0) {
+          await connection.rollback();
           return {
             status: "ERR",
-            message: "Update seat failed",
+            message: `Update seat ${position} failed`,
           };
         }
       }
+
+      await connection.commit();
+      return {
+        status: "OK",
+        message: "Update all seats success",
+      };
     } catch (error) {
+      await connection.rollback();
       throw error;
+    } finally {
+      connection.release();
     }
   };
 }

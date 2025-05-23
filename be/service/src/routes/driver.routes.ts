@@ -11,16 +11,12 @@ const router = express.Router();
 const driverController = new DriverController();
 const userController = new UserController();
 
-router.get("/get-all", 
-  // verifyAccessToken, authorizeRoles("admin"), 
-  driverController.getAll);
-router.get("/get-detail/:id", 
-  // verifyAccessToken, authorizeRoles("admin"), 
-  driverController.fetch);
+router.get("/get-all", verifyAccessToken, authorizeRoles("admin"), driverController.getAll);
+router.get("/get-detail/:id", verifyAccessToken, authorizeRoles("admin"), driverController.fetch);
 router.post(
   "/create",
-  // verifyAccessToken,
-  // authorizeRoles("admin"),
+  verifyAccessToken,
+  authorizeRoles("admin"),
   uploadImage,
   uploadImageToCloudinary,
   driverController.create
