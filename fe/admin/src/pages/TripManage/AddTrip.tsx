@@ -16,6 +16,7 @@ import styles from "../../styles/addTrip.module.scss";
 import { TypeBus } from "../../types/bus";
 import { CoAndDriverType } from "../../types/trip";
 import { generateNormalSeats, generateSleeperSeats } from "../../utils/useGenarateSeat";
+import { toast } from "react-toastify";
 
 type FormType = {
   tripName: string;
@@ -92,6 +93,11 @@ const AddTrip = () => {
   };
 
   const handleAddTrip = async () => {
+    if(!form.carId || !form.departureId || !form.driverId || !form.endTime || !form.startTime || !form.price) {
+      toast.error("Bạn nhập thiếu thông tin")
+      return
+    }
+
     const data = {
       form,
       seats,
@@ -101,7 +107,7 @@ const AddTrip = () => {
   };
 
   const handleSelectedBus = (selectedBus: string) => {
-    const detailBus = formAddTripData.cars.filter((car) => car.licensePlate === selectedBus)[0];
+    const detailBus = formAddTripData?.cars.filter((car) => car.licensePlate === selectedBus)[0];
     if (!detailBus) return;
 
     setForm((prev) => ({ ...prev, carId: detailBus.id }));
@@ -114,18 +120,18 @@ const AddTrip = () => {
       setSeats(generateSleeperSeats());
     }
   };
-  const handleSelectedSeat = useCallback((seatsUpdate) => {
+  const handleSelectedSeat = useCallback((seatsUpdate: SeatType[]) => {
     setSeats(seatsUpdate);
   }, []);
 
   const handleSelectedDeparture = (selectedDeparture: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedDeparture)[0].id;
-    setForm((prev) => ({ ...prev, departureId: getId }));
+    const getId = locationsData?.filter((lo) => lo.name === selectedDeparture)[0].id;
+    setForm((prev) => ({ ...prev, departureId: getId ? getId : 0 }));
   };
 
   const handleSelectedArrival = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
-    setForm((prev) => ({ ...prev, arrivalId: getId }));
+    const getId = locationsData?.filter((lo) => lo.name === selectedArrival)[0].id;
+    setForm((prev) => ({ ...prev, arrivalId: getId ? getId : 0  }));
   };
 
   const handleChangeValueForm = (e: ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +147,7 @@ const AddTrip = () => {
     const getPhone = selectedDriver.split("-")[1].trim();
     setForm((prev) => ({
       ...prev,
-      driverId: formAddTripData.drivers.filter((dr) => dr.phone === getPhone)[0].id,
+      driverId: formAddTripData?.drivers ? formAddTripData.drivers.filter((dr) => dr.phone === getPhone)[0].id : 0 ,
     }));
   };
 
@@ -189,7 +195,7 @@ const AddTrip = () => {
               </label>
               <InputDropDownList
                 idHTML="bus"
-                list={formAddTripData.cars.map((c) => c.licensePlate)}
+                list={formAddTripData?.cars.map((c) => c.licensePlate) || []}
                 contentPlaceholder="Chọn xe khách..."
                 onSelected={handleSelectedBus}
               />
@@ -216,7 +222,7 @@ const AddTrip = () => {
               </label>
               <InputDropDownList
                 idHTML="driver"
-                list={formAddTripData.drivers.map((c) => `${c.fullName} - ${c.phone}`)}
+                list={formAddTripData?.drivers.map((c) => `${c.fullName} - ${c.phone}`) || []}
                 contentPlaceholder="Chọn tài xế..."
                 onSelected={handleSelectedDriver}
               />
@@ -225,7 +231,7 @@ const AddTrip = () => {
             <li className={styles["form-group-item"]}>
               <label className={styles.title}>Phụ xe</label>
               <DynamicCoDriverSelect
-                coDrivers={formAddTripData.coDrivers}
+                coDrivers={formAddTripData?.coDrivers}
                 onFieldsChange={handleChangeFieldCoDriver}
               />
             </li>
@@ -248,7 +254,7 @@ const AddTrip = () => {
               <InputDropDownListCD
                 idHTML="departure"
                 titleModal="địa điểm"
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                list={locationsData?.map((loc) => ({ id: loc.id, value: loc.name })) || []}
                 contentPlaceholder="Nhập điểm đi"
                 onSelected={handleSelectedDeparture}
                 funcAddItem={addLocation}
@@ -279,7 +285,7 @@ const AddTrip = () => {
               <InputDropDownListCD
                 idHTML="arrival"
                 titleModal={"Địa điểm"}
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                list={locationsData?.map((loc) => ({ id: loc.id, value: loc.name })) || []}
                 contentPlaceholder="Nhập điểm đón"
                 onSelected={handleSelectedArrival}
                 funcAddItem={addLocation}

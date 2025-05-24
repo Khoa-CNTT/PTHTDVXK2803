@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
 import InputDropDownListCD from "../../components/InputDropDownListCD";
+import { toast } from "react-toastify";
 
 const UpdateDriver = () => {
   const { id } = useParams<{ id: string }>();
@@ -70,6 +71,13 @@ const UpdateDriver = () => {
 
   const handleUpdateDriver = async () => {
     const { id, ...data } = form;
+
+    const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+    if(!phoneRegex.test(data.phone)){
+      toast.error("Số điện thoại k đúng định dạng!")
+      return
+    }
+
     if (id) {
       await updateMutate.mutateAsync({ id: Number(id), data });
     } else {
@@ -98,7 +106,7 @@ const UpdateDriver = () => {
   };
 
   const handleSelectedLocation = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    const getId = locationsData?.filter((lo) => lo.name === selectedArrival)[0].id;
     setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
@@ -110,12 +118,12 @@ const UpdateDriver = () => {
         password: "",
         sex: driver?.sex ?? "",
         licenseNumber: driver?.licenseNumber ?? "",
-        experienceYears: driver?.experienceYears.split("T")[0] ?? "",
+        experienceYears: driver?.experienceYears?.split("T")[0] ?? "",
         phone: driver?.phone ?? "",
         address: driver?.address ?? "",
         dateBirth: driver?.dateBirth?.split("T")[0] ?? "",
         email: driver?.email ?? "",
-        currentLocationId: driver?.currentLocationId,
+        currentLocationId: driver?.currentLocationId || 0,
       });
     }
   }, [driver]);
@@ -194,8 +202,8 @@ const UpdateDriver = () => {
               <InputDropDownListCD
                 idHTML="location"
                 titleModal={"Địa điểm"}
-                valueIn={data.location.name}
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                valueIn={data?.location?.name}
+                list={locationsData?.map((loc) => ({ id: loc.id, value: loc.name })) || []}
                 contentPlaceholder="Nhập địa điểm"
                 onSelected={handleSelectedLocation}
                 funcAddItem={addLocation}

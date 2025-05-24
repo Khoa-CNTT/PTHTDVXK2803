@@ -36,7 +36,6 @@ export const getDetailBus = async (licensePlate: string) => {
       headers: { "Content-Type": "multipart/form-data" },
     })
     .then((res) => res.data)
-    .then((res) => res[0]);
 };
 
 export const updateBus = async (data: FormData) => {

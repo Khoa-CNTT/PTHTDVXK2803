@@ -10,13 +10,14 @@ import DefaultImage from "../../components/DefaultImage";
 import { useCustomNavMutation } from "../../hooks/useCustomQuery";
 import InputDropDownListCD from "../../components/InputDropDownListCD";
 import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
+import { toast } from "react-toastify";
 
 const UpdateCoDriver = () => {
   const { id } = useParams<{ id: string }>();
   const idFetch = id ?? "0";
   const dateBirthRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading, error } = useQuery({
+  const { data: coDriverData, isLoading, error } = useQuery({
     queryKey: ["coDriver", idFetch],
     queryFn: () => fetchCoDriver(idFetch),
     staleTime: 5 * 60 * 1000,
@@ -28,7 +29,6 @@ const UpdateCoDriver = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const coDriver = data ?? null;
 
   const [form, setForm] = useState({
     id: id,
@@ -49,6 +49,22 @@ const UpdateCoDriver = () => {
     "Cập nhật thông tin phụ xe thất bại"
   );
 
+  useEffect(() => {
+    if (coDriverData) {
+      setForm({
+        id: id,
+        fullName: coDriverData?.fullName ?? "",
+        password: "",
+        sex: coDriverData?.sex ?? "",
+        phone: coDriverData?.phone ?? "",
+        address: coDriverData?.address ?? "",
+        dateBirth:  coDriverData?.dateBirth?.split("T")[0] ?? "",
+        email: coDriverData?.email ?? "",
+        currentLocationId: coDriverData?.location?.id ?? 0,
+      });
+    }
+  }, [coDriverData]);
+
   const handleChangeValue = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -64,6 +80,18 @@ const UpdateCoDriver = () => {
 
   const handleUpdateCoDriver = async () => {
     const { id, ...data } = form;
+
+    if(!data.currentLocationId || !data.sex || !data.phone || !data.password) {
+      toast.error("Bạn điền thiếu dữ liệu!")
+      return
+    }
+
+     const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if(!phoneRegex.test(data.phone)){
+        toast.error("Số điện thoại k đúng định dạng!")
+        return
+      }
+
     if (id) {
       await updateMutate.mutateAsync({ id: Number(id), data });
     } else {
@@ -80,29 +108,15 @@ const UpdateCoDriver = () => {
   };
 
   const handleSelectedLocation = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    const getId =locationsData?.filter((lo) => lo.name === selectedArrival)[0].id;
     setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
-  useEffect(() => {
-    if (coDriver) {
-      setForm({
-        id: id,
-        fullName: coDriver.fullName ?? "",
-        password: "",
-        sex: coDriver.sex ?? "",
-        phone: coDriver.phone ?? "",
-        address: coDriver.address ?? "",
-        dateBirth: coDriver.dateBirth.split("T")[0] ?? "",
-        email: coDriver.email ?? "",
-        currentLocationId: coDriver.location.id ?? 0,
-      });
-    }
-  }, [coDriver]);
-
+  
+  console.log('co-driver', coDriverData)
   if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
-  if (!coDriver) return <p className={styles.error}>Không tìm thấy thông tin khách hàng</p>;
+  if (!coDriverData) return <p className={styles.error}>Không tìm thấy thông tin khách hàng</p>;
 
   return (
     <div className={styles.container}>
@@ -127,15 +141,15 @@ const UpdateCoDriver = () => {
           <li className={styles.item}>
             <p className={styles.title}>Hình ảnh</p>
             <DefaultImage
-              src={coDriver.urlImg}
+              src={coDriverData.urlImg}
               id={Number(idFetch)}
               updateType={"co-driver"}
-              publicId={coDriver.urlPublicImg}
+              publicId={coDriverData.urlPublicImg}
             />
           </li>
           <li className={styles.item}>
             <p className={styles.title}>Email</p>
-            <input type="text" className={styles.data} value={coDriver.email} readOnly />
+            <input type="text" className={styles.data} value={coDriverData.email} readOnly />
           </li>
 
           <li className={styles.item}>
@@ -145,7 +159,7 @@ const UpdateCoDriver = () => {
               onChange={handleChangeValue}
               type="text"
               className={styles.data}
-              value={coDriver.fullName}
+              value={coDriverData.fullName}
             />
           </li>
 
@@ -174,8 +188,8 @@ const UpdateCoDriver = () => {
               <InputDropDownListCD
                 idHTML="location"
                 titleModal={"Địa điểm"}
-                valueIn={coDriver.location.name}
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                valueIn={coDriverData.location.name}
+                list={ locationsData?.map((loc) => ({ id: loc.id, value: loc.name })) || []}
                 contentPlaceholder="Nhập địa điểm"
                 onSelected={handleSelectedLocation}
                 funcAddItem={addLocation}
@@ -213,7 +227,7 @@ const UpdateCoDriver = () => {
               name="address"
               onChange={handleChangeValue}
               className={`${styles.data} ${styles.textarea}`}
-              value={coDriver.address}
+              value={coDriverData.address}
               readOnly
             />
           </li>
@@ -224,7 +238,7 @@ const UpdateCoDriver = () => {
             <input
               type="text"
               className={styles.data}
-              value={dateTimeTransform(coDriver.createAt, "DD-MM-YYYY")}
+              value={dateTimeTransform(coDriverData.createAt, "DD-MM-YYYY")}
               readOnly
             />
           </li>
@@ -233,7 +247,7 @@ const UpdateCoDriver = () => {
             <input
               type="text"
               className={styles.data}
-              value={dateTimeTransform(coDriver.updateAt, "DD-MM-YYYY")}
+              value={dateTimeTransform(coDriverData.updateAt, "DD-MM-YYYY")}
               readOnly
             />
           </li>

@@ -38,8 +38,12 @@ const AddPromotion = () => {
     addMutate.mutate(form);
   };
 
-  const handleClickDate = (ref: React.RefObject<HTMLInputElement>) => {
-    ref.current?.showPicker();
+  const handleClickDate = (ref: React.RefObject<HTMLInputElement> | null) => {
+    if(ref?.current){
+      ref.current?.showPicker();
+    }else{
+      return
+    }
   };
 
   return (
@@ -128,7 +132,7 @@ const AddPromotion = () => {
               <p className={styles.title}>{item.label}</p>
               <input
                 ref={item.ref}
-                onClick={() => handleClickDate(item.ref)}
+                onClick={() => handleClickDate(item.ref && null)}
                 name={item.name}
                 type="date"
                 className={styles["form-control"]}

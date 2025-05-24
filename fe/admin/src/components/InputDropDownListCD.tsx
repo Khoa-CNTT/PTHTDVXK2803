@@ -13,7 +13,7 @@ interface ItemType {
 
 interface Props {
   idHTML?: string;
-  titleModal;
+  titleModal:  string;
   list: ItemType[];
   contentPlaceholder?: string;
   valueIn?: string;
@@ -41,7 +41,7 @@ const InputDropDownListCD: React.FC<Props> = ({
   const [isDropDownVisible, setIsDropDownVisible] = useState<boolean>(false);
   const [isModalCreateVisible, setIsModalCreateVisible] = useState(false);
   const [isModalDeleteVisible, setIsModalDeleteVisible] = useState(false);
-  const [itemDelete, setItemDelete] = useState<ItemType>();
+  const [itemDelete, setItemDelete] = useState<ItemType | null>();
   const [newItemValue, setNewItemValue] = useState<string>("");
 
   const containerRef = useRef<HTMLDivElement>(null);

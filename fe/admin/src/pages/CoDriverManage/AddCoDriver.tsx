@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
 import InputDropDownListCD from "../../components/InputDropDownListCD";
 import Loading from "../../components/Loading";
+import { toast } from "react-toastify";
 
 const AddCoDriver = () => {
   const dateBirthRef = useRef<HTMLInputElement>(null);
@@ -58,7 +59,31 @@ const AddCoDriver = () => {
 
   const handleAddCoDriver = async () => {
     const formData = new FormData();
-    console.log('data', form)
+
+    if(!form.email || !form.phone || !form.password || !form.currentLocationId) {
+      toast.error("Bạn điền thiếu thông tin")
+    return
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(emailRegex.test(form?.email) === false) {
+      toast.error("Email không đúng định dạng")
+      return
+    }
+
+    const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if(!phoneRegex.test(form.phone)){
+        toast.error("Số điện thoại k đúng định dạng!")
+        return
+      }
+
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if(passwordRegex.test(form?.password) === false) {
+      toast.error("Mật khẩu ít nhất phải 1 kí tự thường, hoa, đặc biệt và tối thiếu 8 kí tự")
+      return
+    }
+
     formData.append("data", JSON.stringify(form));
     if (image) {
       formData.append("file", image);
