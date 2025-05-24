@@ -209,9 +209,8 @@ export class CarService {
 
   async getCarByLicensePlate(licensePlate: string) {
     try {
-      const sql = "call getCarByLicensePlate(?)";
-      const [rows] = await this.db.execute(sql, [licensePlate]);
-      return rows[0];
+      const [rows] = await this.db.execute("call getCarByLicensePlate(?)", [licensePlate]);
+      return rows[0][0];
     } catch (error) {
       throw error;
     }

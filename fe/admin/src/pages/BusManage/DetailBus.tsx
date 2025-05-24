@@ -12,7 +12,7 @@ const DetailBus = () => {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["bus", licensePlate],
-    queryFn: () => getDetailBus(licensePlate),
+    queryFn: () => getDetailBus(licensePlate || ''),
     staleTime: 5 * 60 * 1000,
   });
 

@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@types/react-slick": "^0.23.13"
+    "@types/react-slick": "^0.23.13",
+    "moment": "^2.30.1"
   }
 }

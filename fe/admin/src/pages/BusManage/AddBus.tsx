@@ -39,11 +39,21 @@ const AddBus = () => {
   };
 
   const handleSelectedLocation = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    const getId = locationsData?.filter((lo) => lo.name === selectedArrival)[0].id;
     setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
   const handleAddBus = async () => {
+    if(!form.capacity || !form.licensePlate || !form.indexIsMain) {
+      toast.error("Biển số xe k đúng định dạng")
+      return
+    }
+    const regex = /^[0-9]{2}[A-Z]-[0-9]{4,5}$/i;
+    if(regex.test(form?.licensePlate) === false) {
+      toast.error("Biển số xe k đúng định dạng")
+      return
+    }
+
     const formData = new FormData();
     formData.append("data", JSON.stringify(form));
 
@@ -128,7 +138,7 @@ const AddBus = () => {
               <InputDropDownListCD
                 idHTML="location"
                 titleModal={"Địa điểm"}
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                list={locationsData?.map((loc) => ({ id: loc.id, value: loc.name }))  || []}
                 contentPlaceholder="Nhập địa điểm"
                 onSelected={handleSelectedLocation}
                 funcAddItem={addLocation}

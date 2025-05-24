@@ -10,6 +10,7 @@ import InputDropDownListCD from "../../components/InputDropDownListCD";
 import { addLocation, deleteLocation, getAllLocation } from "../../services/location.service";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../../components/Loading";
+import { toast } from "react-toastify";
 
 const AddDriver = () => {
   const dateBirthRef = useRef<HTMLInputElement>(null);
@@ -56,11 +57,29 @@ const AddDriver = () => {
   };
 
   const handleSelectedLocation = (selectedArrival: string) => {
-    const getId = locationsData.filter((lo) => lo.name === selectedArrival)[0].id;
+    const getId = locationsData?.filter((lo) => lo.name === selectedArrival)[0].id;
     setForm((prev) => ({ ...prev, currentLocationId: Number(getId) }));
   };
 
   const handleAddDriver = async () => {
+
+    if(!form.email || !form.phone || !form.password || !form.currentLocationId || !form.licenseNumber) {
+          toast.error("Bạn điền thiếu thông tin")
+          return
+        }
+        
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(emailRegex.test(form?.email) === false) {
+          toast.error("Email không đúng định dạng")
+          return
+        }
+    
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if(passwordRegex.test(form?.password) === false) {
+          toast.error("Mật khẩu ít nhất phải 1 kí tự thường, hoa, đặc biệt và tối thiếu 8 kí tự")
+          return
+        }
+
     const formData = new FormData();
     formData.append("data", JSON.stringify(form));
     if (image) {
@@ -158,7 +177,7 @@ const AddDriver = () => {
               <InputDropDownListCD
                 idHTML="location"
                 titleModal={"Địa điểm"}
-                list={locationsData.map((loc) => ({ id: loc.id, value: loc.name }))}
+                list={locationsData?.map((loc) => ({ id: loc.id, value: loc.name })) || []}
                 contentPlaceholder="Nhập địa điểm"
                 onSelected={handleSelectedLocation}
                 funcAddItem={addLocation}
