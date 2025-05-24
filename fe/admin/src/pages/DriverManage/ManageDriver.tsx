@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { GoTriangleDown } from "react-icons/go";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
@@ -8,12 +8,17 @@ import styles from "../../styles/manageCustomer.module.scss";
 import { ArrangeType } from "../../types/type";
 import DefaultImage from "../../components/DefaultImage";
 import { dateTimeTransform } from "../../utils/transform";
-import { getDriverList } from "../../services/driver.service";
+import { deleteDriver, getDriverList } from "../../services/driver.service";
+import { Button, Modal } from 'react-bootstrap';
+import { toast } from "react-toastify";
 
 const ITEMS_PER_PAGE = 10;
 
 const ManageDriver: React.FC = () => {
+  const queryClient = useQueryClient()
   const navigate = useNavigate();
+   const [showDelete, setShowDelete] = useState(false);
+  const [id, setId] = useState(0);
   const { page } = useParams<{ page?: string }>();
   const location = useLocation();
   const [arrangeType, setArrangeType] = useState<ArrangeType>("desc");
@@ -40,6 +45,19 @@ const ManageDriver: React.FC = () => {
     placeholderData: (previousData) => previousData,
   });
 
+  const useMutationDelete = useMutation({
+    mutationFn: deleteDriver,
+    onSuccess: () =>{
+      
+      toast.success("Xóa thành công")
+      queryClient.invalidateQueries({queryKey:["driverList"]})
+    },
+
+    onError: (error)=>{
+      toast.error(`Xóa thất bại. Lỗi ${error.message}`)
+    }
+  })
+
   const total = data?.total ?? 0;
   const driverData = data?.data || [];
 
@@ -64,6 +82,27 @@ const ManageDriver: React.FC = () => {
 
   if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
+
+   const handleDeleteShow = (id : number) => {
+    setShowDelete(true);
+    setId(id);
+  };
+
+  const handleDeleteClose = () => {
+    setShowDelete(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      if(id) {
+        useMutationDelete.mutateAsync(id)
+        handleDeleteClose()
+      }
+    } catch (error) {
+      console.log("err: ", error);
+    }
+    
+  }
 
   return (
     <div className={styles.container}>
@@ -136,7 +175,9 @@ const ManageDriver: React.FC = () => {
                     >
                       Cập nhật
                     </Link>
-                    <button className={`${styles["btn-delete"]} ${styles.btn}`}>Xóa</button>
+                    <button className={`${styles["btn-delete"]} ${styles.btn}`}
+                      onClick={() => handleDeleteShow(driver.id || 0)}
+                    >Xóa</button>
                   </div>
                 </td>
               </tr>
@@ -152,6 +193,24 @@ const ManageDriver: React.FC = () => {
           currentPage={currentPage}
         />
       </div>
+      <Modal show={showDelete} onHide={handleDeleteClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Xóa Xe</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className='row'>
+            <span>Bạn có chắc chắn muốn xóa không?</span>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleDeleteClose}>
+            Close
+          </Button>
+          <Button variant='danger' onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

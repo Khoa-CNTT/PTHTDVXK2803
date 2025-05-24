@@ -1,6 +1,8 @@
 import express from "express";
 
 import { UserController } from "../controllers/user.controller";
+import { verifyAccessToken } from "../services/auth.service";
+import { authorizeRoles } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 const userController = new UserController();

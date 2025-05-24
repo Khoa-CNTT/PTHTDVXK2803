@@ -45,3 +45,7 @@ export const addDriver = async (data: FormData) => {
     })
     .then((res) => res.data);
 };
+
+export const deleteDriver = async (id: number) => {
+  return await bookTicketAPI.delete(`/driver/delete/${id}`).then((res) => res.data);
+};

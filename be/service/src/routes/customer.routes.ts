@@ -14,7 +14,9 @@ const userController = new UserController();
 router.post("/register", customerController.register);
 router.post("/verify-email", customerController.verifyEmail);
 router.post("/verify-email-forgot-password", customerController.verifyEmailForgotPassword);
-router.get("/get-all", verifyAccessToken, authorizeRoles("admin"), customerController.getAll);
+router.get("/get-all", 
+  verifyAccessToken, authorizeRoles("admin"), 
+  customerController.getAll);
 router.get("/get-detail/:id", verifyAccessToken, authorizeRoles("admin"), customerController.fetch);
 router.post("/get-detail-user-email/", customerController.getDetailUserByEmail);
 router.post("/update-detail-user/",uploadImage, uploadImageToCloudinary, customerController.updateUser);

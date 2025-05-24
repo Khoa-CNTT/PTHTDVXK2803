@@ -28,6 +28,7 @@ import UpdateDriver from "./pages/DriverManage/UpdateDriver";
 import Login from "./pages/Login";
 import AddTrip from "./pages/TripManage/AddTrip";
 import TripManage from "./pages/TripManage/TripManage";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./styles/app.scss";
 import "./styles/reset.scss";
 import "./styles/root.scss";

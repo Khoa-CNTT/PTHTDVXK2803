@@ -16,6 +16,8 @@ const carController = new CarController();
 
 carRouter.post(
   "/add",
+  verifyAccessToken,
+  authorizeRoles("admin"),
   // validateCreateCar,
   // validateCreateCarMiddleware,
   uploadImages,
@@ -24,41 +26,42 @@ carRouter.post(
 );
 carRouter.put(
   "/update",
+  verifyAccessToken,
+  authorizeRoles("admin"),
   // validateUpdateCar,
   // validateUpdateCarMiddleware,
   uploadImages,
   uploadImagesToCloudinary,
   carController.updateCar
 );
-// carRouter.post("/add-img", verifyAccessToken, authorizeRoles("admin"), carController.addImageCar);
 carRouter.put(
   "/image/update",
-  // verifyAccessToken,
-  // authorizeRoles("admin"),
+  verifyAccessToken,
+  authorizeRoles("admin"),
   uploadImage,
   uploadImageToCloudinary,
   carController.updateImgCar
 );
 carRouter.delete(
   "/image/delete",
-  // verifyAccessToken,
-  // authorizeRoles("admin"),
+  verifyAccessToken,
+  authorizeRoles("admin"),
   carController.deleteImgCar
 );
 carRouter.delete(
   "/delete/:id",
-  // verifyAccessToken,
-  // authorizeRoles("admin"),
+  verifyAccessToken,
+  authorizeRoles("admin"),
   carController.deleteCar
 );
 carRouter.get("/get-all", 
-  // verifyAccessToken, 
-  // authorizeRoles("admin"), 
+  verifyAccessToken, 
+  authorizeRoles("admin"), 
   carController.getAllCar);
 carRouter.get(
   "/detail/:licensePlate",
-  // verifyAccessToken,
-  // authorizeRoles("admin", "customer"),
+  verifyAccessToken,
+  authorizeRoles("admin", "customer"),
   carController.getCarByLicensePlate
 );
 

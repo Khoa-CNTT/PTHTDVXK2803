@@ -5,7 +5,9 @@ const ManageLayout = () => {
   return (
     <div className={styles["manage-layout"]}>
       <Sidebar />
-      <Outlet />
+      <div className={styles.children}>
+        <Outlet />
+      </div>
     </div>
   );
 };

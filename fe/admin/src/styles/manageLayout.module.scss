@@ -1,4 +1,9 @@
 .manage-layout {
   // width: 100vw;
   display: flex;
+
+  .children {
+    width: 100%;
+    margin: 0 auto;
+  }
 }
