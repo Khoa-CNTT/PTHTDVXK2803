@@ -1,20 +1,38 @@
 :root {
   /* Color */
-  --light-gray: #f0f0f0;
-  --white: #ffffff;
-  --bright-blue: #2eb4fc;
-  --belize-hole: #3498db; //shade of blue
-  --gray: #c3c3c3;
+  --light-gray: 240, 240, 240;
+  --white: 255, 255, 255;
+  --bright-blue: 46, 180, 252;
+  --belize-hole: 52, 152, 219;
+  --gray: 195, 195, 195;
 
-  // Button Color
-  --primary: #2eb4fc;
-  --secondary: #6c757d;
-  --success: #28a745;
-  --danger: #dc3545;
-  --warning: #ffc107;
-  --info: #17a2b8;
-  --light: #f8f9fa;
-  --dark: #343a40;
+  /* Border */
+  --gray-bd: #c3c3c3;
+  --primary-bd: #2eb4fc;
+  --secondary-bd: #6c757d;
+  --success-bd: #28a745;
+  --danger-bd: #dc3545;
+  --warning-bd: #ffc107;
+  --info-bd: #17a2b8;
+  --light-bd: #f8f9fa;
+  --dark-bd: #343a40;
+  --blue-dark: #0973b9;
+  //
+  --light-gray-bd: #f0f0f0;
+  --white-bd: #ffffff;
+  --bright-blue-bd: #2eb4fc;
+  --belize-hole-bd: #3498db; //shade of blue
+  --gray-bd: #c3c3c3;
+
+  /* Button Colors */
+  --primary: 46, 180, 252;
+  --secondary: 108, 117, 125;
+  --success: 40, 167, 69;
+  --danger: 220, 53, 69;
+  --warning: 255, 193, 7;
+  --info: 23, 162, 184;
+  --light: 248, 249, 250;
+  --dark: 52, 58, 64;
 
   /* Font Family - Custom Variables */
   --ff-TimeNR: "Times New Roman", serif;

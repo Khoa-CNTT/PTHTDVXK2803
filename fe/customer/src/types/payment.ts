@@ -17,13 +17,18 @@ interface Item {
   price: number;
 }
 
-// interface Ticket {
-//   ticketID: number;
-//   tripId?: number;
-//   customerId?: number;
-//   transactionId?: string;
-//   seats?: string;
-//   total_price?: number;
-//   // paymentStatus: string
-//   // paymentType: string
-// }
+export interface DataPaymentSuccess {
+  id: number;
+  customerId: number;
+  email: string;
+  fullName: string;
+  phone: string;
+  tripName: string;
+  startTime: string;
+  departure: string;
+  arrival: string;
+  seatPosition: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  price: number;
+}
