@@ -25,7 +25,7 @@
 
         border-radius: 0.5rem;
 
-        background-color: var(--white);
+        background-color: var(--white-bd);
       }
     }
 
@@ -56,7 +56,7 @@
 
             border-radius: 0.5rem;
 
-            background-color: var(--white);
+            background-color: var(--white-bd);
 
             transition: box-shadow 0.3s;
 
@@ -99,7 +99,7 @@
 
                 .ic {
                   font-size: 1.4rem;
-                  color: var(--danger);
+                  color: var(--danger-bd);
                 }
                 .dash {
                   position: relative;
@@ -136,14 +136,14 @@
                 align-items: end;
 
                 .btn-detail-trip {
-                  border: 1px solid var(--primary);
+                  border: 1px solid var(--primary-bd);
 
                   transition: all 0.3s;
 
                   &:hover {
                     border-color: none;
-                    background-color: var(--bright-blue);
-                    color: var(--white);
+                    background-color: var(--bright-blue-bd);
+                    color: var(--white-bd);
                   }
                 }
               }

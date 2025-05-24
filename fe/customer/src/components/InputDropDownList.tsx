@@ -26,7 +26,7 @@ const InputDropDownList: React.FC<InputDropDownProps> = ({
   const [isDropDownVisible, setIsDropDownVisible] = useState<boolean>(false);
 
   const handleOnChange = (value: string) => {
-    setIsDropDownVisible(false);
+    setIsDropDownVisible(true);
     if (onChangeValue) {
       onChangeValue(value);
     }

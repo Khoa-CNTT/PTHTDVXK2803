@@ -278,8 +278,8 @@ const BookedPage = () => {
                 <p className={styles["booked-user__note-title"]}>Lưu ý</p>
                 <div className={styles["booked-user__note-info"]}>
                   <p>
-                    Vui lòng nhập cá trường bên trái, thông tin này chúng tôi sẽ gửi đến email của
-                    bạn{" "}
+                    Vui lòng nhập cá trường bên trái, chúng tôi sẽ lưu những thông tin này vào vé
+                    của bạn{" "}
                   </p>
                 </div>
               </div>

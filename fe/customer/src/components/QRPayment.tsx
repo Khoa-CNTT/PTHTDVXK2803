@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "../styles/qRPayment.module.scss";
 import { PayOSPaymentResponseData } from "../types/payos";
@@ -8,6 +8,10 @@ import { QRCode } from "antd";
 import { useUserStore } from "../store/userStore";
 import { io, Socket } from "socket.io-client";
 import { toast } from "react-toastify";
+import CustomModal from "./CustomModal";
+import PaymentSuccess from "./PaymentSuccess";
+import { DataPaymentSuccess } from "../types/payment";
+import { useNavigate } from "react-router";
 
 interface QRPaymentProps {
   valueIn: PayOSPaymentResponseData;
@@ -15,7 +19,10 @@ interface QRPaymentProps {
 }
 
 const QRPayment: React.FC<QRPaymentProps> = ({ valueIn, onPaymentSuccess }) => {
+  const navigate = useNavigate();
   const userId = useUserStore((state) => state.user?.id);
+  const [statusPayment, setStatusPayment] = useState<boolean>(false);
+  const [dataPaymentSuccess, setDataPaymentSuccess] = useState<DataPaymentSuccess[]>([]);
   const socket = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -40,10 +47,11 @@ const QRPayment: React.FC<QRPaymentProps> = ({ valueIn, onPaymentSuccess }) => {
     });
 
     socket.current.on("payment-status", (data) => {
-      console.log("Payment status received", data);
       if (data.status === "success") {
+        console.log("ticketInfo", data.ticketInfo);
+        setDataPaymentSuccess(data.ticketInfo);
+        setStatusPayment(true);
         toast.success("Thanh toán thành công");
-        onPaymentSuccess(false);
       }
     });
 
@@ -58,6 +66,12 @@ const QRPayment: React.FC<QRPaymentProps> = ({ valueIn, onPaymentSuccess }) => {
       }
     };
   }, [userId]);
+
+  const handleClosePaymentSuccess = () => {
+    setStatusPayment(false);
+    onPaymentSuccess(false);
+    navigate("/");
+  };
 
   return (
     <div className={styles["qr-payment-wrapper"]}>
@@ -92,6 +106,14 @@ const QRPayment: React.FC<QRPaymentProps> = ({ valueIn, onPaymentSuccess }) => {
           </p>
         </div>
       </div>
+      {/* Modal Payment success */}
+      <CustomModal
+        title="Thông tin thanh toán"
+        onCancel={handleClosePaymentSuccess}
+        open={statusPayment}
+      >
+        <PaymentSuccess data={dataPaymentSuccess} />
+      </CustomModal>
     </div>
   );
 };

@@ -12,12 +12,13 @@ interface CustomModalProps {
 const CustomModal: React.FC<CustomModalProps> = ({ open, title, children, onCancel }) => {
   return (
     <Modal
+      width={"fit-content"}
       open={open}
       title={title}
       onCancel={onCancel}
       footer={null}
       maskClosable={false}
-      getContainer={false}
+      // getContainer={false}
       centered
     >
       {children}
