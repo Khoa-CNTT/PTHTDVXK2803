@@ -2,21 +2,12 @@ import { useEffect, useState } from "react";
 import styles from "../styles/historyBookTicket.module.scss";
 import { getDetailTicketByEmail } from "../services/ticket.service";
 import { useUserStore } from "../store/userStore";
-import { LookupTicketPayLoad } from "../types/ticket";
+import { LookupTicketPayLoad, TicketPayLoad } from "../types/ticket";
 import moment from "moment";
 
 const HistoryBookTicket = () => {
   const { user } = useUserStore();
-  const [dataTicket, setDataTicket] = useState<LookupTicketPayLoad>({
-    email: "",
-    user_name: "",
-    seats: "",
-    trip_name: "",
-    price: "",
-    start_time: "",
-    end_time: "",
-    payment_status: "",
-  });
+  const [dataTicket, setDataTicket] = useState<TicketPayLoad[]>([]);
 
   useEffect(() => {
     handleCallData();
@@ -24,9 +15,9 @@ const HistoryBookTicket = () => {
 
   const handleCallData = async () => {
     try {
+      
       if (user?.email) {
         const res = await getDetailTicketByEmail(user?.email);
-        console.log("Res: ", res);
 
         if (res && res.status === "OK") {
           const ticket = res.data;
@@ -45,7 +36,7 @@ const HistoryBookTicket = () => {
 
   return (
     <div className={styles.container}>
-      {dataTicket && dataTicket.email !== "" ? (
+      {dataTicket && dataTicket.length > 0 ? (
         <div className={styles.content}>
           <h2>Lịch sử đặt vé</h2>
           <div className={styles.data}>
@@ -54,21 +45,24 @@ const HistoryBookTicket = () => {
                 <tr>
                   <th>Email</th>
                   <th>Họ và tên</th>
-                  <th>Số Vé</th>
-                  <th>Thời gian</th>
-                  <th>Điểm đi - Điểm đến</th>
+                  <th>Số Ghế</th>
+                  <th>Thời gian đi</th>
+                  <th>Tổng tiền</th>
                   <th>Trạng thái</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Email</td>
-                  <td>ọ và tên</td>
-                  <td>Số Vé</td>
-                  <td>Số Vé</td>
-                  <td>Số Vé</td>
-                  <td>Số Vé</td>
-                </tr>
+                 {dataTicket.map((ticket, index) => (
+                  <tr key={index}>
+                    <td>{ticket?.email}</td>
+                    <td>{ticket?.user_name}</td>
+                    <td>{ticket?.seats}</td>
+                    <td>{ticket?.start_time}</td>
+                    <td>{ticket?.price}</td>
+                    <td>{ticket?.payment_status}</td>
+                    <td>Xem chi tiết</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

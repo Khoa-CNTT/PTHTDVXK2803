@@ -14,8 +14,6 @@ import { Button, Modal } from 'react-bootstrap';
 const ITEMS_PER_PAGE = 10;
 
 const ManageCoDriver: React.FC = () => {
-  const [showDelete, setShowDelete] = useState(false);
-  const [id, setId] = useState(0);
   const navigate = useNavigate();
   const { page } = useParams<{ page?: string }>();
   const location = useLocation();
@@ -68,19 +66,6 @@ const ManageCoDriver: React.FC = () => {
   if (isLoading) return <Loading />;
   if (error) return <p className={styles.error}>Lỗi khi tải dữ liệu</p>;
 
-  const handleDeleteClose = () => {
-    setShowDelete(false);
-  };
-
-  const handleDeleteShow = (id : number) => {
-    setShowDelete(true);
-    setId(id);
-  };
-
-  const handleDelete = () => {
-    console.log("id: ", id);
-    
-  }
 
   return (
     <div className={styles.container}>
@@ -151,9 +136,7 @@ const ManageCoDriver: React.FC = () => {
                     >
                       Cập nhật
                     </Link>
-                    <button className={`${styles["btn-delete"]} ${styles.btn}`}
-                      onClick={() => handleDeleteShow(coDriver.id || 0)}
-                    >Xóa</button>
+                   
                   </div>
                 </td>
               </tr>
@@ -169,24 +152,6 @@ const ManageCoDriver: React.FC = () => {
           currentPage={currentPage}
         />
       </div>
-      <Modal show={showDelete} onHide={handleDeleteClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Xóa Xe</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className='row'>
-            <span>Bạn có chắc chắn muốn xóa không?</span>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant='secondary' onClick={handleDeleteClose}>
-            Close
-          </Button>
-          <Button variant='danger' onClick={handleDelete}>
-            Delete
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };

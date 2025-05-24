@@ -24,7 +24,7 @@ export const getDetailTicket = async (data: object) => {
 
 export const getDetailTicketByEmail = async (email: string) => {
   try {
-    const response = await bookTicketAPI.post("/ticket/get-detail-ticket-by-email", email);
+    const response = await bookTicketAPI.post("/ticket/get-detail-ticket-by-email", {email: email});
     return response.data;
   } catch (err) {
     toast.warning(err instanceof Error ? err.message : "Lỗi khi lấy vé theo email");
