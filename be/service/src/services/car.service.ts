@@ -216,16 +216,6 @@ export class CarService {
     }
   }
 
-  async getCarByTypeAndStatus(type: string, status: string) {
-    try {
-      const sql = "call get_car_by_type_and_status(?, ?)";
-      const [rows] = await this.db.execute(sql, [type, status]);
-      return rows[0];
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async updateImgCar(dataImgCar: Image, fileCloudinary: CloudinaryAsset) {
     try {
       console.log("dataImgCar", dataImgCar);
