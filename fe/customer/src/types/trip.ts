@@ -69,3 +69,18 @@ export interface TripBookedInfo {
   price: number;
   seats: SeatInfo[];
 }
+
+export interface TripData {
+  id: number;
+  tripName: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  price: number;
+  licensePlate: string | null;
+  driverName: string | null;
+  departureLocation: string | null;
+  arrivalLocation: string | null;
+  totalSeatAvailable: number;
+  totalSeatBooked: number;
+}

@@ -196,10 +196,11 @@ export class CarService {
         licensePlateSearch,
         type,
       ]);
+      console.log("cars", rows[1]);
       return {
-        total,
+        total: rows[0][0].total,
         totalPage: Math.ceil(total / limit),
-        data: rows[0],
+        data: rows[1],
       };
     } catch (error) {
       console.log("err", error);
