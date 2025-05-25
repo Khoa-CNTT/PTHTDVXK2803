@@ -1,28 +1,32 @@
 .wrapper-layout {
   overflow-x: hidden;
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
   position: relative;
 }
 .main {
-  overflow-x: hidden;
+  overflow: hidden;
 
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
 
+  margin-bottom: 1rem;
+
   background-color: #f0f0f0;
 }
 
 .header {
+  overflow: hidden;
   z-index: 10;
   width: 100%;
+
   background-color: rgb(46, 180, 252);
   color: #000;
 }
 
 .footer {
-  // background-color: rgb(46, 180, 252);
+  overflow: hidden;
   color: #000;
 }

@@ -5,7 +5,6 @@ import {
   uploadImagesToCloudinary,
   uploadImageToCloudinary,
 } from "../middlewares/uploadHandler";
-import pool from "../config/database";
 import { uploadImage } from "../middlewares/multerConfig";
 import { verifyAccessToken } from "../services/auth.service";
 import { authorizeRoles } from "../middlewares/auth.middleware";
@@ -54,10 +53,8 @@ carRouter.delete(
   authorizeRoles("admin"),
   carController.deleteCar
 );
-carRouter.get("/get-all", 
-  verifyAccessToken, 
-  authorizeRoles("admin"), 
-  carController.getAllCar);
+carRouter.get("/get-all", verifyAccessToken, authorizeRoles("admin"), carController.getAllCar);
+
 carRouter.get(
   "/detail/:licensePlate",
   verifyAccessToken,

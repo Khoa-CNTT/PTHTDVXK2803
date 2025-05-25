@@ -30,3 +30,18 @@ export interface FormBookedTripType extends SearchLocationType {
   end_hours: string;
   license_plate: string;
 }
+
+export interface TripData {
+  id: number;
+  tripName: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  price: number;
+  licensePlate: string | null;
+  driverName: string | null;
+  departureLocation: string | null;
+  arrivalLocation: string | null;
+  totalSeatAvailable: number;
+  totalSeatBooked: number;
+}
