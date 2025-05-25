@@ -78,7 +78,6 @@ export class CustomerService {
         }
 
         await sendOtpEmail({ email, otp });
-        console.log("register");
         resolve({
           status: "OK",
           message: "Create OTP success",
@@ -368,6 +367,44 @@ export class CustomerService {
     });
   }
 
+  updateNoImage(updateCustomer: ModelCustomer): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const sql = "call updateUserFromCustomer( ?, ?, ?, ?, ?, ?)";
+        const values = [
+          updateCustomer.email,
+          updateCustomer.fullName,
+          updateCustomer.sex,
+          updateCustomer.phone,
+          updateCustomer.dateBirth,
+          updateCustomer.address,
+        ];
+
+        const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
+        if (rows.affectedRows === 0) {
+          return resolve({ status: "ERR", message: "Customer not found" });
+        }
+        
+        const [rowsDataUser] =( await this.db.execute("call fetchCustomerByEmail(?)", [updateCustomer.email]) as [ResultSetHeader]);
+        if (rowsDataUser.affectedRows <= 0) {
+          resolve({
+            status: "ERR",
+            message: "Customer not found",
+          });
+          return
+        }
+
+        resolve({
+          status: "OK",
+          user: rowsDataUser[0][0]
+        });
+
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   updateImage(id: number, publicId: string | null, fileCloudinary: CloudinaryAsset): Promise<any> {
     return new Promise(async (resolve, reject) => {
       try {
@@ -442,7 +479,6 @@ export class CustomerService {
           });
         }
 
-        console.log("[rows]: ", [rows]);
         
         const compareCurrentPassword = await bcrypt.compareSync(
           passwordOld,

@@ -107,7 +107,6 @@ export class PromotionService {
       await conn.beginTransaction();
 
       const { code, carType, type, discountAmount, description, startDate, endDate } = promotion;
-      console.log("promotion", promotion);
 
       const sql = "CALL addPromotion(?, ?, ?, ?, ?, ?, ?)";
       const values = [code, carType, type, discountAmount, description, startDate, endDate];

@@ -177,7 +177,6 @@ export class CoDriverService {
           newCoDriver.dateBirth,
           newCoDriver.address,
         ];
-        console.log("va: ", values);
         
         const [rows] = (await this.db.execute(sql, values)) as [ResultSetHeader];
         if (rows.affectedRows === 0) {

@@ -21,6 +21,7 @@ router.get("/get-detail/:id", verifyAccessToken, authorizeRoles("admin"), custom
 router.post("/get-detail-user-email/", customerController.getDetailUserByEmail);
 router.post("/update-detail-user/",uploadImage, uploadImageToCloudinary, customerController.updateUser);
 router.post("/update-password/", customerController.updatePassword);
+router.post("/update-no-image/", customerController.updateNoImage);
 router.post("/update-new-password/", customerController.updateNewPassword);
 router.post("/insert-otp-forgot-password/", customerController.insertOtp);
 router.post("/send-otp/", customerController.sendOtp);

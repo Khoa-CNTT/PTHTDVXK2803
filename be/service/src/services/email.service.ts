@@ -26,7 +26,6 @@ const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams): Promise<SentMes
       html: getBodyHTMLEmail(otp),
     });
 
-    console.log("Email sent:", info.messageId);
     return info; // Return the sent email information
   } catch (error) {
     throw error;
@@ -51,7 +50,6 @@ const sendTicketEmail = async ({ email, otp }: SendOtpEmailParams): Promise<Sent
       html: getBodyHTMLTicketEmail(otp),
     });
 
-    console.log("Email sent:", info.messageId);
     return info; // Return the sent email information
   } catch (error) {
     throw error;

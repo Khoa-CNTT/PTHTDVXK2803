@@ -28,7 +28,6 @@ export class TicketController {
 
   getDetailTicketByEmail = async (req: Request, res: Response) => {
     const { email } = req.body;
-    console.log("emaik: ", email);
 
     try {
       const result = await this.ticketService.getDetailTicketByEmail(email);

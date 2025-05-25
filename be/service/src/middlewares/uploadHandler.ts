@@ -25,7 +25,6 @@ export interface RequestWithProcessedFiles extends Request {
 }
 
 const uploadVideoToCloudinary = async (req: RequestWithFile, res: Response, next: NextFunction) => {
-  console.log("data", req.body);
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });

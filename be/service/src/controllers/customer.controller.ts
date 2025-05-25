@@ -266,6 +266,17 @@ export class CustomerController {
     }
   };
 
+  updateNoImage = async (req: Request, res: Response) => {
+    try {
+      const updateData = req.body;
+      const result = await this.customerService.updateNoImage(updateData);
+      successResponse(res, 200, result);
+    } catch (error) {
+      console.log("Err Controller", error);
+      errorResponse(res, "ERR Controller.update", 404);
+    }
+  };
+
   updateUser = async (req: RequestFile, res: Response) => {
     try {
       const updateData = JSON.parse(req.body.data);

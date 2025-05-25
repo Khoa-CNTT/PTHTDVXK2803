@@ -60,7 +60,6 @@ export class CarService {
       ]);
 
       const insertId = rows[0][0].insertedId;
-      console.log("insertId", insertId);
       if (!insertId) {
         for (const image of filesCloudinary) {
           if (!image?.public_id) continue;
