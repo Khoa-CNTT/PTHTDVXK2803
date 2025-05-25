@@ -50,8 +50,8 @@ export class CustomerService {
         const checkPerson = await userService.checkUser(email);
         if (checkPerson) {
           return resolve({
-            status: "ERR",
-            message: "This user already exists",
+            status: "E1",
+            message: "Email này đã được sử dụng",
           });
         }
 

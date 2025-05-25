@@ -193,14 +193,15 @@ export class UserService {
         if (!checkPerson) {
           resolve({
             status: "ERR",
-            message: "The customer is not defined",
+            message: "Đăng nhập thất bại",
           });
+          return
         } else {
           const comparePass = await bcrypt.compareSync(userLogin.password, checkPerson.password);
           if (!comparePass) {
             resolve({
               status: "ERR",
-              message: "Password error",
+              message: "Đăng nhập thất bại",
             });
           } else {
             const detailCustomer: UserType = {

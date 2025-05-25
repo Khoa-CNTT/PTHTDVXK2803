@@ -107,7 +107,9 @@ export class UserController {
         successResponse(res, 200, { status, data, expirationTime: expirationTime });
       } else {
         if ("message" in response) {
-          errorResponse(res, response.message, 400);
+          console.log("response: ", response);
+          
+          errorResponse(res, response.message, 200);
         } else {
           errorResponse(res, "Unexpected error occurred", 400);
         }
