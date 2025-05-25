@@ -24,6 +24,20 @@
             label {
                 width: 30%;
             }
+
+            .price {
+                color: red;
+            }
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #2eb4fc;
+            color: #fff;
+            border-radius: 6px;
+            width: 120px;
+            margin-top: 10px;
+            margin: 0 auto;
+            outline: none;
         }
     }
 }

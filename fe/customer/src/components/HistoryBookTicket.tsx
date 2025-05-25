@@ -53,6 +53,7 @@ const HistoryBookTicket = () => {
                 <tr>
                   <th>Email</th>
                   <th>Họ và tên</th>
+                  <th>Thông tin xe</th>
                   <th>Số Ghế</th>
                   <th>Thời gian đi</th>
                   <th>Tổng tiền</th>
@@ -64,6 +65,7 @@ const HistoryBookTicket = () => {
                   <tr key={index}>
                     <td>{ticket?.email}</td>
                     <td>{ticket?.user_name}</td>
+                    <td>{ticket?.type} - {ticket?.license_plate}</td>
                     <td>{ticket?.seats}</td>
                     <td>{ticket?.start_time}</td>
                     <td>{ticket?.price}</td>

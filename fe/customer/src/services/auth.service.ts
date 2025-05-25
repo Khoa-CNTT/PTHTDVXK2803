@@ -61,3 +61,13 @@ export const updateDetailUser = async (data: FormData) => {
     return null;
   }
 };
+
+export const updateUserNoImage = async (data: object) => {
+  try {
+    const response = await bookTicketAPI.post("/customer/update-no-image", data);
+    return response.data;
+  } catch (err) {
+    toast.error(err instanceof Error ? err.message : "Cập nhật thông tin thất bại");
+    return null;
+  }
+};

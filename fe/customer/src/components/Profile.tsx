@@ -4,7 +4,8 @@ import { useUserStore } from "../store/userStore";
 import { User } from "../types/user";
 import { data, useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { updateDetailUser } from "../services/auth.service";
+import { updateDetailUser, updateUserNoImage } from "../services/auth.service";
+import moment from "moment";
 
 const Profile = () => {
   const [avatar , setAvatar] = useState("https://randomuser.me/api/portraits/men/1.jpg")
@@ -23,11 +24,12 @@ const Profile = () => {
 
   useEffect(() => {
     if(user) {
+      const formattedDate = moment(user?.dateBirth).format("YYYY-MM-DD");
       setDataUser({
         fullName: user?.fullName,
         email: user?.email,
-       phone: user?.phone,
-        dateBirth: user?.dateBirth,
+        phone: user?.phone,
+        dateBirth: formattedDate,
         sex: user?.sex,
         address: user?.address,
       })
@@ -68,29 +70,49 @@ const Profile = () => {
 
   const handleUpdateUser = async () => {
     try {
-      if(user !== dataUser) {
-        let formData = new FormData()
-        formData.append("data", JSON.stringify(dataUser))
-        if(fileAvatar){
+      if(fileAvatar) {
+         if(user !== dataUser) {
+          let formData = new FormData()
+          formData.append("data", JSON.stringify(dataUser))
           formData.append("file", fileAvatar)
-
-        }else{
-          alert("chưa có file image")
-        }
-        
-        let res = await updateDetailUser(formData)
-        
-        if(res && res.status === 'OK') {
-          console.log("res?.user: ", res?.user);
           
-          setAvatar(res?.user?.urlImg)
-          setDataUser(res?.user)
-          setUser(res?.user)    
-          toast.success("Bạn đã cập nhật thành công!")
-        }else {
-          toast.error("Cập nhật thất bại!")
+          let res = await updateDetailUser(formData)
+          
+          if(res && res.status === 'OK') {
+            const formattedDate = moment(res?.user?.dateBirth).format("YYYY-MM-DD");
+            const data = {
+              ...res?.user,
+              dateBirth: formattedDate
+            }
+
+            setAvatar(res?.user?.urlImg)
+            setDataUser(data)
+            setUser(res?.user)    
+            toast.success("Bạn đã cập nhật thành công!")
+          }else {
+            toast.error("Cập nhật thất bại!")
+          }
         }
+      }else {
+        let res = await updateUserNoImage(dataUser)
+            console.log("res?.user: ", res);
+
+        if(res && res.status === 'OK') {
+            
+            const formattedDate = moment(res?.user?.dateBirth).format("YYYY-MM-DD");
+            const data = {
+              ...res?.user,
+              dateBirth: formattedDate
+            }
+
+            setDataUser(data)
+            setUser(res?.user)    
+            toast.success("Bạn đã cập nhật thành công!")
+          }else {
+            toast.error("Cập nhật thất bại!")
+          }
       }
+     
     
     } catch (error) {
       console.log("Lỗi: ", error);
