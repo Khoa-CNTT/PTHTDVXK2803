@@ -4,13 +4,10 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import routes from "./routes/routes.routes";
 import { config } from "./config/config";
-import { initChatSocket } from "./sockets/chatSocket";
 import { createServer } from "http";
 import session from "express-session";
 import passport from "passport";
 import { connectRedis } from "./config/redis";
-import TripService from "./services/trip.service";
-import { bookBusTicketsDB } from "./config/db";
 import { initSocket } from "./sockets/socket";
 
 dotenv.config();
@@ -57,7 +54,6 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(cookieParser());
 
 // Khởi động Websocket
-initChatSocket(server);
 initSocket(server);
 
 // Test route

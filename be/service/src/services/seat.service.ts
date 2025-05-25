@@ -36,7 +36,7 @@ class SeatService {
   };
 
   updateSeats = async (
-    positions: string,
+    positions: string[],
     tripId: number,
     customerId: number,
     status: "available" | "pending" | "booked"
@@ -45,8 +45,7 @@ class SeatService {
     try {
       await connection.beginTransaction();
 
-      const getPosition = positions.split("-");
-      for (const position of getPosition) {
+      for (const position of positions) {
         const [rows] = (await connection.execute("CALL update_seat(?, ?, ?, ?)", [
           tripId,
           customerId,

@@ -87,15 +87,16 @@ export class TicketService {
   getDetailTicketByEmail(email: string): Promise<object> {
     return new Promise(async (resolve, reject) => {
       try {
-        const sql = "call getDetailTicketByEmail(?)";
+        const sql = "CALL getDetailTicketByEmail(?)";
 
-        const [rows] = (await this.db.execute(sql, [email])) as [ResultSetHeader];
+        const [rows] = await this.db.execute(sql, [email]) as [any[]];
 
-        if (rows[0].length === 0) {
+        if (!rows || rows[0].length === 0) {
           resolve({
             status: "ERR",
             message: "Ticket not found",
           });
+          return;
         }
         resolve({
           status: "OK",

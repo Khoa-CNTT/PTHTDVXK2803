@@ -1,0 +1,179 @@
+@use "./mixin" as mix;
+
+.payment-success-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+
+  max-width: 100%;
+  width: fit-content;
+
+  padding: 1rem 0;
+
+  .ic-success {
+    padding: 1rem;
+    border: 0.1rem solid var(--success-bd);
+    border-radius: 50%;
+  }
+
+  .center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .title {
+      font-size: 1.8rem;
+      font-weight: 600;
+
+      color: var(--blue-dark);
+    }
+
+    .recei-email {
+      font-weight: 600;
+      margin: 0 0.25rem;
+
+      color: var(--blue-dark);
+    }
+  }
+
+  .booked-ticket-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    max-width: 100%;
+    width: fit-content;
+
+    border: 1px solid var(--gray-bd);
+
+    @include mix.responsive(mobile) {
+      border: none;
+    }
+
+    .booked-ticket-title {
+      display: flex;
+      justify-content: center;
+
+      width: 100%;
+      padding: 2rem;
+
+      background-color: rgba(var(--primary), 0.2);
+
+      .title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+    }
+
+    .booked-ticket-body {
+      padding: 2rem;
+
+      .ticket-info {
+        display: flex;
+        gap: 5rem;
+
+        .ticket-info__user {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          &-detail {
+            &-label {
+              width: 8rem;
+
+              &::after {
+                content: ":";
+                margin-left: 0.25rem;
+              }
+            }
+
+            &-content {
+              font-weight: 600;
+            }
+          }
+        }
+
+        .ticket-info__payment {
+          @extend .ticket-info__user;
+
+          &-detail {
+            &-label {
+              width: 8rem;
+
+              &::after {
+                content: ":";
+                margin-left: 0.25rem;
+              }
+            }
+
+            &-content {
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ticket-info__seats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    width: 40rem;
+
+    @include mix.responsive(mobile) {
+      flex-direction: column;
+      align-items: center;
+      width: 25rem;
+    }
+
+    .ticket-info__seat-item {
+      padding: 0.5rem;
+      border: 1px solid var(--primary-bd);
+      border-radius: 0.4rem;
+
+      @include mix.responsive(mobile) {
+      }
+
+      &__actions {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+
+        &-title {
+          font-weight: 600;
+          color: var(--blue-dark);
+        }
+      }
+
+      &__qr {
+        display: flex;
+        justify-content: center;
+        margin: 1rem 0;
+      }
+
+      &-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        &__detail {
+          display: flex;
+          justify-content: space-between;
+          gap: 6rem;
+
+          &__content {
+            color: var(--blue-dark);
+          }
+        }
+      }
+    }
+  }
+}

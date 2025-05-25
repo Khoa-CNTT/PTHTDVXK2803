@@ -15,7 +15,7 @@
       gap: 2rem;
 
       padding: 1rem;
-      background-color: var(--white);
+      background-color: var(--white-bd);
       border-radius: 0.4rem;
 
       &__info {
@@ -34,7 +34,7 @@
           }
 
           .available {
-            background-color: var(--primary);
+            background-color: var(--primary-bd);
           }
 
           .selecting {
@@ -42,7 +42,7 @@
           }
 
           .unavailable {
-            background-color: var(--gray);
+            background-color: var(--gray-bd);
           }
 
           &__content {
@@ -57,7 +57,7 @@
       gap: 2rem;
 
       padding: 1rem;
-      background-color: var(--white);
+      background-color: var(--white-bd);
       margin: 1rem 0;
 
       &__info {
@@ -70,7 +70,7 @@
           text-align: center;
           text-transform: uppercase;
           font-size: 1.2rem;
-          color: var(--danger);
+          color: var(--danger-bd);
 
           margin-bottom: 0.5rem;
         }
@@ -86,7 +86,7 @@
 
             padding: 0 0.25rem;
 
-            background-color: var(--white);
+            background-color: var(--white-bd);
 
             font-size: 0.9rem;
 
@@ -94,7 +94,7 @@
               content: "*";
               font-size: 1.2rem;
               margin-right: 0.2rem;
-              color: var(--danger);
+              color: var(--danger-bd);
             }
           }
 
@@ -102,7 +102,7 @@
             height: 80%;
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid var(--gray);
+            border: 1px solid var(--gray-bd);
             border-radius: 0.4rem;
 
             box-shadow: 0 0 0 1000px white inset !important; /* hoặc background của form */
@@ -113,7 +113,7 @@
 
             &:focus,
             &:hover {
-              border-color: var(--primary);
+              border-color: var(--primary-bd);
             }
           }
         }
@@ -127,7 +127,7 @@
           text-align: center;
           text-transform: uppercase;
           font-size: 1.2rem;
-          color: var(--danger);
+          color: var(--danger-bd);
           margin-bottom: 1rem;
         }
       }
@@ -139,7 +139,7 @@
 
       padding: 1rem;
       border-radius: 0.4rem;
-      background-color: var(--white);
+      background-color: var(--white-bd);
 
       .total-price {
         font-size: 1.4rem;
@@ -147,15 +147,15 @@
 
       .btn-payment {
         padding: 0.75rem 1rem;
-        background-color: var(--white);
-        border: 1px solid var(--primary);
+        background-color: var(--white-bd);
+        border: 1px solid var(--primary-bd);
         border-radius: 10rem;
 
         transition: all 0.3s;
 
         &:hover,
         &:focus {
-          background-color: var(--primary);
+          background-color: var(--primary-bd);
           color: var(--white);
         }
       }
@@ -174,7 +174,7 @@
       gap: 0.5rem;
 
       padding: 1rem;
-      background-color: var(--white);
+      background-color: var(--white-bd);
       border-radius: 0.4rem;
       margin-bottom: 1rem;
 
@@ -194,7 +194,7 @@
         justify-content: space-between;
 
         &-ic {
-          color: var(--primary);
+          color: var(--primary-bd);
         }
 
         &:nth-child(1) {
@@ -203,14 +203,14 @@
           gap: 0.5rem;
         }
         .price {
-          color: var(--belize-hole);
+          color: var(--belize-hole-bd);
         }
       }
 
       .dash {
         height: 0.1rem;
         width: 100%;
-        background-color: var(--gray);
+        background-color: var(--gray-bd);
       }
     }
   }

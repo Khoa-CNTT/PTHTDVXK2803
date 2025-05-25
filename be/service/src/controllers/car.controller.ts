@@ -5,7 +5,6 @@ import { bookBusTicketsDB } from "../config/db";
 import { CarService } from "../services/car.service";
 import { ArrangeType } from "../@types/type";
 import { typeMap } from "../@types/car.type";
-import { CloudinaryAsset } from "../@types/cloudinary";
 
 export class CarController {
   private carService = new CarService(bookBusTicketsDB);

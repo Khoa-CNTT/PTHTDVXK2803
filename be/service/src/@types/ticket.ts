@@ -14,3 +14,19 @@ export interface searchTicket {
   idTicket: string;
 }
 
+export interface TicketType {
+  id: number;
+  customerId: number;
+  tripId: number;
+  email: string;
+  fullName: string;
+  phone: string;
+  tripName: string;
+  startTime: string;
+  departure: string;
+  arrival: string;
+  seatPosition: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  price: number;
+}

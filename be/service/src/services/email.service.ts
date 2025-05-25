@@ -33,6 +33,31 @@ const sendOtpEmail = async ({ email, otp }: SendOtpEmailParams): Promise<SentMes
   }
 };
 
+const sendTicketEmail = async ({ email, otp }: SendOtpEmailParams): Promise<SentMessageInfo> => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // true for port 465, false for others
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  try {
+    const info = await transporter.sendMail({
+      to: email,
+      subject: "Thông tin vé xe",
+      html: getBodyHTMLTicketEmail(otp),
+    });
+
+    console.log("Email sent:", info.messageId);
+    return info; // Return the sent email information
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getBodyHTMLEmail = (otp: string): string => {
   return `
     <h3>Mã xác thực email: Có thời hạn 5 phút!</h3>
@@ -42,4 +67,10 @@ const getBodyHTMLEmail = (otp: string): string => {
   `;
 };
 
-export { sendOtpEmail };
+const getBodyHTMLTicketEmail = (otp: string): string => {
+  return `
+
+  `;
+};
+
+export { sendOtpEmail, sendTicketEmail };
