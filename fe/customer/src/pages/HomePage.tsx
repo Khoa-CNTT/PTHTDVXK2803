@@ -2,6 +2,7 @@ import logo1 from "../assets/images/logo1.svg";
 import Connection from "../components/Connection";
 import PopularRoutesSlider from "../components/PopularRoutesSlider";
 import PromotionSlider from "../components/PromotionSlider";
+import Quality from "../components/Quality";
 import SearchTrip from "../components/SearchTrip";
 import styles from "../styles/homePage.module.scss";
 
@@ -24,6 +25,9 @@ const HomePage = () => {
       </div>
       <div>
           <PopularRoutesSlider />
+      </div>
+      <div className={styles.quality}>
+          <Quality />
       </div>
       <div className={styles.connection}>
           <Connection />

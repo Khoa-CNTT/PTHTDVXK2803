@@ -26,11 +26,10 @@ const AboutUs = () => {
             </div>
           </div>
           <div className={styles.imageContainer}>
-            
              <div className={styles.block}>
               <h2 className={styles.heading}>ADVERTISING</h2>
             <p>
-              Bên cạnh đó, chúng tôi còn đầu tư vào lĩnh vực truyền thông, quảng cáo với việc thành lập Công ty Cổ phần Quảng Cáo FUTA Việt Nam – FUTA Ads, là đơn vị khai thác quảng cáo trên toàn bộ hệ sinh thái của Tập Đoàn Phương Trang – FUTA Group với đa dạng hình thức quảng cáo như Quảng cáo xe tuyến đường dài, Quảng cáo vận chuyển hàng, Quảng cáo xe taxi, gian hàng bán hàng… Trong xu hướng 4.0 hiện nay, chúng tôi cũng đang ứng dụng và phát triển những công nghệ quảng cáo kỹ thuật số (Digital Marketing) với mục tiêu mang đến giải pháp tiếp thị toàn diện hiệu quả cho doanh nghiệp.
+              Bên cạnh đó, chúng tôi còn đầu tư vào lĩnh vực truyền thông, quảng cáo với việc thành lập Công ty Cổ phần Quảng Cáo VEXETIENICH Việt Nam, là đơn vị khai thác quảng cáo trên toàn bộ hệ sinh thái của Tập Đoàn VEXETIENICH Group với đa dạng hình thức quảng cáo như Quảng cáo xe tuyến đường dài, Quảng cáo vận chuyển hàng, Quảng cáo xe taxi, gian hàng bán hàng… Trong xu hướng 4.0 hiện nay, chúng tôi cũng đang ứng dụng và phát triển những công nghệ quảng cáo kỹ thuật số (Digital Marketing) với mục tiêu mang đến giải pháp tiếp thị toàn diện hiệu quả cho doanh nghiệp.
             </p>
             </div>
             <img src={"https://cdn.futabus.vn/futa-busline-cms-dev/Futa_Ads_daceccbca8/Futa_Ads_daceccbca8.jpg"} alt="VEXETIENICH" />

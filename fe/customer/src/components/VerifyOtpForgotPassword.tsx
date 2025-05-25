@@ -16,17 +16,22 @@ const VerifyOtpForgotPassword = () => {
   const { email } = location.state
 
   const handleOTPVerify = async (data : { email: string; otp: string }) => {
-    const response = await verifyOtpForgotPassword(data);
-    
-
-    if ((response.status === "OK")) {
-      setOtpValue({});
-      toast.success("Xác thực thành công");
-      navigate("/update-forgot-password", {state: {email: email}})
-      return;
-    } else {
-      return toast.error(response.message);
+    try {
+      const response = await verifyOtpForgotPassword(data);
+      
+      if ((response?.status === "OK")) {
+        setOtpValue({});
+        toast.success("Xác thực thành công");
+        navigate("/update-forgot-password", {state: {email: email}})
+        return;
+      } else {
+        toast.error("Xác thực không chính xác");
+      }
+    } catch (error) {
+      console.log("err: ", error);
+      
     }
+    
 }
  return (
     <>

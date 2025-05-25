@@ -21,7 +21,7 @@ export const register = async (data: RegisterType) => {
 export const updatePasswordCustomer = async (data: object) => {
   try {
     const response = await bookTicketAPI.post("/customer/update-password", data);
-    return response.data;
+    return response;
   } catch (err) {
     toast.warning(err instanceof Error ? err.message : "Lỗi khi cập nhật mật khẩu");
     return null;

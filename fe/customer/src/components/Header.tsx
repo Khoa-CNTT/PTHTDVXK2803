@@ -83,6 +83,11 @@ const Header = () => {
     navigate("/lich-su-dat-ve")
 
   }
+
+  const handleClickLogo = () => {
+    navigate("/")
+
+  }
   return (
     <div className={`${styled["container-header"]} ${location.pathname === "/" ? styled["header-homepage"] : styled["header-children"]}`}>
       <div className={styled["top-header"]}>
@@ -97,7 +102,7 @@ const Header = () => {
             />
           </div>
           <div className={styled.logoContainer}>
-          <img src={logo3} alt="logo" className={styled["logo-banner__img"]} />
+          <img src={logo3} alt="logo" className={styled["logo-banner__img"]} onClick={handleClickLogo}/>
               
               <div className={styled.languages}>
             <img

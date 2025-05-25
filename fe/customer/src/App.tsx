@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import BookedPage from "./pages/BookedPage";
 import { handleTokenExpiration } from "./utils/handleTokenExpiration ";
 import useOffline from "./hooks/useOfflie";
+import DetailTicket from "./components/DetailTicket";
 
 function App() {
   useOffline();
@@ -157,6 +158,15 @@ function App() {
           element={
             <Layout>
               <BookedPage />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/chi-tiet-dat-ve"
+          element={
+            <Layout>
+              <DetailTicket />
             </Layout>
           }
         />

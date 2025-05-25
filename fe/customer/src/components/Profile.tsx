@@ -14,6 +14,7 @@ const Profile = () => {
     fullName: "",
         email: "",
        phone: "",
+    avatar: "",
     dateBirth: "",
     sex: "male",
     address: ""
@@ -66,7 +67,8 @@ const Profile = () => {
     }
 
   const handleUpdateUser = async () => {
-    if(user !== dataUser) {
+    try {
+      if(user !== dataUser) {
         let formData = new FormData()
         formData.append("data", JSON.stringify(dataUser))
         if(fileAvatar){
@@ -90,8 +92,14 @@ const Profile = () => {
         }
       }
     
+    } catch (error) {
+      console.log("Lỗi: ", error);
+      
+    }
   }
 
+  console.log("dataUser: ", dataUser);
+  
   return (
     <div className={styles.container}>
       <div className={styles.account}>
@@ -104,7 +112,7 @@ const Profile = () => {
            <div className={styles.account__card}>
         <div className={styles.account__avatar}>
           <img
-            src={avatar}
+            src={dataUser?.avatar ? dataUser?.avatar : avatar}
             alt="Avatar"
           />
           <input id="avatar" hidden type="file" 

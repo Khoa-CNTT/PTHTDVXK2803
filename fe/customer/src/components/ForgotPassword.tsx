@@ -18,7 +18,8 @@ const ForgotPassword : React.FC<ChildProps>= ({onButtonClick}) => {
     }
 
     const handleSubmit = async () => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        try {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if(emailRegex.test(email) === false) {
               toast.error("Email không đúng định dạng")
               return
@@ -27,6 +28,10 @@ const ForgotPassword : React.FC<ChildProps>= ({onButtonClick}) => {
                 console.log("insert: ", res);
                 navigate("/verify-email-forgot-password",{state: {email: email}})
             }
+        } catch (error) {
+          console.log("err: ", error);
+          
+        }
     }
   return (
     <div className={styles.container}>

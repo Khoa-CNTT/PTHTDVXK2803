@@ -23,31 +23,39 @@ const UpdatePassword = () => {
       };
 
       const handleUpdatePassword = async () => {
-        const {passwordOld, passwordNew, confirmPassword} = dataUpdatePassword
+        try {
+            const {passwordOld, passwordNew, confirmPassword} = dataUpdatePassword
 
-        if(!user?.email || !passwordOld || !passwordNew || !confirmPassword) {
-            toast.error("Bạn nhập thiếu dữ liệu");
-            return
-        }
+            if(!user?.email || !passwordOld || !passwordNew || !confirmPassword) {
+                toast.error("Bạn nhập thiếu dữ liệu");
+                return
+            }
 
-        if(passwordNew !== confirmPassword) {
-            toast.error("Xác nhận mật khẩu không thành công");
-            return
-        }
+            if(passwordNew !== confirmPassword) {
+                toast.error("Xác nhận mật khẩu không thành công");
+                return
+            }
 
-        const email = user.email
-        const value = {email, passwordOld, passwordNew}
-        const res = await updatePasswordCustomer(value)
-
-        if(res.status === "OK") {
-            toast.success("Cập nhật mật khẩu thành công")
-            setDataUpdatePassword({
-                passwordOld: "",
-                passwordNew: "",
-                confirmPassword: ""
-            })
-        }else {
-            toast.error("Cập nhật mật khẩu thất bại")
+            const email = user.email
+            const value = {email, passwordOld, passwordNew}
+            const res = await updatePasswordCustomer(value)
+            
+            
+            if(res?.data?.status === "OK") {
+                toast.success("Cập nhật mật khẩu thành công")
+                setDataUpdatePassword({
+                    passwordOld: "",
+                    passwordNew: "",
+                    confirmPassword: ""
+                })
+                return
+            }else {
+                toast.error("Cập nhật thất bại")
+            }
+            
+           
+        } catch (error) {
+            console.log("err: ", error);
         }
       }
 

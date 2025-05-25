@@ -4,10 +4,12 @@ import { getDetailTicketByEmail } from "../services/ticket.service";
 import { useUserStore } from "../store/userStore";
 import { LookupTicketPayLoad, TicketPayLoad } from "../types/ticket";
 import moment from "moment";
+import { useNavigate } from "react-router";
 
 const HistoryBookTicket = () => {
   const { user } = useUserStore();
   const [dataTicket, setDataTicket] = useState<TicketPayLoad[]>([]);
+  const navigation = useNavigate()
 
   useEffect(() => {
     handleCallData();
@@ -21,11 +23,12 @@ const HistoryBookTicket = () => {
 
         if (res && res.status === "OK") {
           const ticket = res.data;
-          const formattedTicket = {
-            ...ticket,
-            start_time: moment(ticket.start_time).utcOffset("+07:00").format("DD/MM/YYYY HH:mm"),
-            end_time: moment(ticket.end_time).utcOffset("+07:00").format("DD/MM/YYYY HH:mm"),
-          };
+          const formattedTicket = ticket.map((item: TicketPayLoad) => ({
+            ...item,
+            start_time: moment(item.start_time).utcOffset("+07:00").format("DD/MM/YYYY HH:mm"),
+            end_time: moment(item.end_time).utcOffset("+07:00").format("DD/MM/YYYY HH:mm"),
+          }));
+
           setDataTicket(formattedTicket);
         }
       }
@@ -33,6 +36,11 @@ const HistoryBookTicket = () => {
       console.log("catch: ", error);
     }
   };
+
+  const handleClickDetail = (ticket: TicketPayLoad) =>  {
+    navigation("/chi-tiet-dat-ve", {state: ticket})
+  } 
+
 
   return (
     <div className={styles.container}>
@@ -60,7 +68,7 @@ const HistoryBookTicket = () => {
                     <td>{ticket?.start_time}</td>
                     <td>{ticket?.price}</td>
                     <td>{ticket?.payment_status}</td>
-                    <td>Xem chi tiết</td>
+                    <td><p className={styles.detail} onClick={() => handleClickDetail(ticket)}>Xem chi tiết</p></td>
                   </tr>
                 ))}
               </tbody>

@@ -44,7 +44,7 @@ const Login: React.FC = () => {
 
     const result = await loginUser(dataLogin);
 
-    if (result.status === "OK" && result.data) {
+    if (result?.status === "OK" && result.data) {
       localStorage.setItem("accept", result.status);
       localStorage.setItem("expirationTime", result.expirationTime);
       setUser({
@@ -58,6 +58,11 @@ const Login: React.FC = () => {
       });
       toast.success("Đăng nhập thành công");
       navigate("/");
+      return
+    }
+    
+    if(result?.message === false) {
+      toast.error(result.message);
     } else {
       toast.error("Đăng nhập thất bại");
     }

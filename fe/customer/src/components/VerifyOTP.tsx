@@ -17,27 +17,37 @@ const VerifyOTP = () => {
   const { email } = location.state
 
   const handleOTPVerify = async (data : { email: string; otp: string }) => {
-    const response = await veriFyEmail(data);
+    try {
+      const response = await veriFyEmail(data);
 
-    if ((response.status === "OK")) {
-      const data = response.data;
-      setUser({ email: data.email, fullName: data.fullName });
-      setOtpValue({});
-      toast.success("Đăng ký thành công");
-      navigate("/")
-      return;
-    } else {
-      return toast.error(response.message);
+      if ((response.status === "OK")) {
+        const data = response.data;
+        setUser({ email: data.email, fullName: data.fullName });
+        setOtpValue({});
+        toast.success("Đăng ký thành công");
+        navigate("/")
+        return;
+      } else {
+        return toast.error(response.message);
+      }
+    } catch (error) {
+      console.log("err: ", error);
+      
     }
+    
 }
 
   const handleSendOtp = async () => {
-    const res = await sendOtp(email)
+    try {
+       const res = await sendOtp(email)
     
-    if(res && res.status === "OK") {
-      toast.success("Đã gửi lại mã, bạn hãy kiểm tra email!")
-    }else {
-      toast.error("Gửi mã thất bại!")
+        if(res && res.status === "OK") {
+          toast.success("Đã gửi lại mã, bạn hãy kiểm tra email!")
+        }else {
+          toast.error("Gửi mã thất bại!")
+        }
+    } catch (error) {
+      console.log("err: ", error);
     }
   }
 
