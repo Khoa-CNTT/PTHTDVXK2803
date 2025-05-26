@@ -1,80 +1,133 @@
-import { useRef, useState } from "react";
-
-import styles from "../styles/chatBox.module.scss";
-import { TripInfoBase } from "../types/trip";
-import { useUserStore } from "../store/userStore";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRocketchat } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { io, Socket } from "socket.io-client";
+import { useUserStore } from "../store/userStore";
+import styles from "../styles/chatBox.module.scss";
+import { ResponseData } from "../types/chatbox";
+import { TripData } from "../types/trip";
+import TripCardInChatBox from "./TripCardInChatBox";
 
 type Message = {
-  from: string;
-  text: string;
+  from?: "user" | "bot";
+  text?: string;
   id?: number;
-  infoTrip?: TripInfoBase;
+  trips?: TripData[];
+  timestamp?: number;
 };
 
 const ChatBox = () => {
   const navigate = useNavigate();
+  const userId = useUserStore((state) => state.user?.id);
+  const socket = useRef<Socket | null>(null);
+  const chatboxRef = useRef<HTMLDivElement | null>(null);
   const { user } = useUserStore();
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { text: "Xin chào tôi có thể giúp gì cho bạn?" },
+  ]);
   const [input, setInput] = useState("");
-  const socketRef = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const socket = new WebSocket(`wss://${import.meta.env.VITE_API_URL}.ngrok-free.app/ws/chat`);
-  //   socketRef.current = socket;
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
-  //   socket.onopen = () => {
-  //     console.log("WebSocket connected");
-  //   };
+  useEffect(() => {
+    if (!open) return;
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, open]);
 
-  //   socket.onmessage = (event) => {
-  //     const data = JSON.parse(event.data);
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutSide);
+      return () => document.removeEventListener("mousedown", handleClickOutSide);
+    }
+  }, [open]);
 
-  //     if (data.type === "chat" || data.type === "system") {
-  //       if (data.trips && Array.isArray(data.trips)) {
-  //         const tripMessages = data.trips.map((trip: TripInfoBase) => {
-  //           const start = new Date(trip.startTime).toLocaleString();
-  //           const end = new Date(trip.endTime).toLocaleString();
+  useEffect(() => {
+    if (!userId || !open) return;
 
-  //           const text =
-  //             `Tên chuyến: ${trip.tripName}\n` +
-  //             `Biển số xe: ${trip.licensePlate}\n` +
-  //             `Tài xế: ${trip.driverName}\n` +
-  //             `Thời gian bắt đầu: ${start}\n` +
-  //             `Thời gian kết thúc: ${end}\n` +
-  //             `Giá tiền: ${trip.price} VND\n` +
-  //             `Số chỗ còn lại: ${trip.totalSeatAvailable}`;
+    socket.current = io(`https://${import.meta.env.VITE_API_URL}.ngrok-free.app`, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+      autoConnect: true,
+    });
 
-  //           return {
-  //             from: "bot",
-  //             text,
-  //             id: trip.id,
-  //             infoTrip: trip,
-  //           };
-  //         });
+    socket.current.on("connect", () => {
+      console.log("Socket connected with id", socket.current?.id);
+      setIsConnected(true);
+      socket.current?.emit("register_user", userId);
+    });
 
-  //         setMessages((prev) => [...prev, ...tripMessages]);
-  //       } else {
-  //         setMessages((prev) => [...prev, { from: "bot", text: data.message }]);
-  //       }
-  //     }
-  //   };
+    socket.current.on("user_registered", (data) => {
+      console.log("User registered successfully", data);
+    });
 
-  //   socket.onclose = () => {
-  //     console.log("WebSocket disconnected");
-  //   };
+    socket.current.on("custom_error", (error) => {
+      console.error("Socket error", error);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: `Lỗi: ${error}`,
+          timestamp: Date.now(),
+        },
+      ]);
+    });
 
-  //   socket.onerror = (error) => {
-  //     console.error("WebSocket error", error);
-  //   };
+    // Nhận phản hồi từ câu hỏi
+    socket.current.on("question_response", (data: ResponseData) => {
+      console.log("Received response:", data.trips);
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: data.answer,
+          trips: data.trips,
+          timestamp: data.timestamp,
+        },
+      ]);
+    });
 
-  //   return () => {
-  //     socket.close();
-  //   };
-  // }, []);
+    // Xác nhận câu hỏi đã được nhận
+    socket.current.on("question_received", (data) => {
+      if (!data) toast.error("Lỗi mấy chủ");
+    });
+
+    // Xử lý lỗi khi gửi câu hỏi
+    socket.current.on("question_error", (error) => {
+      console.error("Question error:", error);
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: `Lỗi: ${error.message}`,
+          timestamp: error.timestamp,
+        },
+      ]);
+    });
+
+    socket.current.on("disconnect", (reason) => {
+      console.log("Socket disconnected", reason);
+      setIsConnected(false);
+    });
+
+    socket.current.on("connect_error", (error) => {
+      console.error("Connection error:", error);
+      setIsConnected(false);
+    });
+
+    return () => {
+      if (socket.current) {
+        socket.current.disconnect();
+        socket.current = null;
+      }
+    };
+  }, [userId, open]);
 
   const handleOpenChat = () => {
     if (!user) {
@@ -85,93 +138,158 @@ const ChatBox = () => {
   };
 
   const handleSend = () => {
-    if (!input) return;
+    if (!input.trim()) return;
+    if (!socket.current || !isConnected) {
+      console.warn("Socket chưa kết nối");
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: "Kết nối chưa sẵn sáng. Vui lòng thử lại sau.",
+          timestamp: Date.now(),
+        },
+      ]);
+      return;
+    }
 
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(
-        JSON.stringify({
-          message: input,
-          language: "vi",
-        })
-      );
+    // Thêm tin nhắn của user vào ChatBox
+    const userMessage: Message = {
+      from: "user",
+      text: input,
+      timestamp: Date.now(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
 
-      setMessages((prev) => [...prev, { from: "user", text: input }]);
-      setInput("");
+    // Gửi câu hỏi tới server qua socket
+    socket.current.emit("user_question", {
+      userId: userId?.toString(),
+      question: input,
+      timestamp: Date.now(),
+    });
+
+    setIsLoading(true);
+    setInput("");
+
+    // loading message
+    setTimeout(() => {
+      if (isLoading) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            from: "bot",
+            text: "Đang xử lý câu hỏi của bạn...",
+            timestamp: Date.now(),
+          },
+        ]);
+      }
+    }, 1000);
+  };
+
+  const handleClickOutSide = (e: MouseEvent) => {
+    if (chatboxRef.current && !chatboxRef.current.contains(e.target as Node)) {
+      setOpen(false);
     } else {
-      console.warn("WebSocket chưa kết nối hoặc đã đóng");
+      return;
     }
   };
 
-  const handleDetailTrip = (
-    departure: string,
-    arrival: string,
-    startTime: string,
-    licensePlate: string
-  ) => {
-    alert(
-      `Điểm đi: ${departure}, điểm đến: ${arrival}, thời gian khởi hành ${startTime}, biển số xe: ${licensePlate}`
-    );
-  };
-
   return (
-    <div className={styles["chat-container"]}>
+    <div ref={chatboxRef} className={styles["chat-container"]}>
       {!open ? (
         <button type="button" onClick={handleOpenChat} className={styles["chat-button"]}>
           <FontAwesomeIcon className={styles["ic-message"]} icon={faRocketchat} />
         </button>
       ) : (
         <div className={styles["chat-box"]}>
+          <div className={styles["chat-header"]}>
+            <span>Chat VeXeTienIch</span>
+            <span
+              className={`${styles["status"]} ${
+                isConnected ? styles["online"] : styles["offline"]
+              }`}
+            >
+              {isConnected ? "Online" : "Offline"}
+            </span>
+          </div>
           <div className={styles["message-list"]}>
             {messages.map((msg, idx) => (
               <div key={msg.id ?? idx} className={`${styles["message"]}`}>
                 {msg.from === "user" ? (
-                  <p className={styles["message-text__user"]}>
-                    <br />
-                    {msg.text.split("\n").map((line, i) => (
-                      <span key={i}>
-                        {line}
-                        <br />
-                      </span>
-                    ))}
-                  </p>
+                  <div className={styles["message-user"]}>
+                    <div className={styles.right}>
+                      <p className={styles["message-text__user"]}>
+                        {msg?.text?.split("\n").map((line, i) => (
+                          <span key={i} className={styles["message-text__user-content"]}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+
+                    {msg.timestamp && (
+                      <div className={styles.timestamp}>
+                        <small className={styles["timestamp-content"]}>
+                          {new Date(msg.timestamp).toLocaleTimeString("vi-VN")}
+                        </small>
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <p className={styles["message-text__bot"]}>
-                    <br />
-                    {msg.text.split("\n").map((line, i) => (
-                      <span key={i}>
-                        {line}
-                        <br />
-                      </span>
-                    ))}
-                  </p>
+                  <div className={styles["message-bot"]}>
+                    <div className={styles.left}>
+                      <p className={styles["message-text__bot"]}>
+                        {msg?.text?.split("\n").map((line, i) => (
+                          <span key={i} className={styles["message-text__bot-content"]}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                    <div key={idx} className="trips">
+                      {msg.trips?.map((t, idx) => (
+                        <TripCardInChatBox key={idx} trip={t} />
+                      ))}
+                    </div>
+                    {msg.timestamp && (
+                      <div className={styles.timestamp}>
+                        <small className={styles["timestamp-content"]}>
+                          {new Date(msg.timestamp).toLocaleTimeString("vi-VN")}
+                        </small>
+                      </div>
+                    )}
+                  </div>
                 )}
-                {msg.infoTrip && (
-                  <button
-                    className={styles["search-trip-btn"]}
-                    type="button"
-                    onClick={() =>
-                      handleDetailTrip(
-                        msg.infoTrip!.departure,
-                        msg.infoTrip!.arrival,
-                        msg.infoTrip!.startTime,
-                        msg.infoTrip!.licensePlate
-                      )
-                    }
-                  >
-                    Xem chuyến
-                  </button>
-                )}
+                <div ref={messageEndRef}></div>
               </div>
             ))}
+            {/* Loading */}
+            {isLoading && open && (
+              <div className={styles["message"]}>
+                <div className={styles["message-bot"]}>
+                  <p className={styles["message-text__bot"]}>
+                    <span className={styles["typing-indicator"]}>
+                      Đang trả lời
+                      <span className={styles["dots"]}>.</span>
+                      <span className={styles["dots"]}>.</span>
+                      <span className={styles["dots"]}>.</span>
+                    </span>
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
+
           <div className={styles["input-area"]}>
             <div className={styles["chat-message"]}>
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Nhập câu hỏi..."
+                placeholder={isConnected ? "Nhập câu hỏi..." : "Đang kết nối..."}
                 className={styles["chat-textarea"]}
                 rows={1}
+                disabled={!isConnected || isLoading}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -184,9 +302,10 @@ const ChatBox = () => {
               <button
                 type="button"
                 onClick={handleSend}
+                disabled={!isConnected || isLoading || !input.trim()}
                 className={`${styles["send-btn"]} ${styles.btn}`}
               >
-                Gửi
+                {isLoading ? "Đang gửi..." : "Gửi"}
               </button>
               <button
                 type="button"

@@ -39,7 +39,7 @@ import ManagePromotion from "./pages/PromotionManage/ManagePromotion";
 import AddPromotion from "./pages/PromotionManage/AddPromotion";
 import DetailPromotion from "./pages/PromotionManage/DetailPromotion";
 import UpdatePromotion from "./pages/PromotionManage/UpdatePromotion";
-import HomePage from "./pages/HomePage";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   useClientWidth();
@@ -64,7 +64,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             {/* Route bảo vệ */}
             <Route element={<ManageLayout />}>
-              <Route index element={<HomePage />} />
+              <Route index element={<Dashboard />} />
             </Route>
 
             {/* Car Manage */}
