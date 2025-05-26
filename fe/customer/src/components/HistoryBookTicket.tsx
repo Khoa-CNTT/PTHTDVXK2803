@@ -15,6 +15,16 @@ const HistoryBookTicket = () => {
     handleCallData();
   }, []);
 
+  const handlePaymentStatus = (payment: string) => {
+    if(payment === "pending") {
+      return "Chưa thanh toán"
+    }
+
+    if(payment === "paid") {
+      return "Đã thanh toán"
+    }
+  }
+
   const handleCallData = async () => {
     try {
       
@@ -29,7 +39,11 @@ const HistoryBookTicket = () => {
             end_time: moment(item.end_time).utcOffset("+07:00").format("DD/MM/YYYY HH:mm"),
           }));
 
-          setDataTicket(formattedTicket);
+          const formattedPaymentStatus = formattedTicket.map((item: TicketPayLoad) => ({
+            ...item,
+            payment_status: handlePaymentStatus(item.payment_status)
+          }));
+          setDataTicket(formattedPaymentStatus);
         }
       }
     } catch (error) {

@@ -25,7 +25,7 @@ const ForgotPassword : React.FC<ChildProps>= ({onButtonClick}) => {
               return
             }else {
                 const res = await insetOtpForgotPassword(email)
-                console.log("insert: ", res);
+                toast.success("Kiểm tra email để xác thực!")
                 navigate("/verify-email-forgot-password",{state: {email: email}})
             }
         } catch (error) {

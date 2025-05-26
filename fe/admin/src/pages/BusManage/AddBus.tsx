@@ -44,13 +44,14 @@ const AddBus = () => {
   };
 
   const handleAddBus = async () => {
-    if(!form.capacity || !form.licensePlate || !form.indexIsMain) {
-      toast.error("Biển số xe k đúng định dạng")
+    
+    if(!form.capacity || !form.licensePlate) {
+      toast.error("Bạn nhập thiếu dữ liệu")
       return
     }
     const regex = /^[0-9]{2}[A-Z]-[0-9]{4,5}$/i;
     if(regex.test(form?.licensePlate) === false) {
-      toast.error("Biển số xe k đúng định dạng")
+      toast.error("Biển số xe không đúng định dạng")
       return
     }
 

@@ -172,7 +172,14 @@ function App() {
         />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/verify-email-forgot-password" element={<VerifyOtpForgotPassword />} />
-        <Route path="/update-forgot-password" element={<UpdateForgotPassword />} />
+        <Route
+          path="/update-forgot-password"
+          element={
+            <Layout>
+              <UpdateForgotPassword />
+            </Layout>
+          }
+        />
       </Routes>
       <ToastContainer
         className="custom-toast"
