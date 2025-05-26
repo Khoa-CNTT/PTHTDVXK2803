@@ -118,8 +118,10 @@
 
     th,
     td {
-      border: 1px solid #ddd;
-      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      border-top: 1px solid #ddd;
+      padding: 0.5rem;
+
       text-align: center;
       vertical-align: middle;
       white-space: nowrap; // Giữ nội dung không bị xuống dòng

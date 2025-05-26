@@ -12,6 +12,8 @@ import promotionRoute from "./promotion.route";
 import ticketRoute from "./ticket.routes";
 import payOSRoute from "./payos.routes";
 import webhookPayOsRoute from "./webhook.routes";
+import statisticalRoute from "./statistical.route";
+import revenueRoute from "./revenue.route";
 
 const routes = (app: express.Application): void => {
   // Cấu hình routes
@@ -27,6 +29,8 @@ const routes = (app: express.Application): void => {
   app.use("/api/ticket", ticketRoute);
   app.use("/api/payos", payOSRoute);
   app.use("/api/webhook", webhookPayOsRoute);
+  app.use("/api/statistical", statisticalRoute);
+  app.use("/api/revenue", revenueRoute);
 
   // Route cho các yêu cầu không tìm thấy
   app.use((req: Request, res: Response): void => {

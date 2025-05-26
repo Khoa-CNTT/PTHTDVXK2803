@@ -1,11 +1,11 @@
 @use "./mixin" as mix;
 .wrapper-layout {
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
 
   background-color: #f0f0f0;
 }

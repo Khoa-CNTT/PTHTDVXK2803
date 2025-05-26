@@ -3,8 +3,12 @@
   width: 2.5rem;
   height: 2.5rem;
 
-  user-select: none;
   cursor: pointer;
+
+  user-select: none;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE/Edge */
 }
 
 .img {

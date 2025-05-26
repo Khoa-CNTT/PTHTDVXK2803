@@ -1,39 +1,16 @@
-import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import styled from "../styles/sidebar.module.scss";
-// import { toast } from "react-toastify";
-// import { logout } from "../services/auth.service";
 import { Icon, IconType } from "./Icon";
+import useSidebarModal from "../store/useSidebarModal";
 
-interface SideBarProps {
-  statusSideBar?: boolean;
-}
-
-const Sidebar: React.FC<SideBarProps> = ({ statusSideBar }) => {
-  // const navigate = useNavigate();
+const Sidebar = () => {
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(statusSideBar);
-
-  useEffect(() => {
-    setCollapsed(statusSideBar);
-  }, [statusSideBar]);
+  const { sidebarStatus } = useSidebarModal();
 
   if (location.pathname === "/login") return null;
 
-  // const handleLogout = async () => {
-  //   const response = await logout();
-  //   if (response.status === "OK") {
-  //     toast.success("Đăng xuất thành công");
-  //     localStorage.removeItem("accept");
-  //     localStorage.removeItem("expirationTime");
-  //     navigate("/login");
-  //   } else {
-  //     toast.error("Đăng xuất thất bại");
-  //   }
-  // };
-
   return (
-    <div className={`${collapsed ? styled["collapsed"] : styled["side-bar"]}`}>
+    <div className={`${sidebarStatus ? styled["collapsed"] : styled["side-bar"]}`}>
       <nav className={styled["side-bar__menu"]}>
         <ul className={styled.list}>
           {[

@@ -2,14 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { GoTriangleDown } from "react-icons/go";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import DefaultImage from "../../components/DefaultImage";
 import Loading from "../../components/Loading";
 import Pagination from "../../components/Pagination";
 import { getCustomerList } from "../../services/customer.service";
 import styles from "../../styles/manageCustomer.module.scss";
 import { ArrangeType } from "../../types/type";
-import DefaultImage from "../../components/DefaultImage";
-import { dateTimeTransform } from "../../utils/transform";
 import { debounce } from "../../utils/debounce";
+import { dateTimeTransform } from "../../utils/transform";
 
 const ITEMS_PER_PAGE = 10;
 

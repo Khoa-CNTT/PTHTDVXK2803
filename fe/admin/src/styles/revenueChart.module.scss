@@ -1,7 +1,43 @@
-.chart-wrapper {
-  position: relative;
-  height: 300px;
-  width: 100%;
+.renevue-chart-container {
+  height: 25rem;
+
+  .filterd-container {
+    display: flex;
+    justify-content: center;
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+
+      .options {
+        padding: 0.25rem 0.5rem;
+
+        outline: none;
+      }
+
+      .filter-btn {
+        padding: 0.5rem;
+        border: 0.05rem solid var(--gray);
+        border-radius: 0.4rem;
+        transition: all 0.3s;
+        background-color: transparent;
+        color: var(--gray);
+        cursor: pointer;
+
+        &:hover {
+          background-color: var(--primary);
+          color: var(--white);
+        }
+
+        &.filter-btn__active {
+          background-color: var(--primary);
+          color: var(--white);
+        }
+      }
+    }
+  }
 }
 
 canvas {

@@ -1,44 +1,79 @@
-import { useState } from "react";
-import Stats from "../components/Stats";
-import RevenueChart from "../components/RevenueChart";
-
-const periodLabels: Record<string, string> = {
-  today: "Hôm nay",
-  this_week: "Tuần này",
-  this_month: "Tháng này",
-  last_month: "Tháng trước",
-  this_year: "Năm này",
-  last_year: "Năm trước",
-  all: "Tất cả",
-};
-
-const periods = Object.keys(periodLabels);
+import styles from "../styles/dashboard.module.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBus, faTicket, faUser, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { useQuery } from "@tanstack/react-query";
+import { getDashboardStats } from "../services/statistical.service";
+import RevenueChartByHours from "../components/RevenueChartByHours";
+import RevenueChartByMonth from "../components/RevenueChartByMonth";
+import RevenueChartByYear from "../components/RevenueChartByYear";
 
 const Dashboard = () => {
-  const [period, setPeriod] = useState("today");
+  const { data: statsData } = useQuery({
+    queryKey: ["stats"],
+    queryFn: () => getDashboardStats(),
+    staleTime: 60 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
   return (
-    <div className="dashboard">
-      <div className="dashboard__header">
-        <h1>Dashboard Đặt Vé</h1>
-        <p>Theo dõi doanh thu và đơn hàng theo thời gian</p>
-      </div>
+    <div className={styles["dashboard"]}>
+      <div className={styles["dashboard-summary"]}>
+        <div className={styles["dashboard-summary__item"]}>
+          <div className={styles["dashboard-summary__item-title"]}>
+            <p>Người dùng</p>
+          </div>
+          <div className={styles["dashboard-summary__item-info"]}>
+            <FontAwesomeIcon icon={faUser} />
+            <h6>{statsData?.totalCustomers}</h6>
+          </div>
+        </div>
+        <div className={styles["dashboard-summary__item"]}>
+          <div className={styles["dashboard-summary__item-title"]}>
+            <p>Nhân viên</p>
+          </div>
+          <div className={styles["dashboard-summary__item-info-wrapper"]}>
+            <div className={styles["info"]}>
+              <FontAwesomeIcon icon={faUsers} />
+              <h6>{statsData?.totalStaffs}</h6>
+            </div>
+            <div className={styles["info"]}>
+              <div className={styles["content"]}>
+                <p className={styles.title}>Tài xế </p>
+                <p>{statsData?.totalDrivers}</p>
+              </div>
+              <div className={styles["content"]}>
+                <p className={styles.title}>Phụ xe </p>
+                <p>{statsData?.totalCoDrivers}</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div className="filters">
-        {periods.map((p) => (
-          <button
-            key={p}
-            className={`filter-btn ${p === period ? "filter-btn--active" : ""}`}
-            onClick={() => setPeriod(p)}
-          >
-            {periodLabels[p]}
-          </button>
-        ))}
-      </div>
+        <div className={styles["dashboard-summary__item"]}>
+          <div className={styles["dashboard-summary__item-title"]}>
+            <p>Xe khách</p>
+          </div>
+          <div className={styles["dashboard-summary__item-info"]}>
+            <FontAwesomeIcon icon={faBus} />
+            <h6>{statsData?.totalCars}</h6>
+          </div>
+        </div>
 
-      <Stats period={period} />
-      <RevenueChart period={period} />
-      {/* <Transactions /> */}
+        <div className={styles["dashboard-summary__item"]}>
+          <div className={styles["dashboard-summary__item-title"]}>
+            <p>Vé xe</p>
+          </div>
+          <div className={styles["dashboard-summary__item-info"]}>
+            <FontAwesomeIcon icon={faTicket} />
+            <h6>{statsData?.totalTickets}</h6>
+          </div>
+        </div>
+      </div>
+      <div className={styles["revenue-chart"]}>
+        <RevenueChartByHours />
+        <RevenueChartByMonth />
+        <RevenueChartByYear />
+      </div>
     </div>
   );
 };
