@@ -195,7 +195,6 @@ export class CarService {
         licensePlateSearch,
         type,
       ]);
-      console.log("cars", rows[1]);
       return {
         total: rows[0][0].total,
         totalPage: Math.ceil(total / limit),

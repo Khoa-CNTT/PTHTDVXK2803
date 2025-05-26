@@ -1,0 +1,98 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  margin-bottom: 5rem;
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    .filter-btn {
+      padding: 0.5rem;
+      border: 0.05rem solid var(--gray);
+      border-radius: 0.4rem;
+      transition: all 0.3s;
+      background-color: transparent;
+      color: var(--gray);
+      cursor: pointer;
+
+      &:hover {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+
+      &.filter-btn__active {
+        background-color: var(--primary);
+        color: var(--white);
+      }
+    }
+  }
+
+  .dashboard-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+
+    margin-top: 1.4rem;
+
+    &__item {
+      min-width: 20rem;
+      min-height: 4.6rem;
+      padding: 0.5rem 1.4rem;
+      border-radius: 0.4rem;
+
+      background-color: rgba($color: var(--primary-ra), $alpha: 0.2);
+
+      &-title {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+      }
+
+      &-info {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .dashboard-summary__item-info-wrapper {
+        display: flex;
+        justify-content: space-between;
+
+        .info:nth-child(1) {
+          flex: 1;
+          display: flex;
+          gap: 1rem;
+        }
+
+        .info:nth-child(2) {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          .content {
+            position: relative;
+
+            display: flex;
+            gap: 0.5rem;
+
+            .title {
+              width: 4rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .revenue-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+    width: 100%;
+  }
+}

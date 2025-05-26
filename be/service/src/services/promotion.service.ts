@@ -34,7 +34,6 @@ export class PromotionService {
     type: "all" | "percentage" | "fixed",
     carTypes: string
   ): Promise<{ status: string; total: number; totalPage: number; data: any[] }> {
-    console.log("car-type", carTypes);
     const totalCount = await this.total();
 
     const [row] = await this.db.execute("CALL getAllPromotions(?, ?, ?, ?, ?, ?)", [
