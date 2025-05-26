@@ -12,6 +12,7 @@ import { formatCurrency } from "../utils/formatCurrency";
 import IconDeparture from "../components/IconDeparture";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import logo1 from "../assets/images/logo1.svg";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -107,6 +108,13 @@ const SearchTripPage = () => {
 
   return (
     <div className={styles["search-trip-page-wrapper"]}>
+      <div className={styles.banner}>
+      <img
+          className={styles["img-banner"]}
+          src={logo1}
+          alt="banner-wrapper"
+        />
+      </div>
       <div className={styles["search-trip-cpn-wrapper"]}>
         <SearchTrip valueSearchIn={searchParamsValue} />
       </div>

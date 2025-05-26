@@ -43,7 +43,6 @@ const DetailCoDriver = () => {
             >
               Cập nhật
             </Link>
-            <button className={`${styles["btn-delete"]} ${styles["feat-item"]}`}>Xóa</button>
           </div>
         </div>
         <ul className={styles.detail}>
